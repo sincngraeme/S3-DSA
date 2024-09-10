@@ -34,14 +34,14 @@ PARITY Parity(unsigned char* buff, int bufflen)
     for (int i = 0; i < bufflen;)           // loop until mask is 0 -> final bit has been assessed 
     {
 
-        if (*buff & mask)
+        if (*buff & mask)                   // check if the value of buff & mask results in 1, then increment the sum
         {
-            sum++;
+            sum++;                      
         } 
 
         mask >>= 1;                          // shift the bits by 1
 
-        if (mask == 0)
+        if (mask == 0)                       // if the shift resulted in mask running out, reset mask, and increment loop counter and buffer
         {
             mask = 0x80;
             i++;
@@ -49,10 +49,10 @@ PARITY Parity(unsigned char* buff, int bufflen)
         }
     }
 
-    if (sum % 2 == 0) 
+    if (sum % 2 == 0)                       // determine if even or odd by taking remainder when divided by 2
     {
-        return PAR_EVEN;
+        return PAR_EVEN;  
     } else {
-        return PAR_ODD;
+        return PAR_ODD;                     // since binary 1/0 are the only possible values
     }
 }
