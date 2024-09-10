@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		bPackedString = PackToBits( argv[i], strlen( argv[i] ), &iPackedLen );   // argv[i] is the ith char string input by user (i.e. 1100 ), i elements are separated by spaces
 																				 // &iPackedLen is the memory location of the int iPackedLen which is passed to PackToBits() and stores the value iOutLen (length of buf in bits)
 		if( bPackedString ) {  // i.e. if not NULL
-			rc = Parity( bPackedString, iPackedLen );
+			rc = 	Parity( bPackedString, iPackedLen );
 			printf("For %s, Parity() is %s. \n", argv[i], ( rc == PAR_EVEN ) ? "even" : ( ( rc == PAR_ODD ) ? "odd" : "ERROR"));
 			free( bPackedString); 
 		} else {
