@@ -1,0 +1,8 @@
+CRC: cyclic redundancy check
+
+ - fancy calculations on multiple bytes
+ - not for security - only for data integrity
+ - uses an algorithm to produce a "checksum" even though it is not really a sum
+ - polynomial division
+
+ 
