@@ -1,0 +1,8 @@
+Checksum
+
+- checksums provide an algorithm for detectin errors in larger data sets
+- instead of working with bits within a byte they work with bytes within a block
+- sum all the bytes in the message
+    - compute the result:
+        Checksum == sum % number
+            * where number is the maximum number +1 (for 8 bit 0x100)
