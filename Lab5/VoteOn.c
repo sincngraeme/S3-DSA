@@ -13,8 +13,11 @@ int VoteOn( void *Instances[], int nInstances, int nSize)
         
         for (j = i; j < nInstances; j++)
         {
-            if(memcmp(Instances[i], Instances[j], nSize) == 0);
-            curRepeats++;
+            if(memcmp(Instances[i], Instances[j], nSize) == 0)
+            {
+                curRepeats++;
+            }
+            
         }
         if(curRepeats > maxRepeats) 
         {
