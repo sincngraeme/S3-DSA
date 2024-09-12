@@ -1,0 +1,9 @@
+Repetition and Voting
+
+    - Foreward Error Correction     (FEC)
+        - the ability to anticipate errors before transmission
+
+    - Lab5 implements EEC or error correction code
+
+        - Repetition send data in multiples (odd) and "vote" to find the majority -> corrects minority values
+        

@@ -1,4 +1,4 @@
-/* main() for VoteOn function LAB 5
+/* main() for VoteOn function 
  */
 
 #include <stdio.h>
@@ -15,21 +15,31 @@ struct TestStruct {
 	short	s;
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// Define the variables used to test the function
 	/************************************************************************************************************************************** */
 	// Structures
-	struct TestStruct a = { 11, 123.2, 'a', 3217 };	   // a and c are identical
-	struct TestStruct b = { 11, 332.0, 'b', 3217 };
-	struct TestStruct c = { 11, 123.2, 'a', 3217 };    // a and c are identical
-	struct TestStruct d = { 11, 123.2, 'd', 3217 };    
+	struct TestStruct a = { 11, 123, 'a', 3217 };	 // a and c are identical
+	struct TestStruct b = { 11, 332, 'b', 3217 };
+	//struct TestStruct c = { 11, 123, 'a', 3217 };    // a and c are identical -- NOTE: Not true for the version of memcmp() used by VS Code compiler
+	struct TestStruct d = { 11, 123, 'd', 3217 };    
+
+	// Changes to code for VSCode 
+	/* ******************************************************************************************************** */
+	struct TestStruct* c; 											// Use the heap instead of the stack !!!!!
+	c = (struct TestStruct*)malloc(sizeof(struct TestStruct)); 	
+	memcpy((void*)c, (void*)&a, sizeof(struct TestStruct));
+
+	// changed &c to c below since it is already a pointer  
+
+	/* ********************************************************************************************************* */
 
 	// Arrays of pointers to structures 
-	struct TestStruct *List[] = { &a, &b, &c, &b, &c, &a, &b, &a };   // 3 a's, 2 c's, 3 b's. (So 5 out of 8 are same - we should print either the location of the a or the location of the c).
-	struct TestStruct *List2[] = { &b, &a, &c };					  // 2 out of 3 are the same since a and c are identical
+	struct TestStruct* List[] = { &a, &b, c, &b, c, &a, &b, &a };   // 3 a's, 2 c's, 3 b's. (So 5 out of 8 are same - we should print either the location of the a or the location of the c).
+	struct TestStruct *List2[] = { &b, &a, c };					  // 2 out of 3 are the same since a and c are identical
 	struct TestStruct *List3[] = { &b, &a, &d };					  // all different
-	struct TestStruct *List4[] = { &b, &a, &d, &c };				  // even # of elements, two are identical
+	struct TestStruct *List4[] = { &b, &a, &d, c };				  // even # of elements, two are identical
 	int		i;
 
 	// Variables
