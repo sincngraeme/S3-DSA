@@ -27,6 +27,7 @@ void MultiplyHx(int* A, int n , int m, int* x1, int* y1 )
         }
 
       *(y1 + i) = sum % 2;          // set each element of y1 to modulus of sum for each row since
+    }
 }
 
 
