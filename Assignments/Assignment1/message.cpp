@@ -14,33 +14,39 @@ int frandNum(int min, int max) {}
 int fnumQuotes(void) 
 {
     printf("here\n");
-    char buf[3];                                 // string to store adjacent characters
+    int buf[2];                                 // string to store adjacent characters
     int count = 0;
 
     FILE* pfp = fopen(filePath, "r");            // file pointer to read file (previous)
-    FILE* cfp = pfp + sizeof(char);                             // file pointer to read file (current)
+    FILE* cfp = pfp;                             // file pointer to read file (current)
+    fseek(cfp, 1, SEEK_SET);                     // sets character ahead
 
-    printf("%p\n%p\n",pfp,cfp);
-    getchar();
 
     if((pfp == NULL) || (ferror(pfp) != 0))         // error checking (pfp and cpf are same)
     {
         perror("ERROR opening file");
         return -1;
     }
-    printf("here2\n");
 
-    while(cfp != NULL && !ferror(cfp))       // cfp is further ahead
+    while(!ferror(cfp))      // cfp is further ahead
     {
         buf[0] = fgetc(pfp);
         buf[1] = fgetc(cfp);
 
-        if((buf[0] == '%') && (buf[1] == '%')) 
+        if(buf[0] == EOF || buf[1] == EOF)
         {
-            printf("%d", count);
+            break;
+        }
+
+        if((buf[0] == 37) && (buf[1] == 37)) 
+        {
+            printf("%d\n", count);
             count++;             // if two adjacent characters are the same, check if they are both a %. if they are, increment
         }
-        printf("a");
+    }
+    if(ferror(cfp))
+    {
+        perror("ERROR reading from file");
     }
 
     fclose(pfp);
