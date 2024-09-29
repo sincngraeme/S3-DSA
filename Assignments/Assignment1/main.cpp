@@ -25,6 +25,7 @@ int main() {
 	// srand(time(NULL));					// Seed the random number generator
 	// result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, frandNum(1,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 	free(quoteIndices); //temp
+	free(quoteLengths);
 	// system("pause");
 	return(0);
 }

@@ -49,7 +49,7 @@ int fnumQuotes()
 // Function returns an array that indicates the start of every quote in the file (number of characters from the start of the file) 
 long int* fquoteIndices(int numQuotes) 
 {
-    long int* indices = (long int*)malloc(numQuotes * sizeof(long int));                 // numQuotes is the number of indices in the array
+    long int* indices = (long int*)malloc((numQuotes + 1) * sizeof(long int));                 // numQuotes is the number of indices in the array
 
     char buf[2];                                // buffer to store two consecutive characters
 
@@ -61,7 +61,7 @@ long int* fquoteIndices(int numQuotes)
         free(indices);
         return NULL;
     }
-    for (int i = 0; !feof(fp), i < numQuotes;) 
+    for (int i = 0; !feof(fp), i <= numQuotes;) 
     {
         buf[0] = fgetc(fp);                     // read the first character
         if (buf[0] == '%')                      // if the first character is '%'
@@ -78,22 +78,25 @@ long int* fquoteIndices(int numQuotes)
 
     fclose(fp);
 
-    return(indices);
+    return indices;
 }
 
 // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 int* fquoteLength(int numQuotes, long int* quoteIndices) 
 {
+    printf("Quote Lengths:\n\n");
     // we already know the start and end of each quote so we can find the length from there
-
-    int* length = (int*)malloc(numQuotes * sizeof(int));                 
-    int curlength;
     
+    int* length = (int*)malloc(numQuotes * sizeof(int));                 
+
     for (int i = 0; i < numQuotes; i++) 
     {
-        curlength = quoteIndices[i++] - quoteIndices[i] - 2;
-        length[i] = ((curlength) < 140) ? curlength : 140;   
+        
+        length[i] = (int)(quoteIndices[i + 1] - (quoteIndices[i] + 2));   
+        printf("%d\t%d\n", i, length[i]);
     }
+
+    return length;
 
 } 
 
