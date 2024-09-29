@@ -82,7 +82,20 @@ long int* fquoteIndices(int numQuotes)
 }
 
 // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
-int* fquoteLength(int numQuotes, long int* quoteIndices) {} 
+int* fquoteLength(int numQuotes, long int* quoteIndices) 
+{
+    // we already know the start and end of each quote so we can find the length from there
 
-// Function that gets q random quote from the FortuneCookies file 
+    int* length = (int*)malloc(numQuotes * sizeof(int));                 
+    int curlength;
+    
+    for (int i = 0; i < numQuotes; i++) 
+    {
+        curlength = quoteIndices[i++] - quoteIndices[i] - 2;
+        length[i] = ((curlength) < 140) ? curlength : 140;   
+    }
+
+} 
+
+// Function that gets a random quote from the FortuneCookies file 
 int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) {}
