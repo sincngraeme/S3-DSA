@@ -6,6 +6,8 @@
 
 #define MAX_QUOTE_LENGTH 140
 
+const char filePath[] = "FortuneCookies.txt";
+
 // These functions will produce the inputs to the GetMessageFromFile() function
 int frandNum(int min, int max);							// Function gets a random number between min and max (max is the number of quotes in the file)
 int fnumQuotes(void);									// Function returns number of quotes in the file (only need to run once)

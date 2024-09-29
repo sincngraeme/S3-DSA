@@ -18,13 +18,13 @@ int main() {
 
 	// Count the number of quotes in the file and index it for fast access (only need to do this once) 
 	numQuotes = fnumQuotes();									// Number of quotes
-	quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
-	quoteLengths = fquoteLength(numQuotes, quoteIndices);		// Length of each quote (up to MAX_QUOTE_LENGTH) - cut off after 	
+	// quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
+	// quoteLengths = fquoteLength(numQuotes, quoteIndices);		// Length of each quote (up to MAX_QUOTE_LENGTH) - cut off after 	
   
-	// Get the random message from the file
-	srand(time(NULL));					// Seed the random number generator
-	result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, frandNum(1,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
+	// // Get the random message from the file
+	// srand(time(NULL));					// Seed the random number generator
+	// result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, frandNum(1,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 
-	system("pause");
+	// system("pause");
 	return(0);
 }
