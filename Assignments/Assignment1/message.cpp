@@ -8,75 +8,28 @@
 #include "message.h"
 
 // Function gets a random number between min and max (max is the number of quotes in the file)
-int frandNum(int min, int max) {}
+//int frandNum(int min, int max) {}
 
 // Function returns number of quotes in the file (only need to run once)
-// int fnumQuotes(void) 
-// {
-//     printf("here\n");
-//     int buf[2];                                 // string to store adjacent characters
-//     int count = 0;
-
-//     FILE* pfp = fopen(filePath, "r");            // file pointer to read file (previous)
-//     FILE* cfp = pfp;                             // file pointer to read file (current)
-//     fseek(cfp, 1, SEEK_SET);                     // sets character ahead
-
-
-//     if((pfp == NULL) || (ferror(pfp) != 0))         // error checking (pfp and cpf are same)
-//     {
-//         perror("ERROR opening file");
-//         return -1;
-//     }
-
-//     while(!ferror(cfp))      // cfp is further ahead
-//     {
-//         buf[0] = fgetc(pfp);
-//         buf[1] = fgetc(cfp);
-
-//         if(buf[0] == EOF || buf[1] == EOF)
-//         {
-//             break;
-//         }
-
-//         if((buf[0] == 37) && (buf[1] == 37)) 
-//         {
-//             printf("%d\n", count);
-//             count++;             // if two adjacent characters are the same, check if they are both a %. if they are, increment
-//         }
-//     }
-//     if(ferror(cfp))
-//     {
-//         perror("ERROR reading from file");
-//     }
-
-//     fclose(pfp);
-//     fclose(cfp);
-
-//     printf("number of quotes in file is: %d", count - 1);
-//     return (count - 1);
-
-// }
-
-// Function to return the number of quotes in the file
-int fnumQuotes(const char* filePath) 
+int fnumQuotes() 
 {
     char buf[2];                                // buffer to store two consecutive characters
     int count = 0;                              // variable to count the number of quotes
  
-    FILE* pfp = fopen(filePath, "r");           // open the file for reading
-    if (pfp == NULL)                            // error checking
+    FILE* fp = fopen(filePath, "r");           // open the file for reading
+    if (fp == NULL)                            // error checking
     {
         perror("ERROR opening file");
         return -1;
     }
  
     // Loop through the file character by character
-    while (!feof(pfp)) 
+    while (!feof(fp)) 
     {
-        buf[0] = fgetc(pfp);                    // read the first character
+        buf[0] = fgetc(fp);                    // read the first character
         if (buf[0] == '%')                      // if the first character is '%'
         {
-            buf[1] = fgetc(pfp);                // read the next character
+            buf[1] = fgetc(fp);                // read the next character
             if (buf[1] == '%')                  // if the second character is also '%'
             {
                 count++;                        // increment the count for each %% pair
@@ -84,20 +37,49 @@ int fnumQuotes(const char* filePath)
         }
     }
  
-    fclose(pfp);                                // close the file
+    fclose(fp);                                // close the file
  
     // Each quote is surrounded by %% (pair of percent symbols)
     // So, half of the count will give the number of quotes.
-    int numQuotes = count / 2;
+    int numQuotes = count - 1;
  
     printf("Number of quotes in file: %d\n", numQuotes);
     return numQuotes;
 }
-
-
-
 // Function returns an array that indicates the start of every quote in the file (number of characters from the start of the file) 
-long int* fquoteIndices(int numQuotes) {}
+long int* fquoteIndices(int numQuotes) 
+{
+    long int* indices = (long int*)malloc(numQuotes * sizeof(long int));                 // numQuotes is the number of indices in the array
+
+    char buf[2];                                // buffer to store two consecutive characters
+
+    FILE* fp = fopen(filePath, "r");
+
+    if (fp == NULL)                            // error checking
+    {
+        perror("ERROR opening file");
+        free(indices);
+        return NULL;
+    }
+    for (int i = 0; !feof(fp), i < numQuotes;) 
+    {
+        buf[0] = fgetc(fp);                     // read the first character
+        if (buf[0] == '%')                      // if the first character is '%'
+        {
+            buf[1] = fgetc(fp);                 // read the next character
+            if (buf[1] == '%')                  // if the second character is also '%'
+            {   
+                /*TEMP*/printf("%d\t%d\n",i ,ftell(fp));
+                indices[i] = ftell(fp);         // we are now at the begining of a quote set the given index of array to the current location of the file pointer
+                i++;                            // increment the index since we have another quote
+            }
+        }
+    }
+
+    fclose(fp);
+
+    return(indices);
+}
 
 // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 int* fquoteLength(int numQuotes, long int* quoteIndices) {} 
