@@ -8,7 +8,10 @@
 #include "message.h"
 
 // Function gets a random number between min and max (max is the number of quotes in the file)
-//int frandNum(int min, int max) {}
+int frandNum(int min, int max) 
+{
+    return (rand() % (max - min) + min);
+}
 
 // Function returns number of quotes in the file (only need to run once)
 int fnumQuotes() 
@@ -101,4 +104,28 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 } 
 
 // Function that gets a random quote from the FortuneCookies file 
-int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) {}
+int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
+{
+    int mLen;                             // number of characters to read from file
+
+    FILE* fp = fopen(filePath, "r");
+
+    if (fp == NULL)                            // error checking
+    {
+        perror("ERROR opening file");       
+        return -1;
+    }
+    
+    mLen = (quoteLengths[randNum] < (iLen - 1)) ? quoteLengths[randNum] : iLen - 1;      
+    //^- if the length of the quote is less than the space in the buffer (extra for \0), use the length of the quote
+    // - if the length of the quote is greater than the space in the buffer, use the length of the buffer (with space for \0) 
+
+    fseek(fp, quoteIndices[randNum], SEEK_SET);               // set file pointer to begining then offset by file index at randNum array index
+    fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
+    buff[mLen + 1] = '\0';                              // set the last character in string to \0
+
+    printf("%d\n", randNum);
+    fclose(fp);                                               // close the file
+    return 0;
+
+}
