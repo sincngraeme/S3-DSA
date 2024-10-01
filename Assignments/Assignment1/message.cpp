@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>			// Dynamic memory allocation for arrays that store quote location and length
+#include <string.h>
 #include "message.h"
 
 // Function gets a random number between min and max (max is the number of quotes in the file)
@@ -88,16 +89,36 @@ long int* fquoteIndices(int numQuotes)
 int* fquoteLength(int numQuotes, long int* quoteIndices) 
 {
     printf("Quote Lengths:\n\n");
+
+    FILE* fp = fopen(filePath, "r");
+
+    if (fp == NULL)                            // error checking
+    {
+        perror("ERROR opening file");
+        return NULL;
+    }    
     // we already know the start and end of each quote so we can find the length from there
     
-    int* length = (int*)malloc(numQuotes * sizeof(int));                 
+    int* length = (int*)malloc(numQuotes * sizeof(int));        // allocate space for the length storage array         
 
-    for (int i = 0; i < numQuotes; i++) 
-    {
-        
-        length[i] = (int)(quoteIndices[i + 1] - (quoteIndices[i] + 2));   
+    for (int i = 0; i < numQuotes; i++)                         // loop through all the quotes
+    {       
+        length[i] = (int)(quoteIndices[i + 1] - (quoteIndices[i] + 2));         // subract adjacent indices (includes compensation for delimiting characters)
+
+        fseek(fp, quoteIndices[i], SEEK_SET);                           // set location of fp to current quote
+        int count = 0;
+
+        for(int j = 0; j < length[i]; j++)                   // loop through the quote
+        {
+            if(fgetc(fp) == '\r') count++;                   // check if the current character is \r, if so increment newline count. (windows terminal does not handle \n\r unix encoding)
+        }
+
+        length[i] -= count;                                  // subtract the count of newlines from the quote length
+
         printf("%d\t%d\n", i, length[i]);
     }
+
+    fclose(fp);
 
     return length;
 
