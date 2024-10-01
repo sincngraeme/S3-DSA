@@ -103,17 +103,17 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 
     for (int i = 0; i < numQuotes; i++)                         // loop through all the quotes
     {       
-        length[i] = (int)(quoteIndices[i + 1] - (quoteIndices[i] + 2));         // subract adjacent indices (includes compensation for delimiting characters)
+        length[i] = (int)(quoteIndices[i + 1] - quoteIndices[i] - 2);         // subract adjacent indices (includes compensation for delimiting characters)
 
         fseek(fp, quoteIndices[i], SEEK_SET);                           // set location of fp to current quote
-        int count = 0;
+        int count = 0;                                       // character count
 
         for(int j = 0; j < length[i]; j++)                   // loop through the quote
         {
-            if(fgetc(fp) == '\r') count++;                   // check if the current character is \r, if so increment newline count. (windows terminal does not handle \n\r unix encoding)
+            if(fgetc(fp) != '\n') count++;                   // check if the current character is \r, if so increment newline count. (windows terminal does not handle \n\r unix encoding)
         }
 
-        length[i] -= count;                                  // subtract the count of newlines from the quote length
+        length[i] = count;                                  // subtract the count of newlines from the quote length
 
         printf("%d\t%d\n", i, length[i]);
     }
@@ -143,7 +143,7 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
 
     fseek(fp, quoteIndices[randNum], SEEK_SET);               // set file pointer to begining then offset by file index at randNum array index
     fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
-    buff[mLen + 1] = '\0';                              // set the last character in string to \0
+    buff[mLen] = '\0';                              // set the last character in string to \0
 
     printf("%d\n", randNum);
     fclose(fp);                                               // close the file
