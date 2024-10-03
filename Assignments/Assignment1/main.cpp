@@ -12,7 +12,7 @@ int main() {
 	int numQuotes;					// Number of quotes in the file
 	long int* quoteIndices;			// Array of quote locations in the file (index correspondes to quote number)
 	int* quoteLengths;				// Array of quote lengths (index correspondes to quote number)
-	char testBuff[MAX_QUOTE_LENGTH]; // Buffer to write the message to
+	char testBuff[MAX_QUOTE_LENGTH] = "0"; // Buffer to write the message to
 	int result;						 // result = 0 if successfully get a message
 
 
@@ -24,9 +24,10 @@ int main() {
 	// // Get the random message from the file
 	srand(time(NULL));					// Seed the random number generator
 	result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
-	printf("%s\t%d", testBuff);
-	
-	
+	printf("-------------------------------------------------\n");
+	printf("%s\t\n", testBuff);
+	printf("-------------------------------------------------\n");
+
 	free(quoteIndices);
 	free(quoteLengths);
 	system("pause");
