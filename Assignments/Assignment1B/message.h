@@ -17,3 +17,31 @@ int* fquoteLength(int numQuotes, long int* quoteIndices); // Function returns th
 
 // Function that gets q random quote from the FortuneCookies file 
 int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths);  // buff is a character array (need top pass the node element that is a character array) 
+
+
+//STUFF FROM PART B
+const int iLength = 140;
+
+typedef struct node Node;
+typedef struct item Item; 
+typedef Node* link;
+
+struct item {
+	char message[iLength];
+	short int sid;			// Sender ID
+	short int rid;			// Receiver ID 
+	char priority;			// Priority of message
+	short int seqNum;		// Sequence number of the message
+	char later[25];			// Character we might use later 
+};
+
+struct node {
+	link pNext; 
+	Item Data;
+};
+
+// Queue function prototypes 
+void InitQueue(void); 
+int IsQueueEmpty(void); 
+void AddToQueue(link); 
+link DeQueue(void);
