@@ -8,6 +8,8 @@
 #include <string.h>
 #include "message.h"
 
+static link pHead, pTail; 
+
 // Function gets a random number between min and max (max is the number of quotes in the file)
 int frandNum(int min, int max) 
 {
@@ -139,8 +141,8 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
     // while(fgetc(fp) == ('\n'||'\r'));                   // read until the real begining of the quote not including newlines
     // fseek(fp, -1, SEEK_CUR);                                        // move backwards after
 
-    fread(buff, sizeof(char), mLen  - 1, fp);                // read message into buff as long as there is space and message
-    buff[mLen] = '\0';                              // set the last character in string to \0
+    fread(buff, sizeof(char), mLen  - 2, fp);                // read message into buff as long as there is space and message
+    buff[mLen+ 1] = '\0';                              // set the last character in string to \0
 
     //printf("%d\n", randNum);
     fclose(fp);                                               // close the file
@@ -148,9 +150,8 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
 
 }
 
-//STUFF FROM PART B
 
-static link pHead, pTail; 
+//STUFF FROM PART B
 
 void InitQueue(void) {
 	pHead = pTail = NULL; 
@@ -170,7 +171,6 @@ void AddToQueue(link pn) {
 	}
 	pTail->pNext = NULL;
 }
-
 
 link DeQueue(void) {
 	link pTemp;					// Hold the current Head

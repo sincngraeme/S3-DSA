@@ -5,6 +5,7 @@
 #pragma once
 
 #define MAX_QUOTE_LENGTH 140
+#define QUEUE_SIZE 5
 
 const char filePath[] = "FortuneCookies.txt";
 
@@ -14,12 +15,6 @@ int fnumQuotes(void);									// Function returns number of quotes in the file (
 long int* fquoteIndices(int numQuotes);					// Function returns an array that indicates the start of every quote in the file (number of characters from the start of the file) 
 int* fquoteLength(int numQuotes, long int* quoteIndices); // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 
-
-// Function that gets q random quote from the FortuneCookies file 
-int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths);  // buff is a character array (need top pass the node element that is a character array) 
-
-
-//STUFF FROM PART B
 const int iLength = 140;
 
 typedef struct node Node;
@@ -40,7 +35,8 @@ struct node {
 	Item Data;
 };
 
-// Queue function prototypes 
+// Function that gets q random quote from the FortuneCookies file 
+int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths);  // buff is a character array (need top pass the node element that is a character array)
 void InitQueue(void); 
 int IsQueueEmpty(void); 
 void AddToQueue(link); 

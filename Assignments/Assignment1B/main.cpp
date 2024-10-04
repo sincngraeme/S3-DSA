@@ -14,8 +14,10 @@ int main() {
 	int* quoteLengths;				// Array of quote lengths (index correspondes to quote number)
 	char testBuff[MAX_QUOTE_LENGTH] = "0"; // Buffer to write the message to
 	int result;						 // result = 0 if successfully get a message
+	link p, q; 
+	int i; 
 
-
+	
 	// Count the number of quotes in the file and index it for fast access (only need to do this once) 
 	numQuotes = fnumQuotes();									// Number of quotes
 	quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
@@ -28,8 +30,32 @@ int main() {
 	printf("%s\t\n", testBuff);
 	printf("-------------------------------------------------\n");
 
+	system("pause");
+
+	InitQueue(); 
+
+		// Create & Add Nodes numbered 1 to 10 to the Queue
+	for (i = 0; i < 10; i++) {
+		p = (link)malloc(sizeof(Node)); 		
+		p->Data.seqNum = i;                     // (*p).Data.sid = i;
+		result = GetMessageFromFile(p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
+		if(result != 0)							// check the result of GetMessageFromFile
+		{
+			free(p);												
+			break;								// we dont want to add if there is an error
+		}
+		AddToQueue(p);
+		//free(p);
+	}
+
+	while (!IsQueueEmpty()) {
+		q = DeQueue(); 
+		printf("\n %d) %s", q->Data.seqNum, q->Data.message);		// print the data from each node
+		free(q);													// data has been accessed so free q
+	}
+
 	free(quoteIndices);
 	free(quoteLengths);
-	system("pause");
+
 	return(0);
 }
