@@ -133,7 +133,7 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
         return -1;
     }
     
-    // mLen = (quoteLengths[randNum] < (iLen - 1)) ? quoteLengths[randNum] : iLen - 1;      
+    mLen = (quoteLengths[randNum] < (iLen - 1)) ? quoteLengths[randNum] - 1 : iLen - 1;      
     
 
     fseek(fp, quoteIndices[randNum], SEEK_SET);               // set file pointer to begining then offset by file index at randNum array index
