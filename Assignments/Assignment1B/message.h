@@ -15,7 +15,7 @@ int fnumQuotes(void);									// Function returns number of quotes in the file (
 long int* fquoteIndices(int numQuotes);					// Function returns an array that indicates the start of every quote in the file (number of characters from the start of the file) 
 int* fquoteLength(int numQuotes, long int* quoteIndices); // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 
-const int iLength = 140;
+const int iLength = MAX_QUOTE_LENGTH;
 
 typedef struct node Node;
 typedef struct item Item; 

@@ -21,6 +21,9 @@ int fnumQuotes()
 {
     char buf[2];                                // buffer to store two consecutive characters
     int count = 0;                              // variable to count the number of quotes
+    int a = 0;
+    int b = 0;
+    int c = 0;
  
     FILE* fp = fopen(filePath, "r");           // open the file for reading
     if (fp == NULL)                            // error checking
@@ -46,10 +49,10 @@ int fnumQuotes()
     fclose(fp);                                // close the file
  
     // Each quote is surrounded by %% (pair of percent symbols)
-    // So, half of the count will give the number of quotes.
+    // So, the count minus 1 will give the number of quotes.
     int numQuotes = count - 1;
  
-    //printf("Number of quotes in file: %d\n", numQuotes);
+    printf("Number of quotes in file: %d\n", numQuotes);
     return numQuotes;
 }
 // Function returns an array that indicates the start of every quote in the file (number of characters from the start of the file) 
@@ -67,7 +70,7 @@ long int* fquoteIndices(int numQuotes)
         free(indices);
         return NULL;
     }
-    for (int i = 0; !feof(fp), i <= numQuotes;) 
+    for (int i = 0; !feof(fp), i < numQuotes;) 
     {
         buf[0] = fgetc(fp);                     // read the first character
         if (buf[0] == '%')                      // if the first character is '%'
@@ -75,7 +78,6 @@ long int* fquoteIndices(int numQuotes)
             buf[1] = fgetc(fp);                 // read the next character
             if (buf[1] == '%')                  // if the second character is also '%'
             {   
-
                 /*TEMPprintf("%d\t%d\n",i ,ftell(fp));*/
                 indices[i] = ftell(fp);         // we are now at the begining of a quote set the given index of array to the current location of the file pointer
                 i++;                            // increment the index since we have another quote
@@ -91,7 +93,9 @@ long int* fquoteIndices(int numQuotes)
 // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 int* fquoteLength(int numQuotes, long int* quoteIndices) 
 {
-    //printf("Quote Lengths:\n\n");
+    printf("Quote Lengths:\n\n");
+
+    char buf[2];
 
     FILE* fp = fopen(filePath, "r");
 
@@ -104,9 +108,10 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
     
     int* length = (int*)malloc(numQuotes * sizeof(int));        // allocate space for the length storage array         
 
-    for (int i = 0; i < numQuotes; i++)                         // loop through all the quotes
+    for (int i = 0; !feof(fp), i < numQuotes; i++)                         // loop through all the quotes
     {             
-        length[i] = (int)(quoteIndices[i + 1] - quoteIndices[i]) - 4;               // subract adjacent indices (includes compensation for delimiting characters)
+        
+        length[i] = (int)(quoteIndices[i + 1] - quoteIndices[i]) - 6;               // subract adjacent indices (includes compensation for delimiting characters)
         length[i] = (length[i] < MAX_QUOTE_LENGTH - 1) ? length[i] : MAX_QUOTE_LENGTH - 1;     
         //^- if the length of the quote is less than the space in the buffer (extra for \0), use the length of the quote
         // - if the length of the quote is greater than the space in the buffer, use the length of the buffer (with space for \0) 
@@ -123,7 +128,7 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 // Function that gets a random quote from the FortuneCookies file 
 int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
 {
-    int mLen = quoteLengths[randNum];                             // number of characters to read from file
+    int mLen = (int)quoteLengths[randNum];                             // number of characters to read from file
 
     FILE* fp = fopen(filePath, "r");
 
@@ -133,7 +138,7 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
         return -1;
     }
     
-    mLen = (quoteLengths[randNum] < (iLen - 1)) ? quoteLengths[randNum] - 1 : iLen - 1;      
+    //mLen = (quoteLengths[randNum] < (iLen - 1)) ? quoteLengths[randNum] - 1 : iLen - 1;      
     
 
     fseek(fp, quoteIndices[randNum], SEEK_SET);               // set file pointer to begining then offset by file index at randNum array index
@@ -141,8 +146,16 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
     // while(fgetc(fp) == ('\n'||'\r'));                   // read until the real begining of the quote not including newlines
     // fseek(fp, -1, SEEK_CUR);                                        // move backwards after
 
-    fread(buff, sizeof(char), mLen  - 2, fp);                // read message into buff as long as there is space and message
-    buff[mLen+ 1] = '\0';                              // set the last character in string to \0
+    fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
+    buff[mLen] = '\0';
+    
+    if (mLen < iLen)
+    {
+        for (int diff = iLen - mLen; diff != 0; diff--)
+        {
+            buff[iLen - diff] = '\0';
+        }
+    }                              // set the last character in string to \0
 
     //printf("%d\n", randNum);
     fclose(fp);                                               // close the file
