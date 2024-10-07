@@ -65,7 +65,7 @@ long int* fquoteIndices(int numQuotes)
         free(indices);
         return NULL;
     }
-    for (int i = 0; !feof(fp), i <= numQuotes;) 
+    for (int i = 0; !feof(fp), i <= numQuotes;) //enter loop until end of the file is reached OR the last idex of the quote is reached
     {
         buf[0] = fgetc(fp);                     // read the first character
         if (buf[0] == '%')                      // if the first character is '%'
@@ -74,7 +74,7 @@ long int* fquoteIndices(int numQuotes)
             if (buf[1] == '%')                  // if the second character is also '%'
             {   
 
-                /*TEMPprintf("%d\t%d\n",i ,ftell(fp));*/
+                /*TEMPprintf("%d\t%d\n",i ,ftell(fp));*/////////////////////////////////////////////// so Nigel can eraseeeee
                 indices[i] = ftell(fp);         // we are now at the begining of a quote set the given index of array to the current location of the file pointer
                 i++;                            // increment the index since we have another quote
             }
@@ -89,7 +89,7 @@ long int* fquoteIndices(int numQuotes)
 // Function returns the smaller of the actual quote length or MAX_QUOTE_LENGTH
 int* fquoteLength(int numQuotes, long int* quoteIndices) 
 {
-    //printf("Quote Lengths:\n\n");
+    //printf("Quote Lengths:\n\n");////////////////////////////////////////////////////////// so sic Eclair cake can omit
 
     FILE* fp = fopen(filePath, "r");
 
@@ -109,7 +109,7 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
         //^- if the length of the quote is less than the space in the buffer (extra for \0), use the length of the quote
         // - if the length of the quote is greater than the space in the buffer, use the length of the buffer (with space for \0) 
 
-        //printf("%d\t%d\n", i, length[i]);
+        //printf("%d\t%d\n", i, length[i]); /////////////////////////////////////////////////////////nigel
     }
 
     fclose(fp);
