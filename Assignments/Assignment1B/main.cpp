@@ -27,9 +27,9 @@ int main() {
 	srand(time(NULL));					// Seed the random number generator
 	result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, 
 	//frandNum(0,numQuotes),
-	912,
+	1030,
 	numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
-	printf("%d\n",);
+	//printf("%d\n",);
 	printf("-------------------------------------------------\n");
 	printf("%s\n", testBuff);
 	printf("-------------------------------------------------\n");
