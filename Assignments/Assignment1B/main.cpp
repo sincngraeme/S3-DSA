@@ -1,6 +1,6 @@
 /* main.cpp - Main file for testing the File IO functions that get random messages from a file 
 *  By: Nigel Sinclair, Fergus Page, and Rita Yevtushenko
-*  Adapeted from code by Michael Galle
+*  Adapted from code by Michael Galle
 */
 
 #include <stdio.h>
