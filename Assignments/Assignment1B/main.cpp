@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <time.h>			// Needed for srand
 #include "message.h"
+#include "queue.h"
 
 int main() {
 
@@ -40,7 +41,7 @@ int main() {
 		// Create & Add Nodes numbered 1 to 10 to the Queue
 	for (i = 0; i < 10; i++) {
 		p = (link)malloc(sizeof(Node)); 		
-		p->Data.seqNum = i;                     // (*p).Data.sid = i;
+		p->Data.seqNum = i;                    
 		result = GetMessageFromFile(p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 		if(result != 0)							// check the result of GetMessageFromFile
 		{
@@ -53,7 +54,9 @@ int main() {
 
 	while (!IsQueueEmpty()) {
 		q = DeQueue(); 
-		printf("\n%d) %s", q->Data.seqNum, q->Data.message);		// print the data from each node
+		printf("\n%d) -----------------------------------------------------------\n", q->Data.seqNum);		// formatting
+		printf("%s", q->Data.message);		// print the data from each node
+
 		free(q);													// data has been accessed so free q
 	}
 
