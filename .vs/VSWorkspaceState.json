@@ -1,7 +1,13 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CMS",
+    "\\CMS\\Code"
   ],
+<<<<<<< Updated upstream
   "SelectedNode": "\\VSWEEK1.sln",
+=======
+  "SelectedNode": "\\CMS\\Code\\CMSMaster",
+>>>>>>> Stashed changes
   "PreviewInSolutionExplorer": false
 }
