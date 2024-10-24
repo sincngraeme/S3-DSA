@@ -1,0 +1,1 @@
+Use this folder to store working files for weekly tasks before moving them to a permanent folder like the ones in the directory above this.
