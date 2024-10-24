@@ -23,14 +23,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="menu.cpp" />
-    <ClCompile Include="menumain.cpp" />
     <ClCompile Include="message.cpp" />
-    <ClCompile Include="messagemain.cpp" />
     <ClCompile Include="queue.cpp" />
     <ClCompile Include="recursion.cpp" />
-    <ClCompile Include="recursionmain.cpp" />
-    <ClCompile Include="sound.cpp" />
-    <ClCompile Include="soundmain.cpp" />
+    <ClCompile Include="sound.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions), _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="menu.h" />
