@@ -38,9 +38,9 @@ int	main(int argc, char *argv[])
 	while ((c = getchar()) != '\n' && c != EOF) {}								// Flush other input
 	if ((save == 'y') || (save == 'Y')) {								////Check the command result.
 		/* Open input file */
-		f = fopen("C:\\myfiles\\recording.dat", "wb");				////Open the save location.
+		f = fopen(argv[1], "wb");				////Open the save location.
 		if (!f) {														////Error handling.
-			printf("unable to open %s\n", "C:\\myfiles\\recording.dat");
+			printf("unable to open %s\n", argv[1]);
 			return 0;
 		}
 		printf("Writing to sound file ...\n");
@@ -54,9 +54,9 @@ int	main(int argc, char *argv[])
 	while ((c = getchar()) != '\n' && c != EOF) {}								// Flush other input
 	if ((replay == 'y') || (replay == 'Y')) {							////Check the command result.
 		/* Open input file */
-		f = fopen("C:\\myfiles\\recording.dat", "rb");				////Open the saved file location.
+		f = fopen(argv[1], "rb");				////Open the saved file location.
 		if (!f) {														////Error handling.
-			printf("unable to open %s\n", "C:\\myfiles\\recording.dat");
+			printf("unable to open %s\n", argv[1]);
 			return 0;
 		}
 		printf("Reading from sound file ...\n");
