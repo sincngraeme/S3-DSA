@@ -5,6 +5,7 @@
 
 #include "treenode.h"
 #include "treefunc.h"
+#include "message.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,7 @@
 
 // Private variables 
 static link root;																// Root of the BST
-static Item NullItem{ "Not found - Leaf has been reached" };					// Indicate that a leaf was reached
+static Item NullItem = { "Not found - Leaf has been reached" };					// Indicate that a leaf was reached
 
 // Function Implementations
 
