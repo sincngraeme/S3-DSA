@@ -6,12 +6,12 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 
 // #pragma comment(lib, "Ws2_32.lib")	   // Make sure we are linking against the Ws2_32.lib library
 // #pragma comment(lib, "Winmm.lib")      // Make sure we are linking against the Winmm.lib library - some functions/symbols from this library (Windows sound API) are used
+
 #include <stdio.h> 
 #include <windows.h>					// Contains WAVEFORMATEX structure
 #include <mmsystem.h>					////Header for Windows multimedia interfaces. Includes mmeapi.h and others.
 #include <math.h>						////Header for math functions.
 #include "sound.h"						////Header for the supplied Audio wrapper functions.
-
 
 // BUFFERS
 short iBigBuf[SAMPLES_SEC * RECORD_TIME];
