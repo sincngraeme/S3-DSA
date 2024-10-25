@@ -7,18 +7,25 @@
 CXX = g++
 
 # define any compile-time flags
-CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
+CXXFLAGS	:= -std=c++17 -Wall -Wextra
+
+# warning flags
+WFLAGS = -fpermissive
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
-LFLAGS =
+#	for windows must be full file path within quotes (for .dll)
+#	for linux can use -l[file] (if the file has format libfile.so)
+LFLAGS = \
+"C:\Windows\System32\Ws2_32.dll" \
+"C:\Windows\System32\Winmm.dll"
 
 # define output directory
 OUTPUT	:= output
 
 # define source directory
-SRC		:= src
+SRC		:= src 
 
 # define include directory
 INCLUDE	:= include
@@ -32,7 +39,7 @@ SOURCEDIRS	:= $(SRC)
 INCLUDEDIRS	:= $(INCLUDE)
 LIBDIRS		:= $(LIB)
 FIXPATH = $(subst /,\,$1)
-RM			:= del /q /f
+RM			:= rm -f
 MD	:= mkdir
 else
 MAIN	:= main
@@ -65,7 +72,8 @@ DEPS		:= $(OBJECTS:.o=.d)
 # deleting dependencies appended to the file from 'make depend'
 #
 
-OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
+#OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
+OUTPUTMAIN := $(OUTPUT)/$(MAIN)
 
 all: $(OUTPUT) $(MAIN)
 	@echo Executing 'all' complete!
@@ -74,7 +82,7 @@ $(OUTPUT):
 	$(MD) $(OUTPUT)
 
 $(MAIN): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LIBS) $(LFLAGS)
 
 # include all .d files
 -include $(DEPS)
@@ -85,7 +93,7 @@ $(MAIN): $(OBJECTS)
 # -MMD generates dependency output files same name as the .o file
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -MMD $<  -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -MMD $<  -o $@ $(WFLAGS)
 
 .PHONY: clean
 clean:
