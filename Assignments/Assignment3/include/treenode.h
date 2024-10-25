@@ -5,7 +5,9 @@
 
 #pragma once
 
-const int iLength = 140; 
+#include "message.h"
+
+//const int iLength = 140; 			//already defineds
 
 typedef struct item Item; 
 typedef struct BSTNode Node; 

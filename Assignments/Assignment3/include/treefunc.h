@@ -5,6 +5,7 @@
 
 #pragma once
 #include "treenode.h"
+#include "message.h"
 
 // Function prototypes
 link NEW(Item item, link left, link right);		// Creates a new BST node

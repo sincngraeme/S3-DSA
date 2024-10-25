@@ -7,15 +7,14 @@
 #include <string.h>
 #include "treenode.h"
 #include "treefunc.h"
-
-
+#include "message.h"
 
 int main()
 {
     BSTInit();                              // Initialize the BST 
     Item* p = NULL;                         
     int i, num;                 
-    char buffer[4];
+    char buffer[MAX_QUOTE_LENGTH];          //Changed buffer size to accomodate message.
 
     // Input from user
     printf("\nHow many node would you like to put into the BST?\n"); 
@@ -28,8 +27,8 @@ int main()
     for (i = 0; i < num; i++) {
         p = (Item*)malloc(sizeof(Item)); 
         printf("Item %d: ", i); 
-        scanf("%s", buffer); 
-        buffer[2] = '\0';
+        scanf(messagemain(), buffer);               //Replaced %s with quote from file
+        //buffer[2] = '\0';                         //Took care of this in GetMessageFromFile() in message.cpp, on lines 137-145.
         strcpy(p->buff, buffer);
         Insert(*p);
     }

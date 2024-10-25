@@ -3,7 +3,7 @@ Author: Michael Galle
 Date: Updated 2022
 Details: Testing mainline for Windows sound API
 */
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "sound.h"
 #include <stdio.h>
 #include <windows.h>
@@ -34,11 +34,11 @@ int	main(int argc, char *argv[])
 
 	// save audio recording  
 	printf("Would you like to save your audio recording? (y/n): "); 
-	scanf_s("%c", &save, 1);											////Check for save command.
+	scanf("%c", &save);											////Check for save command.
 	while ((c = getchar()) != '\n' && c != EOF) {}								// Flush other input
 	if ((save == 'y') || (save == 'Y')) {								////Check the command result.
 		/* Open input file */
-		fopen_s(&f, "C:\\myfiles\\recording.dat", "wb");				////Open the save location.
+		fopen("C:\\myfiles\\recording.dat", "wb");				////Open the save location.
 		if (!f) {														////Error handling.
 			printf("unable to open %s\n", "C:\\myfiles\\recording.dat");
 			return 0;
@@ -50,11 +50,11 @@ int	main(int argc, char *argv[])
 
 	// replay audio recording from file -- read and store in buffer, then use playback() to play it
 	printf("Would you like to replay the saved audio recording from the file? (y/n): ");
-	scanf_s("%c", &replay, 1);											////Check for replay command.
+	scanf("%c", &replay);											////Check for replay command.
 	while ((c = getchar()) != '\n' && c != EOF) {}								// Flush other input
 	if ((replay == 'y') || (replay == 'Y')) {							////Check the command result.
 		/* Open input file */
-		fopen_s(&f, "C:\\myfiles\\recording.dat", "rb");				////Open the saved file location.
+		fopen( "C:\\myfiles\\recording.dat", "rb");				////Open the saved file location.
 		if (!f) {														////Error handling.
 			printf("unable to open %s\n", "C:\\myfiles\\recording.dat");
 			return 0;
