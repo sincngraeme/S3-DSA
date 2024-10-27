@@ -1,0 +1,1 @@
+This folder is for any external libraries not included in C/C++ standards or system libraries
