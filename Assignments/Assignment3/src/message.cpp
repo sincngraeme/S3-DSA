@@ -120,7 +120,7 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 } 
 
 // Function that gets a random quote from the FortuneCookies file 
-int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
+const char* GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
 {
     int mLen = quoteLengths[randNum];           // number of characters to read from file
 
@@ -129,7 +129,7 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
     if (fp == NULL)                             // error checking
     {
         perror("ERROR opening file");       
-        return -1;
+        return NULL;
     }    
 
     fseek(fp, quoteIndices[randNum], SEEK_SET);         // set file pointer to begining then offset by file index at randNum array index
@@ -147,5 +147,5 @@ int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long in
    // printf("%d\n", randNum);
     fclose(fp);                                               // close the file
 
-    return 0;
+    return buff;
 }

@@ -2,6 +2,7 @@
 //
 
 #define _CRT_SECURE_NO_WARNINGS
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,7 @@
 
 int main()
 {
+    srand(time(NULL));
     BSTInit();                              // Initialize the BST 
     Item* p = NULL;                         
     int i, num;                 
@@ -26,10 +28,12 @@ int main()
     // Fill the BST
     for (i = 0; i < num; i++) {
         p = (Item*)malloc(sizeof(Item)); 
-        printf("Item %d: ", i); 
-        scanf(messagemain(), buffer);               //Replaced %s with quote from file
-        //buffer[2] = '\0';                         //Took care of this in GetMessageFromFile() in message.cpp, on lines 137-145.
-        strcpy(p->buff, buffer);
+        printf("\n\nItem %d: ", i); 
+        //memcpy(buffer, messagemain(), MAX_QUOTE_LENGTH);
+        //strcpy(buffer, messagemain());               //Replaced %s with quote from file
+        //buffer[139] = '\0';                         //Took care of this in GetMessageFromFile() in message.cpp, on lines 137-145.
+        strcpy(p->buff, messagemain());
+        printf("%s \n\n", p->buff);
         Insert(*p);
     }
 

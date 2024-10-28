@@ -66,7 +66,7 @@ void BSTPrint(link h) {															// Private print function called by Print(
 
 	// Recursive subcalls
 	BSTPrint(h->pLeft);						// Left
-	printf("\nKey: %s", h->msg.buff);		// Center
+	printf("\nKey: %s\n", h->msg.buff);		// Center
 	BSTPrint(h->pRight);					// Right
 }
 
