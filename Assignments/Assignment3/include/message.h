@@ -41,5 +41,5 @@ struct messagenode {				// node structure
 };
 
 // Function that gets q random quote from the FortuneCookies file 
-int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths);  // buff is a character array (need top pass the node element that is a character array)
-char* messagemain();
+const char* GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths);  // buff is a character array (need top pass the node element that is a character array)
+const char* messagemain();
