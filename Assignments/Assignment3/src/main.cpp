@@ -2,13 +2,13 @@
 //
 
 #define _CRT_SECURE_NO_WARNINGS
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "treenode.h"
-#include "treefunc.h"
-#include "message.h"
+#include <time.h>                       //need for srand().
+#include <stdio.h>                      //need for keyboard input.
+#include <stdlib.h>                     //need for rand() and srand().
+#include <string.h>                     //need for string functions.
+#include "treenode.h"                   //need for tree node and link structures.
+#include "treefunc.h"                   //need for tree management (arboury haha) functions.
+#include "message.h"                    //need for message file access functions and FortuneCookies.txt file.
 
 int main()
 {
@@ -16,6 +16,7 @@ int main()
     BSTInit();                              // Initialize the BST 
     Item* p = NULL;                         
     int i, num;                 
+
     char buffer[MAX_QUOTE_LENGTH];          //Changed buffer size to accomodate message.
 
     // Input from user
@@ -29,12 +30,9 @@ int main()
     for (i = 0; i < num; i++) {
         p = (Item*)malloc(sizeof(Item)); 
         printf("\n\nItem %d: ", i); 
-        //memcpy(buffer, messagemain(), MAX_QUOTE_LENGTH);
-        //strcpy(buffer, messagemain());               //Replaced %s with quote from file
-        //buffer[139] = '\0';                         //Took care of this in GetMessageFromFile() in message.cpp, on lines 137-145.
-        strcpy(p->buff, messagemain());
-        printf("%s \n\n", p->buff);
-        Insert(*p);
+        strcpy(p->buff, messagemain());                 //encapsulated main from message function set.
+        printf("%s \n\n", p->buff);                     //print the string in p->buff .
+        Insert(*p);                                     //insert the contents of p into the tree, to be sorted linguistically/alphabetically by strcmp().
     }
 
     // Print the BST 'Inorder'
