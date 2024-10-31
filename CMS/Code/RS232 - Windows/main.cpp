@@ -34,9 +34,9 @@ COMMTIMEOUTS timeout;								// A commtimeout struct variable
 int main() {
 
 	// Set up both sides of the comm link
-	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
+	initPort(&hComRx, (LPCSTR)COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
 	Sleep(500);
-	initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
+	initPort(&hComTx, (LPCSTR)COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
 	Sleep(500);
 
 	// Transmit side 
