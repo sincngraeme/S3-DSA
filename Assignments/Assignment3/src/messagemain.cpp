@@ -3,35 +3,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
-#include <time.h>			// Needed for srand
-#include "message.h"
+#include <malloc.h>			//need for dynamic allocation of memory.
+#include <time.h>			//needed for srand.
+#include "message.h"		//message header.
 
-const char* messagemain()
+const char* messagemain()	//old main function for messages, turned into a wrapper for FortuneCookies.txt access and random message delivery.
 {
-	messagelink q; 
-	//clsint i; 
-	int numQuotes;					// Number of quotes in the file
-	long int* quoteIndices;			// Array of quote locations in the file (index correspondes to quote number)
-	int* quoteLengths;				// Array of quote lengths (index correspondes to quote number)
-	//char result;						// result = 0 if successfully get a message
-	// Count the number of quotes in the file and index it for fast access (only need to do this once) 
+	messagelink q; 												// Messagelink instance q
+	int numQuotes;												// Number of quotes in the file
+	long int* quoteIndices;										// Array of quote locations in the file (index correspondes to quote number)
+	int* quoteLengths;											// Array of quote lengths (index correspondes to quote number)
 	numQuotes = fnumQuotes();									// Number of quotes
-	//printf("%d", numQuotes);
 	quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
 	quoteLengths = fquoteLength(numQuotes, quoteIndices);		// Length of each quote (up to MAX_QUOTE_LENGTH) - cut off after 	
-	//printf("%ld", quoteIndices[4]);
-	//printf("%d", quoteLengths[4]);
-    // Get the random message from the file
-	//srand(time(NULL));					// Seed the random number generator				//// Moved to main
+	q = (messagelink)malloc(sizeof(Messagenode)); 				// Allocate memory for struct node q
 
-	// Create & Add Nodes numbered 1 to 10 to the Queue
+	//assign a random message to message using getMessageFromFile
+	const char* message = GetMessageFromFile(q->Data.message, MAX_QUOTE_LENGTH, frandNum(0, numQuotes), numQuotes, quoteIndices, quoteLengths);	
 
-	q = (messagelink)malloc(sizeof(Messagenode)); 
-	const char* message = GetMessageFromFile(q->Data.message, MAX_QUOTE_LENGTH, frandNum(0, numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
-	free(quoteIndices);
-	free(quoteLengths);
+	free(quoteIndices);		// Now I'm Freeeeeeee
+	free(quoteLengths);		// Freeeeee
+	free(q);				// Memoryyyy
 
-	return(message);
+	return(message);		// Return the message to the call outside of the wrapper.
 }
-

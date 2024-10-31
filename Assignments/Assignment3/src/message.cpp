@@ -7,6 +7,25 @@
 
 */
 
+
+/*
+
+                                                                CODE UPDATES
+
+        1. const char* GetMessageFromFile() used to have type int, but to work with the strcpy() data type requirements for seamless handoff of message.
+        2. added message variable of same data type so that the memory can all be freed before the function collapses.
+
+*/
+
+
+
+
+
+
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>			// Dynamic memory allocation for arrays that store quote location and length
