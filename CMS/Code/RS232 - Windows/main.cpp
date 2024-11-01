@@ -21,7 +21,7 @@ const int BUFSIZE = 140;							// Buffer size
 
 //Physical ports
 wchar_t COMPORT_Rx[] = L"COM5";						// Check device manager after plugging device in and change this port
-//wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device in and change this port
+wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device in and change this port
 												// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 
 // Communication variables and parameters
@@ -38,27 +38,27 @@ int main() {
 
 	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
 	Sleep(500);
-	// initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
-	// Sleep(500);
+	initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
+	Sleep(500);
 
-	// // Transmit side 
-	// char msgOut[] = "Hi there person";							// Sent message	
-	// outputToPort(&hComTx, msgOut, strlen(msgOut)+1);			// Send string to port - include space for '\0' termination
-	// Sleep(500);													// Allow time for signal propagation on cable 
+	// Transmit side 
+	char msgOut[] = "Hi there person";							// Sent message	
+	outputToPort(&hComTx, msgOut, strlen(msgOut)+1);			// Send string to port - include space for '\0' termination
+	Sleep(500);													// Allow time for signal propagation on cable 
 
 	// Receive side  
 	char msgIn[BUFSIZE];
 	DWORD bytesRead;
 	bytesRead = inputFromPort(&hComRx, msgIn, BUFSIZE);			// Receive string from port
-	//printf("Length of received msg = %d", bytesRead);
+	printf("Length of received msg = %d", bytesRead);
 	msgIn[bytesRead] = '\0';
 	printf("\nMessage Received: %s\n\n", msgIn);				// Display message from port
 	
 	// Tear down both sides of the comm link
 	purgePort(&hComRx);											// Purge the Rx port
-	// purgePort(&hComTx);											// Purge the Tx port
+	purgePort(&hComTx);											// Purge the Tx port
 	CloseHandle(hComRx);										// Close the handle to Rx port 
-	// CloseHandle(hComTx);										// Close the handle to Tx port 
+	CloseHandle(hComTx);										// Close the handle to Tx port 
 	
 	system("pause");
 }
