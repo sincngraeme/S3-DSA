@@ -3,7 +3,6 @@
  *	Adapted By: Nigel Sinclair, Fergus Page
  */
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
-
 #include <Windows.h>    // Includes the functions for serial communication via RS232
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,6 +12,7 @@
 #define EX_FATAL 1
 
 // Initializes the port and sets the communication parameters
+
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
