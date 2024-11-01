@@ -4,6 +4,7 @@
  */
 #define UNICODE
 
+#define UNICODE
 #include <Windows.h>    
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,7 +27,7 @@ wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device
 
 // Communication variables and parameters
 HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
-HANDLE hComTx;										// Pointer to the selected COM port (Transmitter)
+HANDLE hComTx;										// Pointlaer to the selected COM port (Transmitter)
 int nComRate = 9600;								// Baud (Bit) rate in bits/second 
 int nComBits = 8;									// Number of bits per frame
 COMMTIMEOUTS timeout;								// A commtimeout struct variable
@@ -35,7 +36,6 @@ COMMTIMEOUTS timeout;								// A commtimeout struct variable
 int main() {
 
 	// Set up both sides of the comm link
-
 	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
 	Sleep(500);
 	initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
