@@ -3,6 +3,7 @@
  *
  */
 
+#define UNICODE
 #include <Windows.h>    
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,13 +20,13 @@ const int BUFSIZE = 140;							// Buffer size
 //wchar_t COMPORT_Tx[] = L"COM8";					// COM port used for Tx (use L"COM8" for transmit program)
 
 //Physical ports
-wchar_t COMPORT_Rx[] = L"COM9";						// Check device manager after plugging device in and change this port
-wchar_t COMPORT_Tx[] = L"\\\\.\\COM10";				// Check device manager after plugging device in and change this port
+//wchar_t COMPORT_Rx[] = L"COM3";						// Check device manager after plugging device in and change this port
+wchar_t COMPORT_Tx[] = L"COM3";				// Check device manager after plugging device in and change this port
 													// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 
 // Communication variables and parameters
 HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
-HANDLE hComTx;										// Pointer to the selected COM port (Transmitter)
+HANDLE hComTx;										// Pointlaer to the selected COM port (Transmitter)
 int nComRate = 9600;								// Baud (Bit) rate in bits/second 
 int nComBits = 8;									// Number of bits per frame
 COMMTIMEOUTS timeout;								// A commtimeout struct variable
@@ -34,9 +35,9 @@ COMMTIMEOUTS timeout;								// A commtimeout struct variable
 int main() {
 
 	// Set up both sides of the comm link
-	initPort(&hComRx, (LPCSTR)COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
+	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
 	Sleep(500);
-	initPort(&hComTx, (LPCSTR)COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
+	initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
 	Sleep(500);
 
 	// Transmit side 

@@ -2,6 +2,7 @@
  * By: Michael A. Galle
  *
  */
+#define UNICODE
 #include <Windows.h>    // Includes the functions for serial communication via RS232
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,7 +12,7 @@
 #define EX_FATAL 1
 
 // Initializes the port and sets the communication parameters
-void initPort(HANDLE* hCom, LPCSTR COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) // Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) // Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
 	purgePort(hCom);									// Purges the COM port
@@ -77,7 +78,7 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 // Sub functions called by above functions
 /**************************************************************************************/
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
-void createPortFile(HANDLE* hCom, LPCSTR COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
 	// Call the CreateFile() function to create comport file (hardware is accessed through files) 
 	*hCom = CreateFile(
