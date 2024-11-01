@@ -19,9 +19,9 @@ const int BUFSIZE = 140;							// Buffer size
 //wchar_t COMPORT_Tx[] = L"COM8";					// COM port used for Tx (use L"COM8" for transmit program)
 
 //Physical ports
-wchar_t COMPORT_Rx[] = L"COM9";						// Check device manager after plugging device in and change this port
-wchar_t COMPORT_Tx[] = L"\\\\.\\COM10";				// Check device manager after plugging device in and change this port
-													// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
+wchar_t COMPORT_Rx[] = L"COM5";						// Check device manager after plugging device in and change this port
+//wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device in and change this port
+												// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 
 // Communication variables and parameters
 HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
@@ -34,15 +34,16 @@ COMMTIMEOUTS timeout;								// A commtimeout struct variable
 int main() {
 
 	// Set up both sides of the comm link
-	initPort(&hComRx, (LPCSTR)COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
-	Sleep(500);
-	initPort(&hComTx, (LPCSTR)COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
-	Sleep(500);
 
-	// Transmit side 
-	char msgOut[] = "Hi there person";							// Sent message	
-	outputToPort(&hComTx, msgOut, strlen(msgOut)+1);			// Send string to port - include space for '\0' termination
-	Sleep(500);													// Allow time for signal propagation on cable 
+	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
+	Sleep(500);
+	// initPort(&hComTx, (LPCSTR)COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
+	// Sleep(500);
+
+	// // Transmit side 
+	// char msgOut[] = "Hi there person";							// Sent message	
+	// outputToPort(&hComTx, msgOut, strlen(msgOut)+1);			// Send string to port - include space for '\0' termination
+	// Sleep(500);													// Allow time for signal propagation on cable 
 
 	// Receive side  
 	char msgIn[BUFSIZE];
@@ -54,9 +55,9 @@ int main() {
 	
 	// Tear down both sides of the comm link
 	purgePort(&hComRx);											// Purge the Rx port
-	purgePort(&hComTx);											// Purge the Tx port
+	// purgePort(&hComTx);											// Purge the Tx port
 	CloseHandle(hComRx);										// Close the handle to Rx port 
-	CloseHandle(hComTx);										// Close the handle to Tx port 
+	// CloseHandle(hComTx);										// Close the handle to Tx port 
 	
 	system("pause");
 }
