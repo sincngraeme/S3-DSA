@@ -2,6 +2,7 @@
  * Author: Michael A. Galle
  *
  */
+#define UNICODE
 
 #include <Windows.h>    
 #include <stdlib.h>
@@ -37,7 +38,7 @@ int main() {
 
 	initPort(&hComRx, COMPORT_Rx, nComRate, nComBits, timeout);	// Initialize the Rx port
 	Sleep(500);
-	// initPort(&hComTx, (LPCSTR)COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
+	// initPort(&hComTx, COMPORT_Tx, nComRate, nComBits, timeout);	// Initialize the Tx port
 	// Sleep(500);
 
 	// // Transmit side 

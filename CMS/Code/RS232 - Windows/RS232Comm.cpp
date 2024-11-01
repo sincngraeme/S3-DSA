@@ -1,7 +1,9 @@
 /* RS232Comm.cpp - Implementation for the RS232 communications module
- * By: Michael A. Galle
- *
+ * 	By: Michael A. Galle
+ *	Adapted By: Nigel Sinclair, Fergus Page
  */
+#define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
+
 #include <Windows.h>    // Includes the functions for serial communication via RS232
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,7 +13,7 @@
 #define EX_FATAL 1
 
 // Initializes the port and sets the communication parameters
-void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) // Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
 	purgePort(hCom);									// Purges the COM port
@@ -79,11 +81,9 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
 void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
-	// convert to windows APCSTR (const char*)
-	LPCSTR nCOMPORT = new char[sizeof(COMPORT) * 2];			// account for the wide size of the string
 	// Call the CreateFile() function to create comport file (hardware is accessed through files) 
 	*hCom = CreateFile(
-		nCOMPORT,									// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
+		COMPORT,									// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 		GENERIC_READ | GENERIC_WRITE,				// Open for read and write
 		NULL,										// No sharing allowed
 		NULL,										// No security
