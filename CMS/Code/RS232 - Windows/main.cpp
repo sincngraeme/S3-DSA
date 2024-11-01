@@ -2,6 +2,7 @@
  * Author: Michael A. Galle
  *
  */
+#define UNICODE
 
 #define UNICODE
 #include <Windows.h>    
@@ -20,9 +21,9 @@ const int BUFSIZE = 140;							// Buffer size
 //wchar_t COMPORT_Tx[] = L"COM8";					// COM port used for Tx (use L"COM8" for transmit program)
 
 //Physical ports
-//wchar_t COMPORT_Rx[] = L"COM3";						// Check device manager after plugging device in and change this port
-wchar_t COMPORT_Tx[] = L"COM3";				// Check device manager after plugging device in and change this port
-													// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
+wchar_t COMPORT_Rx[] = L"COM5";						// Check device manager after plugging device in and change this port
+wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device in and change this port
+												// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 
 // Communication variables and parameters
 HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
@@ -49,7 +50,7 @@ int main() {
 	char msgIn[BUFSIZE];
 	DWORD bytesRead;
 	bytesRead = inputFromPort(&hComRx, msgIn, BUFSIZE);			// Receive string from port
-	//printf("Length of received msg = %d", bytesRead);
+	printf("Length of received msg = %d", bytesRead);
 	msgIn[bytesRead] = '\0';
 	printf("\nMessage Received: %s\n\n", msgIn);				// Display message from port
 	
