@@ -6,7 +6,7 @@
 #include <malloc.h>
 #include <time.h>			// Needed for srand
 #include "message.h"
-#include "recursion.h"
+// #include "recursion.h"
 
 int main()
 {
@@ -39,33 +39,6 @@ int main()
 		}
 		AddToQueue(p);
 	}
-
-	// Test count() 
-	printf("\nThe number of nodes in the Queue is: %d\n", count(returnHead()));
-
-	printf("\n\nTraversing list in forward direction gives ...\n");
-	printf("\nThe sid is %d\n", p->Data.sid);
-	traverse(returnHead(), visit); 
-	printf("\n\nTraversing list in reverse direction gives ...\n");
-	printf("\nThe sid is %d\n", p->Data.sid);
-	traverseR(returnHead(), visit);
-	
-	// Test deleteR()
-	Item v;
-	v.sid = 7; 
-	deleteR(returnHead(), returnHead()->pNext, v); 
-
-	printf("\n\nThe number of nodes in the Queue after the deleteR() operation is: %d\n", count(returnHead()));
-
-	// Empty  the Queue
-	while (!IsQueueEmpty()) {
-		q = DeQueue(); 
-		printf("\n SID of Node is: %d, and its message is: %s", q->Data.sid, q->Data.message);		// (*q).Data.sid
-	}
-
-
-	// Test count() 
-	printf("\n\nThe number of nodes in the Queue after dequeuing all nodes is: %d\n", count(returnHead()));
 
 	free(quoteIndices);
 	free(quoteLengths);

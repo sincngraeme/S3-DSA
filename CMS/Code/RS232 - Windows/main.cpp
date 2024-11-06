@@ -21,16 +21,6 @@ const int BUFSIZE = 140;							// Buffer size
 //wchar_t COMPORT_Tx[] = L"COM8";					// COM port used for Tx (use L"COM8" for transmit program)
 
 //Physical ports
-<<<<<<< Updated upstream
-wchar_t COMPORT_Rx[] = L"COM5";						// Check device manager after plugging device in and change this port
-wchar_t COMPORT_Tx[] = L"COM5";				// Check device manager after plugging device in and change this port
-												// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
-
-// Communication variables and parameters
-HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
-HANDLE hComTx;										// Pointlaer to the selected COM port (Transmitter)
-int nComRate = 9600;								// Baud (Bit) rate in bits/second 
-=======
 //wchar_t COMPORT_Rx[] = L"COM3";						// Check device manager after plugging device in and change this port
 wchar_t COMPORT_Tx[] = L"COM3";				// Check device manager after plugging device in and change this port
 												// --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
@@ -39,7 +29,6 @@ wchar_t COMPORT_Tx[] = L"COM3";				// Check device manager after plugging device
 // HANDLE hComRx;										// Pointer to the selected COM port (Receiver)
 HANDLE hComTx;										// Pointer to the selected COM port (Transmitter)
 int nComRate = 460800;								// Baud (Bit) rate in bits/second 
->>>>>>> Stashed changes
 int nComBits = 8;									// Number of bits per frame
 COMMTIMEOUTS timeout;								// A commtimeout struct variable
 
