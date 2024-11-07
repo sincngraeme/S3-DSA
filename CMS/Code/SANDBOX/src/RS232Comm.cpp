@@ -2,7 +2,11 @@
  * 	By: Michael A. Galle
  *	Adapted By: Nigel Sinclair, Fergus Page
  */
+
+#pragma once
+
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
+
 #include <Windows.h>    // Includes the functions for serial communication via RS232
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +32,8 @@ void purgePort(HANDLE* hCom)
 }
 
 // Output/Input messages to/from ports 
-void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
+void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
+{
 	int i = 0;
 	DWORD NumberofBytesTransmitted;
 	LPDWORD lpErrors=0;
@@ -50,19 +55,22 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
 }
 
-void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf); {
+void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf) 
+{
 
-outputToPort(hCom, (LPVOID)buf, szBuf);
-
-}
-
-DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf) {
-
-inputFromPort(hCom, (LPVOID)buf,  szBuf);
+	outputToPort(hCom, (LPVOID)buf, szBuf);
 
 }
 
-DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
+DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf) 
+{
+
+	inputFromPort(hCom, (LPVOID)buf,  szBuf);
+
+}
+
+DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) 
+{
 	int i = 0;
 	DWORD NumberofBytesRead;						// stores the number of bytes read from the port
 	LPDWORD lpErrors = 0;							// ptr to variable to recieve error mask
@@ -91,7 +99,7 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 // Sub functions called by above functions
 /**************************************************************************************/
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
-void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+static void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
 	// Call the CreateFile() function to create comport file (hardware is accessed through files) 
 	*hCom = CreateFile(

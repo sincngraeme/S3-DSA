@@ -3,7 +3,9 @@
 *   By: Nigel Sinclair, Rita Yevtushenko, Fergus Page
 *   Desription: Menu implementation that contains function definitions for rendering menus
 */
+
 #include "menu.h"
+#include "RS232Comm.h"
 
 /************** Function for printing main menu *************/
 

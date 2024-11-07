@@ -4,6 +4,13 @@
  */
 #pragma once
 
+#define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
+
+#include <Windows.h>    
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 // Prototype the functions to be used
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);        // initialize port settings
 void purgePort(HANDLE* hCom);                                                                           // clear buffers of given port
@@ -13,6 +20,6 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf);                     
 DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf);
 
 // Sub functions
-void createPortFile(HANDLE* hCom, wchar_t* COMPORT);                                                       // creates device file for interacting with comport
+static void createPortFile(HANDLE* hCom, wchar_t* COMPORT);                                                       // creates device file for interacting with comport
 static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout);                 // wrapper for setting DCB and timeout settings for the given port
 //                                 ^ user can only set the BAUD rate and the number of bits
