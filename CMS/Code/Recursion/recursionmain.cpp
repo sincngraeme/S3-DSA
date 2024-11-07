@@ -6,9 +6,21 @@
 #include <malloc.h>
 #include <time.h>			// Needed for srand
 #include "recursion.h"
+#include "port.h"
 
 int main()
 {
+	Port p3;
+	Port p1 = Port();
+
+	{
+		Port p2 = Port(2000);
+		p1.baud = 500;
+
+		p1.sendData("hello there");
+	}
+	
+
 	link p, q; 
 	int i; 
 	int numQuotes;					// Number of quotes in the file
