@@ -8,5 +8,5 @@
 #include "RS232Comm.h"
 
 void TxAudio();
-void TxText();
+void TxText(char* buf, int szBuf);
 void TxImage();
