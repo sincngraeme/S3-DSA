@@ -99,6 +99,7 @@ int RxMode()
             case '2':
                 /*TEMP*/printf("Text Mode:");
                 RxText(message, 26);
+                printf("\n%s\n", message);
                 /*TEMP*/getchar();
                 break;
             case '3':

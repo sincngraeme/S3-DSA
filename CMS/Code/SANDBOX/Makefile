@@ -95,7 +95,14 @@ clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))
-	@echo Cleanup complete!
+	@echo clean all successfull
+
+.PHONY: cleanobj
+cleanobj:
+	$(RM) $(call FIXPATH,$(OBJECTS)) 
+	$(RM) $(call FIXPATH,$(DEPS)) 
+	@echo clean objects and dependencies successfull
+
 
 run: all
 	./$(OUTPUTMAIN)

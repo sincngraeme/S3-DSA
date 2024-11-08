@@ -5,12 +5,15 @@
 */
 
 #include "menu.h"
+#include "windows.h"
 
 int main()
 {
     int flag = 0;   // gets set low to exit program 
     int ret = 0;
     int c;
+
+    Sleep(500);
 
     while(!flag)    // main program loop
     {

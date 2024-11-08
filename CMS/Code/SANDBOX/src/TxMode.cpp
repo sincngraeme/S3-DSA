@@ -16,7 +16,7 @@ void TxAudio()
 // function for transmitting text
 void TxText(char* buf, int szBuf)
 {
-    wchar_t* comport = L"COM5";
+    wchar_t* comport = L"COM6";
 
     RS232Comm port1(comport, 9600, 8);
 
