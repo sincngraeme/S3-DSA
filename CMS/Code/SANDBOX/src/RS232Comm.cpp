@@ -15,9 +15,39 @@
 
 #define EX_FATAL 1
 
-// Initializes the port and sets the communication parameters
+/**************************************************************** WRAPPERS **************************************************************/
+// Constructor
+RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
+{
+	// set members
+	COMPORT = portName;
+	nComRate = baudRate;
+	nComBits = numBits;
 
-void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
+	initPort(hCom, COMPORT, nComRate, nComBits, timeout);
+}
+// Transmit
+void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
+{
+	outputToPort(hCom, (LPCVOID*)buf, szBuf);
+}
+void RS232Comm::TxToPort(short* buf, DWORD szBuf)	// Audio
+{
+	outputToPort(hCom, (LPCVOID*)buf, szBuf);
+}
+// Recieve
+void RS232Comm::RxFromPort(char* buf, DWORD szBuf)
+{
+	inputFromPort(hCom, buf, szBuf);
+}
+void RS232Comm::RxFromPort(short* buf, DWORD szBuf)
+{
+	inputFromPort(hCom, buf, szBuf);
+}
+/**************************************************************** PRIVATE ***************************************************************/
+
+// Initializes the port and sets the communication parameters
+void RS232Comm::initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
 	purgePort(hCom);									// Purges the COM port
@@ -26,13 +56,13 @@ void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTI
 }
 
 // Purge any outstanding requests on the serial port (initialize)
-void purgePort(HANDLE* hCom) 
+void RS232Comm::purgePort(HANDLE* hCom) 
 {
 	PurgeComm(*hCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);		// perormes logical or with Macros from Windows.h in order tom set bits
 }
 
-// Output/Input messages to/from ports 
-void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
+// Output/Input messages to/from ports - template function to accept any datatype  
+void RS232Comm::outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 {
 	int i = 0;
 	DWORD NumberofBytesTransmitted;
@@ -55,21 +85,8 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
 }
 
-void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf) 
-{
-
-	outputToPort(hCom, (LPVOID)buf, szBuf);
-
-}
-
-DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf) 
-{
-
-	inputFromPort(hCom, (LPVOID)buf,  szBuf);
-
-}
-
-DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) 
+// input function template for recieving data of any type
+DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) 
 {
 	int i = 0;
 	DWORD NumberofBytesRead;						// stores the number of bytes read from the port
@@ -94,12 +111,10 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 	return(NumberofBytesRead);
 }
 
-
-
 // Sub functions called by above functions
 /**************************************************************************************/
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
-static void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+void RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
 	// Call the CreateFile() function to create comport file (hardware is accessed through files) 
 	*hCom = CreateFile(
@@ -120,7 +135,7 @@ static void createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wcha
 	}
 }
 
-static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
+int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
 	DCB dcb;										// Windows device control block (struct that defines ctrl settings for serial coms device)
 	// Clear DCB to start out clean, then get current settings
@@ -143,6 +158,6 @@ static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS ti
 	timeout.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
 	timeout.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
-	return(1);
+	return 1;
 }
 
