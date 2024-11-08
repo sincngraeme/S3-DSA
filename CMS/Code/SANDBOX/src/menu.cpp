@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "TxMode.h"
 #include "RxMode.h"
+#include "sound.h"
 
 /************** Function for printing main menu *************/
 
@@ -48,7 +49,14 @@ int TxMode()
         {
             case '1':
                 /*TEMP*/printf("Audio Mode:");
-                
+                // initialize playback and recording
+                InitializePlayback();												////Program initialization. Setup playback.
+                InitializeRecording();												////Program initialization. Setup recording.
+
+                // start recording
+                RecordBuffer(iBigBuf, lBigBufSize);									////Record some audio into the buffer.
+                CloseRecording();
+                TxAudio(iBigBuf, lBigBufSize);	
                 /*TEMP*/getchar();
                 break;
             case '2':
@@ -84,6 +92,10 @@ int RxMode()
 {
     int RxFlag = 0;
     char message[26];
+    long lBigBufNewSize = lBigBufSize*sizeof(short);
+    short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
+
+
 
     while(!RxFlag)
     {
@@ -94,6 +106,11 @@ int RxMode()
         {
             case '1':
                 /*TEMP*/printf("Audio Mode:");
+                RxAudio(iBigBufNew, lBigBufNewSize);
+                // playback recording 
+                printf("\nPlaying recording from buffer\n");
+                PlayBuffer(iBigBufNew, lBigBufNewSize);									////Play the recorded audio from the buffer.
+                ClosePlayback();													////End playback operation.
                 /*TEMP*/getchar();
                 break;
             case '2':

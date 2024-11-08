@@ -15,7 +15,11 @@ CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
-LFLAGS =
+LFLAGS = \
+C:\Windows\System32\Ws2_32.dll\
+C:\Windows\System32\Winmm.dll
+# Warning Flags
+WFLAGS = -fpermissive
 
 # define output directory
 OUTPUT	:= output
@@ -77,7 +81,7 @@ $(OUTPUT):
 	$(MD) $(OUTPUT)
 
 $(MAIN): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LIBS) $(LFLAGS)
 
 # include all .d files
 -include $(DEPS)
@@ -88,7 +92,7 @@ $(MAIN): $(OBJECTS)
 # -MMD generates dependency output files same name as the .o file
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -MMD $<  -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -MMD $<  -o $@ $(WFLAGS)
 
 .PHONY: clean
 clean:
