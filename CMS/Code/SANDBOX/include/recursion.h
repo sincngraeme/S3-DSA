@@ -7,10 +7,10 @@ typedef struct node Node;	// typedef for nodes
 typedef struct item Item; 	// typedef for contents of nodes
 typedef Node* link;			// typedef for pointers of nodes
 
-const int iLength = MAX_QUOTE_LENGTH;	// assign max quote length to a constant integer to be used in the interface
+//const int iLength = MAX_QUOTE_LENGTH;	// assign max quote length to a constant integer to be used in the interface
 
 struct item {				// item structure
-	char message[iLength];	// message
+	char message[MAX_QUOTE_LENGTH];	// message
 	short int sid;			// Sender ID
 	short int rid;			// Receiver ID 
 	char priority;			// Priority of message

@@ -3,7 +3,7 @@
  *	Adapted By: Nigel Sinclair, Fergus Page
  */
 
-#pragma once
+//#pragma once
 
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
 
@@ -78,7 +78,7 @@ void RS232Comm::outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 	);
 	// Handle the timeout error (no device detected)
 	if (i == 0) {
-		printf("\nWrite Error: 0x%x\n", GetLastError());
+		printf("\nWrite Error: 0x%lu\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
 	}
 	else

@@ -8,7 +8,7 @@
 #include "recursion.h"
 #include "message.h"
 
-int main()
+int recursionmain()
 {
 	messagelink p, q; 
 	int i; 

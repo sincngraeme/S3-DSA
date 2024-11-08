@@ -8,7 +8,7 @@
 #include "message.h"
 #include "recursion.h"
 
-int main()
+int messagemain()
 {
 	messagelink p, q; 
 	int i; 
@@ -51,7 +51,7 @@ int main()
 	traverseR(returnHead(), visit);
 	
 	// Test deleteR()
-	messageItem v;
+	Item v;
 	v.sid = 7; 
 	deleteR(returnHead(), returnHead()->pNext, v); 
 
