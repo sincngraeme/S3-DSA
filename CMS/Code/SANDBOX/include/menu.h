@@ -9,11 +9,12 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)		// allows for processing ctrl inputs
 #define DB_ARG_MAX_SZ 256               // max buffer size for total argument input string to debug mode
+#define MSG_BUF_SZ 26
 
 // ANSI escape sequences (not compatible with older versions of windows)
-const char setH[] = "\033[H";           // set to home position (0,0)
-const char clearto[] = "\033[0J";       // Clear Screen starting from cursor to end of screen
-const char clearfrom[] = "\033[1J";     // Clear Screen starting from home to cursor
+const char setH[] = "\e[H";           // set to home position (0,0)
+const char clearto[] = "\e[0J";       // Clear Screen starting from cursor to end of screen
+const char clearfrom[] = "\e[1J";     // Clear Screen starting from home to cursor
 
 /********** Function Declarations **********/
 

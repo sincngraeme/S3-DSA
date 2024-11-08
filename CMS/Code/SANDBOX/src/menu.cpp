@@ -39,7 +39,7 @@ int TxMode()
     int TxFlag = 0;
     char message[] = "this is my message string";
 
-    while(!TxFlag)
+    while(TxFlag == 0)
     {
         printTxMenu();
 
@@ -53,7 +53,7 @@ int TxMode()
                 break;
             case '2':
                 /*TEMP*/printf("Text Mode:");
-                TxText(message, 26);
+                TxText(message, MSG_BUF_SZ);
                 /*TEMP*/getchar();
                 break;
             case '3':
@@ -62,10 +62,12 @@ int TxMode()
                 break;
             case 'b':
                 TxFlag = 1;                     // set exit flag high
-                break;
-                
+            case CTRL_KEY('q'):
+                TxFlag = 2;
+                break;   
         }
     }
+    return TxFlag;
 }
 // Renders recieve Menu
 void printRxMenu()
@@ -85,7 +87,7 @@ int RxMode()
     int RxFlag = 0;
     char message[26];
 
-    while(!RxFlag)
+    while(RxFlag == 0)
     {
         printRxMenu();
 
@@ -98,7 +100,7 @@ int RxMode()
                 break;
             case '2':
                 /*TEMP*/printf("Text Mode:");
-                RxText(message, 26);
+                RxText(message, MSG_BUF_SZ);
                 printf("\n%s\n", message);
                 /*TEMP*/getchar();
                 break;
@@ -109,9 +111,12 @@ int RxMode()
             case 'b':
                 RxFlag = 1;                     // set exit flag high
                 break;
-                
+            case CTRL_KEY('q'):
+                RxFlag = 2; 
+                break;
         }
     }
+    return RxFlag;
 }
 // Renders Settings Menu
 void printSettingsMenu()
@@ -119,8 +124,8 @@ void printSettingsMenu()
     printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
     printf("------------------- Settings -----------------\n\n");
     printf("\tSet Bitrate\t\t(1)\n");
-    // printf("\tText\t\t(2)\n");
-    // printf("\tImage\t\t(3)\n");
+    printf("\tSet Bit Depth\t\t(2)\n");
+    printf("\tSet COM Port\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -128,7 +133,7 @@ int settingsMode()
 {
     int setFlag = 0;
 
-    while(!setFlag)
+    while(setFlag == 0)
     {
         printSettingsMenu();
 
@@ -136,23 +141,27 @@ int settingsMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
-                /*TEMP*/printf("Set Bitrate:");
+                /*TEMP*/printf("Set Bitrate:\n");
                 /*TEMP*/getchar();
                 break;
-            // case '2':
-            //     /*TEMP*/printf("\n");
-            //     /*TEMP*/getchar();
-            //     break;
-            // case '3':
-            //     /*TEMP*/printf("\n");
-            //     /*TEMP*/getchar();
-            //     break;
+            case '2':
+                /*TEMP*/printf("Set Bit Depth:\n");
+                /*TEMP*/getchar();
+                break;
+            case '3':
+                /*TEMP*/printf("Set COM Port:\n");
+                /*TEMP*/getchar();
+                break;
             case 'b':
                 setFlag = 1;                    // set exit flag high
+                break;
+            case CTRL_KEY('q'):
+                setFlag = 2;
                 break;
                 
         }
     }
+    return setFlag;
 }
 // Renders Debug Menu
 void printDebugMenu()

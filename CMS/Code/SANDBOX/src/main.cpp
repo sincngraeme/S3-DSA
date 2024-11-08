@@ -39,6 +39,7 @@ int main()
                 flag = 1;                   // set exit flag high
                 break;
         }
+        flag = (ret == 2) ? 1: flag;        // if the quit flag is set by a sub menu, set flag high. else do not change
         c = 0;                              // ensure that we are not filling with garbage
     }
 

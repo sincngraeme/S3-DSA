@@ -68,7 +68,7 @@ DEPS		:= $(OBJECTS:.o=.d)
 # deleting dependencies appended to the file from 'make depend'
 #
 
-OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
+OUTPUTMAIN	:= "$(OUTPUT)/$(MAIN)"
 
 all: $(OUTPUT) $(MAIN)
 	@echo Executing 'all' complete!
