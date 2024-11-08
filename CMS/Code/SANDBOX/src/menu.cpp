@@ -3,7 +3,10 @@
 *   By: Nigel Sinclair, Rita Yevtushenko, Fergus Page
 *   Desription: Menu implementation that contains function definitions for rendering menus
 */
+
 #include "menu.h"
+#include "TxMode.h"
+#include "RxMode.h"
 
 /************** Function for printing main menu *************/
 
@@ -34,6 +37,7 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
+    char message[] = "this is my message string";
 
     while(!TxFlag)
     {
@@ -44,10 +48,12 @@ int TxMode()
         {
             case '1':
                 /*TEMP*/printf("Audio Mode:");
+                
                 /*TEMP*/getchar();
                 break;
             case '2':
                 /*TEMP*/printf("Text Mode:");
+                TxText(message, 26);
                 /*TEMP*/getchar();
                 break;
             case '3':
@@ -77,6 +83,7 @@ void printRxMenu()
 int RxMode()
 {
     int RxFlag = 0;
+    char message[26];
 
     while(!RxFlag)
     {
@@ -91,6 +98,7 @@ int RxMode()
                 break;
             case '2':
                 /*TEMP*/printf("Text Mode:");
+                RxText(message, 26);
                 /*TEMP*/getchar();
                 break;
             case '3':
