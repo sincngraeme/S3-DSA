@@ -6,6 +6,9 @@
 # define the Cpp compiler to use
 CXX = g++
 
+# define the Cpp Debugger 
+DXX = gdb 
+
 # define any compile-time flags
 CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
 
@@ -97,3 +100,6 @@ clean:
 run: all
 	./$(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
+
+debug:
+	$(DXX) $(OUTPUTMAIN)

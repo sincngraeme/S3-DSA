@@ -25,11 +25,12 @@ class RS232Comm {
 
     private:
 
-        HANDLE* hCom;
+        // arguments to port functions
+        HANDLE hCom;                    // cannot be set with cunstructor
         wchar_t* COMPORT;
         int nComRate;
         int nComBits;
-        COMMTIMEOUTS timeout;
+        COMMTIMEOUTS timeout;           // cannot be set with constructor
 
         // Prototype the functions to be used
         void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);        // initialize port settings

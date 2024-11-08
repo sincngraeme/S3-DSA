@@ -3,7 +3,7 @@
  *	Adapted By: Nigel Sinclair, Fergus Page
  */
 
-//#pragma once
+#pragma once
 
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
 
@@ -24,25 +24,25 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 	nComRate = baudRate;
 	nComBits = numBits;
 
-	initPort(hCom, COMPORT, nComRate, nComBits, timeout);
+	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
 }
 // Transmit
 void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
 {
-	outputToPort(hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
 }
 void RS232Comm::TxToPort(short* buf, DWORD szBuf)	// Audio
 {
-	outputToPort(hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
 }
 // Recieve
 void RS232Comm::RxFromPort(char* buf, DWORD szBuf)
 {
-	inputFromPort(hCom, buf, szBuf);
+	inputFromPort(&hCom, buf, szBuf);
 }
 void RS232Comm::RxFromPort(short* buf, DWORD szBuf)
 {
-	inputFromPort(hCom, buf, szBuf);
+	inputFromPort(&hCom, buf, szBuf);
 }
 /**************************************************************** PRIVATE ***************************************************************/
 
@@ -78,7 +78,7 @@ void RS232Comm::outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 	);
 	// Handle the timeout error (no device detected)
 	if (i == 0) {
-		printf("\nWrite Error: 0x%lu\n", GetLastError());
+		printf("\nWrite Error: 0x%lx\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
 	}
 	else
@@ -102,7 +102,7 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 	);
 	// Handle the timeout error
 	if (i == 0) {
-		printf("\nRead Error: 0x%x\n", GetLastError());
+		printf("\nRead Error: 0x%lx\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 	}
 	else
@@ -128,7 +128,7 @@ void RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from 
 	);
 	
 	if (*hCom == INVALID_HANDLE_VALUE) {
-		printf("\nFatal Error 0x%x: Unable to open\n", GetLastError());
+		printf("\nFatal Error 0x%lx: Unable to open\n", GetLastError());
 	}
 	else {
 		printf("\nCOM is now open\n");
