@@ -16,10 +16,12 @@ CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
 LFLAGS = \
-C:\Windows\System32\Ws2_32.dll\
+-lWs2_32 -lWinmm
+#C:\Windows\System32\Ws2_32.dll\
 C:\Windows\System32\Winmm.dll
 # Warning Flags
-WFLAGS = -fpermissive
+WFLAGS = 
+# -fpermissive
 
 # define output directory
 OUTPUT	:= output
@@ -109,7 +111,8 @@ cleanobj:
 
 
 run: all
-	./$(OUTPUTMAIN)
+	cd output
+	./$(MAIN)
 	@echo Executing 'run: all' complete!
 
 debug:

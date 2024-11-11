@@ -16,8 +16,6 @@ class RS232Comm {
 
         RS232Comm(wchar_t* portName, int baudRate, int numBits);   // Constructor of RS232Comm
         ~RS232Comm();                                   // Destructor of RS232Comm
-        void hello();
-        void hello2();
         // Tx/Rx functions are overloaded to handle multiple types
         void TxToPort(char* buf, DWORD szBuf);                      // Text
         void TxToPort(short* buf, DWORD szBuf);                     // Audio

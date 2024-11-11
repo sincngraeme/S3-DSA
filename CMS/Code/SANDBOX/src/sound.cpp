@@ -13,9 +13,6 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 #include <math.h>						////Header for math functions.
 #include "sound.h"						////Header for the supplied Audio wrapper functions.
 
-// BUFFERS
-short iBigBuf[SAMPLES_SEC * RECORD_TIME];
-long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
 
 // output and input channel parameters 
 static	int			g_nSamplesPerSec = SAMPLES_SEC;		////Audio sample rate in Hz (SAMPLES_SEC == 8kHz)
@@ -26,6 +23,10 @@ static	WAVEFORMATEX WaveFormat;			/* WAVEFORMATEX structure for reading in the W
 static  WAVEHDR	WaveHeader[NFREQUENCIES];	/* WAVEHDR structures - 1 per buffer */
 static  WAVEHDR	WaveHeaderSilence;			// Not used in main yet.
 static  WAVEHDR WaveHeaderIn;				
+
+// BUFFERS
+short iBigBuf[SAMPLES_SEC * RECORD_TIME];
+long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
 
 /* PLAYBACK FUNCTIONS */
 /* ********************************************************************************************* */

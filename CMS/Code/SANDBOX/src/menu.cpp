@@ -39,7 +39,10 @@ int TxMode()
 {
     int TxFlag = 0;
     char message[] = "this is my message string";
-
+    // BUFFERS
+    extern short* iBigBuf;
+    extern long  lBigBufSize;	// total number of samples
+    
     while(!TxFlag)
     {
         printTxMenu();
@@ -92,6 +95,8 @@ int RxMode()
 {
     int RxFlag = 0;
     char message[26];
+    // BUFFERS
+    extern long  lBigBufSize;	// total number of samples
     long lBigBufNewSize = lBigBufSize*sizeof(short);
     short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
 
