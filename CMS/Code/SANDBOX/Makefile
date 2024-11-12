@@ -111,8 +111,7 @@ cleanobj:
 
 
 run: all
-	cd output
-	./$(MAIN)
+	./$(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
 
 debug:

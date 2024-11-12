@@ -39,9 +39,9 @@ int TxMode()
 {
     int TxFlag = 0;
     char message[] = "this is my message string";
-    // BUFFERS
-    extern short* iBigBuf;
-    extern long  lBigBufSize;	// total number of samples
+    // // BUFFERS
+    // extern short* iBigBuf;
+    // extern long  lBigBufSize;	// total number of samples
     
     while(!TxFlag)
     {
@@ -51,17 +51,27 @@ int TxMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
-                /*TEMP*/printf("Audio Mode:");
-                // initialize playback and recording
-                InitializePlayback();												////Program initialization. Setup playback.
-                InitializeRecording();												////Program initialization. Setup recording.
+            {
+                printf("Audio Mode:\t\t\t\tPress R to Record\n");
+                while(getch() != 'r');
 
+                // instantiate audio object
+                audio soundObj;                             // constructor initializes playback and recording                
                 // start recording
-                RecordBuffer(iBigBuf, lBigBufSize);									////Record some audio into the buffer.
-                CloseRecording();
-                TxAudio(iBigBuf, lBigBufSize);	
-                /*TEMP*/getchar();
+                soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
+                soundObj.CloseRecording();
+                // playback recording 
+	            printf("\nPlaying recording from buffer\n");
+	            soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
+	            soundObj.ClosePlayback();													////End playback operation.
+                printf("send? (y|n):");
+
+                if (getchar() == 'y')
+                {
+                    TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);	
+                }
                 break;
+            }
             case '2':
                 /*TEMP*/printf("Text Mode:");
                 TxText(message, 26);
@@ -74,9 +84,10 @@ int TxMode()
             case 'b':
                 TxFlag = 1;                     // set exit flag high
                 break;
-                
+            case CTRL_KEY('q'): return 1;       // to break out of main program loop
         }
     }
+    return 0;
 }
 // Renders recieve Menu
 void printRxMenu()
@@ -95,10 +106,7 @@ int RxMode()
 {
     int RxFlag = 0;
     char message[26];
-    // BUFFERS
-    extern long  lBigBufSize;	// total number of samples
-    long lBigBufNewSize = lBigBufSize*sizeof(short);
-    short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
+    
 
 
 
@@ -110,14 +118,21 @@ int RxMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
+            {
                 /*TEMP*/printf("Audio Mode:");
-                RxAudio(iBigBufNew, lBigBufNewSize);
+                // instantiate object
+                audio soundObj = audio();                         // constructor initializes recording
+                // BUFFERS
+                long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
+                short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
+                RxAudio(iBigBufNew, lBigBufNewSize);    // recieve audio from port
                 // playback recording 
                 printf("\nPlaying recording from buffer\n");
-                PlayBuffer(iBigBufNew, lBigBufNewSize);									////Play the recorded audio from the buffer.
-                ClosePlayback();													////End playback operation.
+                soundObj.PlayBuffer(iBigBufNew, lBigBufNewSize);								        // Play the recorded audio from the buffer.
+                soundObj.ClosePlayback();													            // End playback operation.
                 /*TEMP*/getchar();
                 break;
+            }
             case '2':
                 /*TEMP*/printf("Text Mode:");
                 RxText(message, 26);
@@ -131,9 +146,10 @@ int RxMode()
             case 'b':
                 RxFlag = 1;                     // set exit flag high
                 break;
-                
+            case CTRL_KEY('q'): return 1;       // to break out of main program loop    
         }
     }
+    return 0;
 }
 // Renders Settings Menu
 void printSettingsMenu()
@@ -172,9 +188,10 @@ int settingsMode()
             case 'b':
                 setFlag = 1;                    // set exit flag high
                 break;
-                
+            case CTRL_KEY('q'): return 1;       // to break out of main program loop
         }
     }
+    return 0;
 }
 // Renders Debug Menu
 void printDebugMenu()
@@ -193,6 +210,7 @@ int debugMode()
     // lookup from fn list
     // pass arguments and run fn
     /*TEMP*/getchar();
+    return 0;
 }
 // Renders quit menu
 void printQuitMenu()

@@ -1,11 +1,9 @@
 /*	Filename: sound.cpp
 Author: Michael Galle
+Adapted By: Nigel Sinclair, Rita Yevtushenko, Fergus Page
 Date: Updated 2022
 Details: Implementation - Contains functions for Windows sound API (sound recording & playback) 
 */
-
-// #pragma comment(lib, "Ws2_32.lib")	   // Make sure we are linking against the Ws2_32.lib library
-// #pragma comment(lib, "Winmm.lib")      // Make sure we are linking against the Winmm.lib library - some functions/symbols from this library (Windows sound API) are used
 
 #include <stdio.h> 
 #include <windows.h>					// Contains WAVEFORMATEX structure
@@ -13,52 +11,21 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 #include <math.h>						////Header for math functions.
 #include "sound.h"						////Header for the supplied Audio wrapper functions.
 
-
-// output and input channel parameters 
-static	int			g_nSamplesPerSec = SAMPLES_SEC;		////Audio sample rate in Hz (SAMPLES_SEC == 8kHz)
-static	int			g_nBitsPerSample = 16;				////Bit depth of samples (16bit)
-static	HWAVEOUT	HWaveOut;				/* Handle of opened WAVE Out and In device */
-static  HWAVEIN		HWaveIn;				
-static	WAVEFORMATEX WaveFormat;			/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
-static  WAVEHDR	WaveHeader[NFREQUENCIES];	/* WAVEHDR structures - 1 per buffer */
-static  WAVEHDR	WaveHeaderSilence;			// Not used in main yet.
-static  WAVEHDR WaveHeaderIn;				
-
-// BUFFERS
-short iBigBuf[SAMPLES_SEC * RECORD_TIME];
-long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
+// // BUFFERS
+// short iBigBuf[SAMPLES_SEC * RECORD_TIME];
+// long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
 
 /* PLAYBACK FUNCTIONS */
 /* ********************************************************************************************* */
+audio::audio()
+{
+	// initialize playback and recording
+	InitializePlayback();												////Program initialization. Setup playback.
+	InitializeRecording();												////Program initialization. Setup recording.
+}
 
-// short* recForTx()
-// {
 
-// 	//short* iBigBufNew = (short*)malloc(lBigBufSize*sizeof(short));		// buffer used for reading recorded sound from file
-
-// 	char save;															////Character buffer for saving command.
-// 	char replay;														////Character buffer for replay command.
-// 	char c;																// used to flush extra input
-// 	//FILE* f;															////Initialize file pointer.
-
-// 	// initialize playback and recording
-// 	InitializePlayback();												////Program initialization. Setup playback.
-// 	InitializeRecording();												////Program initialization. Setup recording.
-
-// 	// start recording
-// 	RecordBuffer(iBigBuf, lBigBufSize);									////Record some audio into the buffer.
-// 	CloseRecording();	
-// }
-// short* playFromRx()
-// {
-// 	// playback recording 
-// 	printf("\nPlaying recording from buffer\n");
-// 	PlayBuffer(iBigBuf, lBigBufSize);									////Play the recorded audio from the buffer.
-// 	ClosePlayback();													////End playback operation.
-
-// }
-
-int	InitializePlayback(void)												////Initialize Playback
+int	audio::InitializePlayback(void)												////Initialize Playback
 {
 	int		rc;																////Flag for error checking.
 	// set up the format structure, needed for playback (and recording)
@@ -72,9 +39,9 @@ int	InitializePlayback(void)												////Initialize Playback
 	return(1);
 }
 
-int PlayBuffer(short *piBuf, long lSamples)					////Function to play back a recorded message.
+int audio::PlayBuffer(short *piBuf, long lSamples)					////Function to play back a recorded message.
 {
-	static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
+	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */
 	MMRESULT	mmErr;					
 	int		rc;							////Flag for error checking.
@@ -104,7 +71,7 @@ int PlayBuffer(short *piBuf, long lSamples)					////Function to play back a reco
 	return(rc);															////Return error code.
 }
 
-void ClosePlayback(void)														////Closes the waveform output device.
+void audio::ClosePlayback(void)														////Closes the waveform output device.
 {
 	int		i;																	////Counter to go through the frequencies.
 	for (i = 0; i < NFREQUENCIES; ++i) {										////For loop to traverse the frequencies.
@@ -117,7 +84,7 @@ void ClosePlayback(void)														////Closes the waveform output device.
 
 /* RECORDING FUNCTIONS */
 /* ********************************************************************************************* */
-int InitializeRecording(void)													////Initialize Recording
+int audio::InitializeRecording(void)													////Initialize Recording
 {
 	MMRESULT rc;																////Initialize error code.
 
@@ -132,11 +99,12 @@ int InitializeRecording(void)													////Initialize Recording
 	}
 
 	// prepare the buffer header for use later on
-	WaveHeaderIn.lpData = (char *)iBigBuf;									////Sets the waveheader struct data pointer to the buffer input to function.
-	WaveHeaderIn.dwBufferLength = lBigBufSize * sizeof(short);				////Sets the waveheader struct buffer length to the number of samples times
-																			////the size of short to make enough room for all the bits.
-	rc = waveInPrepareHeader(HWaveIn, &WaveHeaderIn, sizeof(WAVEHDR));		////This prepares a waveform block for playback - loads it up.
-	if (rc) {																////Error checking the result.
+	WaveHeaderIn.lpData = (char *)iBigBuf;									// Sets the waveheader struct data pointer to the buffer input to function.
+	WaveHeaderIn.dwBufferLength = lBigBufSize * sizeof(short);				// Sets the waveheader struct buffer length to the number of samples times
+	WaveHeaderIn.dwFlags = 0;
+																			// the size of short to make enough room for all the bits.
+	rc = waveInPrepareHeader(HWaveIn, &WaveHeaderIn, sizeof(WAVEHDR));		// This prepares a waveform block for playback - loads it up.
+	if (rc) {																// Error checking the result.
 		printf("Failed preparing input WAVEHDR, error 0x%x.", rc);
 		return(0);
 	}
@@ -145,9 +113,9 @@ int InitializeRecording(void)													////Initialize Recording
 
 }
 
-int	RecordBuffer(short *piBuf, long lBufSize)								////Function to record a message.
+int	audio::RecordBuffer(short *piBuf, long lBufSize)								////Function to record a message.
 {
-	static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
+	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */
 	MMRESULT	mmErr;					////Initialize error flag
 	int		rc;							////initialize error flag
@@ -180,7 +148,7 @@ int	RecordBuffer(short *piBuf, long lBufSize)								////Function to record a me
 	return(rc);
 }
 
-void CloseRecording(void)												////Closes the waveform input device.
+void audio::CloseRecording(void)												////Closes the waveform input device.
 {
 	waveInUnprepareHeader(HWaveIn, &WaveHeaderIn, sizeof(WAVEHDR));		////Clean out the buffer and header and prepare for closing.
 	// close the playback device	
@@ -192,7 +160,7 @@ void CloseRecording(void)												////Closes the waveform input device.
 /* SUPPORT FUNCTIONS USED BY PLAYBACK FUNCTIONS - Updated 2021 */
 /* ********************************************************************************************* */
 // Function needed by InitializePlayback() - SetupFormat() initializes a WAVEFORMATEX structure to the required parameters (sample rate, bits per sample, etc) 
-static void SetupFormat(WAVEFORMATEX* wf)
+void audio::SetupFormat(WAVEFORMATEX* wf)
 {
 	wf->wFormatTag = WAVE_FORMAT_PCM;									////A standard data format used in Windows.
 	wf->nChannels = 1;													////Number of channels recorded in one block. Mono/Stereo/Dual Mono.
@@ -205,7 +173,7 @@ static void SetupFormat(WAVEFORMATEX* wf)
 }
 
 // Function used by Playbuffer() to wait for whatever is playing to finish or quit after waiting 10 seconds
-static int WaitOnHeader(WAVEHDR* wh, char cDit)	
+int audio::WaitOnHeader(WAVEHDR* wh, char cDit)	
 {
 	long	lTime = 0;															////Start wait time at 0s.
 	// wait for whatever is being played, to finish. Quit after 10 seconds.

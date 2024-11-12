@@ -14,20 +14,18 @@ using namespace std;
 // function for transmitting audio
 void TxAudio(short* buf, long szBuf)
 {
-    wchar_t* comport = NULL;                       // declare wchar_t* buffer for comport
-    wcin >> comport;                        // wide version of cin for user input
-
-    RS232Comm port1(comport, 9600, 8);      // Instantiate port object and initialize settings
+    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
+    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+    RS232Comm port1(comport, 9600, 8);                          // Instantiate port object and initialize settings
 
     port1.TxToPort(buf, szBuf);             // output
 }
 // function for transmitting text
 void TxText(char* buf, int szBuf)
 {
-    wchar_t* comport = NULL;                       // declare wchar_t* buffer for comport
-    wcin >> comport;                        // wide version of cin for user input
-
-    RS232Comm port1(comport, 9600, 8);      // Instantiate port object and initialize settings
+    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
+    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+    RS232Comm port1(comport, 9600, 8);                          // Instantiate port object and initialize settings
 
     port1.TxToPort(buf, szBuf);             // output
 }

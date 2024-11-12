@@ -2,6 +2,9 @@
 	Author: Michael Galle
 	Date: Updated 2022
 	Details: Interface - Contains prototypes for Windows sound API (sound recording and playback functions)
+	Changes:	
+				- Changed from static function definitions to audio class.
+				-  
 */
 #pragma once
 
@@ -16,18 +19,41 @@
 
 // FUNCTION PROTOTYPES
 /* ************************ */
-short* recForTx();
-short* playFromRx();
-// Playback
-int InitializePlayback(void);						////Sets up playback.
-int PlayBuffer(short *piBuf, long lSamples);		////Plays recorded audio through a buffer/output device.
-void ClosePlayback(void);							////Cleans out the buffers and closes the output device.
+class audio {
 
-// Recording
-int InitializeRecording(void);						////Sets up recording.
-int	RecordBuffer(short *piBuf, long lBufSize);		////Records audio from input device to buffer.
-void CloseRecording(void);							////Cleans out the buffers and closes the input device.
+	public: 
+	// Constructor
+	audio();						// initializes playback and recording upon instantiation
 
-// Support functions for Playback functions (updated 2021)
-void SetupFormat(WAVEFORMATEX* wf);			// Used by InitializePlayback()					
-int WaitOnHeader(WAVEHDR* wh, char cDit);	// Used by Playbuffer()
+	// BUFFERS
+	short iBigBuf[SAMPLES_SEC * RECORD_TIME];
+	long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
+
+
+	// Playback
+	int InitializePlayback(void);						// Sets up playback.
+	int PlayBuffer(short *piBuf, long lSamples);		// Plays recorded audio through a buffer/output device.
+	void ClosePlayback(void);							// Cleans out the buffers and closes the output device.
+
+	// Recording
+	int InitializeRecording(void);						// Sets up recording.
+	int	RecordBuffer(short *piBuf, long lBufSize);		// Records audio from input device to buffer.
+	void CloseRecording(void);							// Cleans out the buffers and closes the input device.
+
+	private:
+
+	// output and input channel parameters 
+	int					g_nSamplesPerSec = SAMPLES_SEC;		////Audio sample rate in Hz (SAMPLES_SEC == 8kHz)
+	int					g_nBitsPerSample = 16;				////Bit depth of samples (16bit)
+	HWAVEOUT			HWaveOut;				/* Handle of opened WAVE Out and In device */
+	HWAVEIN				HWaveIn;				
+	WAVEFORMATEX 		WaveFormat;			/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
+	WAVEHDR				WaveHeader[NFREQUENCIES];	/* WAVEHDR structures - 1 per buffer */
+	WAVEHDR				WaveHeaderSilence;			// Not used in main yet.
+	WAVEHDR 			WaveHeaderIn;				
+
+	// Support functions for Playback functions (updated 2021)
+	void SetupFormat(WAVEFORMATEX* wf);			// Used by InitializePlayback()					
+	int WaitOnHeader(WAVEHDR* wh, char cDit);	// Used by Playbuffer()
+
+};

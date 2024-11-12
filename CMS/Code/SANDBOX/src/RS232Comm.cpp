@@ -86,9 +86,9 @@ void RS232Comm::outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 	if (i == 0) {
 		printf("\nWrite Error: 0x%lx\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
-	}
-	else
+	} else {
 		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
+	}
 }
 
 // input function template for recieving data of any type
