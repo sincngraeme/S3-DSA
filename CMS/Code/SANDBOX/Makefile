@@ -6,6 +6,9 @@
 # define the Cpp compiler to use
 CXX = g++
 
+# define the Cpp Debugger 
+DXX = gdb 
+
 # define any compile-time flags
 CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
 
@@ -32,7 +35,7 @@ SOURCEDIRS	:= $(SRC)
 INCLUDEDIRS	:= $(INCLUDE)
 LIBDIRS		:= $(LIB)
 FIXPATH = $(subst /,\,$1)
-RM			:= del /q /f
+RM			:= rm -f
 MD	:= mkdir
 else
 MAIN	:= main
@@ -97,3 +100,6 @@ clean:
 run: all
 	./$(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
+
+debug:
+	$(DXX) $(OUTPUTMAIN)

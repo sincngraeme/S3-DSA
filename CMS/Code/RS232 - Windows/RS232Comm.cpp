@@ -51,14 +51,16 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf){
 }
 
 void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf){
+{
 
-outputToPort(hCom, (LPVOID)buf, szBuf);
+
+	outputToPort(hCom, (LPVOID)buf, szBuf);
 
 }
 
 DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf){
 
-inputFromPort(hCom, (LPVOID)buf,  szBuf);
+	inputFromPort(hCom, (LPVOID)buf,  szBuf);
 
 }
 
