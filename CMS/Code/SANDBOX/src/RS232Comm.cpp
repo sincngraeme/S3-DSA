@@ -26,6 +26,12 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 
 	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
 }
+// Destructor
+RS232Comm::~RS232Comm()
+{
+	purgePort(&hCom);
+	CloseHandle(hCom);
+}
 // Transmit
 void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
 {
