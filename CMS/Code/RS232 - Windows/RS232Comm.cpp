@@ -28,7 +28,7 @@ void purgePort(HANDLE* hCom)
 }
 
 // Output/Input messages to/from ports 
-void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
+void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf){
 	int i = 0;
 	DWORD NumberofBytesTransmitted;
 	LPDWORD lpErrors=0;
@@ -50,20 +50,21 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
 }
 
-void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf)
+void outputToPortAudio(HANDLE* hCom, short buf, DWORD szBuf){
 {
+
 
 	outputToPort(hCom, (LPVOID)buf, szBuf);
 
 }
 
-DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf) {
+DWORD inputFromPortAudio(HANDLE* hCom, short buf, DWORD szBuf){
 
 	inputFromPort(hCom, (LPVOID)buf,  szBuf);
 
 }
 
-DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
+DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf){
 	int i = 0;
 	DWORD NumberofBytesRead;						// stores the number of bytes read from the port
 	LPDWORD lpErrors = 0;							// ptr to variable to recieve error mask

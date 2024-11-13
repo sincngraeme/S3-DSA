@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "TxMode.h"
 #include "RxMode.h"
+#include "debug.h"
 
 /************** Function for printing main menu *************/
 
@@ -18,6 +19,7 @@ void printMainMenu()
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
     printf("\tSettings\t\t(3)\n");
+    printf("\tDebug\t\t(4)\n");
     printf("\tExit at any time\t(CTRL + q)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -53,7 +55,7 @@ int TxMode()
                 break;
             case '2':
                 /*TEMP*/printf("Text Mode:");
-                TxText(message, 26);
+                TxText(message, 26, L"COM6");
                 /*TEMP*/getchar();
                 break;
             case '3':
@@ -160,8 +162,8 @@ void printDebugMenu()
     printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
     // list all fn
     printf("Enter function name and arguments to test:\n");
- 
 }
+
 int debugMode()
 {
     //char arguments[DB_ARG_MAX_SZ];                          // function number (none specified by default)
