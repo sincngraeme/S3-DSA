@@ -27,7 +27,7 @@ class RS232Comm {
     private:
 
         // arguments to port functions
-        HANDLE hCom;                    // cannot be set with cunstructor
+        HANDLE hCom;                    // cannot be set with constructor
         wchar_t* COMPORT;
         int nComRate;
         int nComBits;

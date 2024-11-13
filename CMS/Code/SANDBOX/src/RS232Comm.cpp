@@ -15,7 +15,7 @@
 
 #define EX_FATAL 1
 
-/**************************************************************** WRAPPERS **************************************************************/
+/**************************************************** WRAPPERS (Added By Nigel Sinclair) *********************************************/
 // Constructor
 RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 {
@@ -167,3 +167,4 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	return 1;
 }
 
+ 

@@ -119,9 +119,9 @@ int RxMode()
         {
             case '1':
             {
-                /*TEMP*/printf("Audio Mode:");
+                printf("Audio Mode:\n");
                 // instantiate object
-                audio soundObj = audio();                         // constructor initializes recording
+                audio soundObj;                         // constructor initializes recording
                 // BUFFERS
                 long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
                 short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
@@ -134,13 +134,13 @@ int RxMode()
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:");
+                /*TEMP*/printf("Text Mode:\n");
                 RxText(message, 26);
                 printf("\n%s\n", message);
                 /*TEMP*/getchar();
                 break;
             case '3':
-                /*TEMP*/printf("Image Mode:");
+                /*TEMP*/printf("Image Mode:\n");
                 /*TEMP*/getchar();
                 break;
             case 'b':
