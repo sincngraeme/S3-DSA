@@ -1,13 +1,12 @@
 /* main.cpp - Main file for testing the File IO functions that get random messages from a file 
-*  By: Nigel Sinclair, Fergus Page, and Rita Yevtushenko
-*  Adapted from code by Michael Galle
+*  By: Michael Galle
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>			// Needed for srand
 #include "message.h"
-#include "queue.h"
+#include "Assignment4.h"
 
 int main() {
 
@@ -16,10 +15,8 @@ int main() {
 	int* quoteLengths;				// Array of quote lengths (index correspondes to quote number)
 	char testBuff[MAX_QUOTE_LENGTH] = "0"; // Buffer to write the message to
 	int result;						 // result = 0 if successfully get a message
-	link p, q; 
-	int i; 
 
-	
+
 	// Count the number of quotes in the file and index it for fast access (only need to do this once) 
 	numQuotes = fnumQuotes();									// Number of quotes
 	quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
@@ -27,41 +24,56 @@ int main() {
   
 	// // Get the random message from the file
 	srand(time(NULL));					// Seed the random number generator
-	int num = frandNum(0,numQuotes);
-	result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, num, numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
-	printf("%d\t%d\t%d\n", num, quoteIndices[num], quoteLengths[num]);
+	result = GetMessageFromFile(testBuff, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 	printf("-------------------------------------------------\n");
-	printf("%s\n", testBuff);
+	printf("%s\t\n", testBuff);
 	printf("-------------------------------------------------\n");
 
-	system("pause");
+	/*************************************************Assignment 4 Testing Case ***************************************************************/
+	
+	// Message for testing the compression
+	unsigned char testMessage[] = "Hello World!";
+	long long testLen = strlen((char*)testMessage);
 
-	InitQueue(); 
+	// Buffer for compression and decompression
+	unsigned char compressedMessage[100]; // Buffer for compressed data
+	unsigned char decompressedMessage[100]; // Buffer for the decompressed data
 
-		// Create & Add Nodes numbered 1 to 10 to the Queue
-	for (i = 0; i < 10; i++) {
-		p = (link)malloc(sizeof(Node)); 		
-		p->Data.seqNum = i;                    
-		result = GetMessageFromFile(p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
-		if(result != 0)							// check the result of GetMessageFromFile
-		{
-			free(p);												
-			break;								// we dont want to add if there is an error
-		}
-		AddToQueue(p);
-		//free(p);
+	// Compress the message
+	long long compressedLen = RLEcompress(testMessage, testLen, compressedMessage, sizeof(compressedMessage));
+
+	//Display the compressed message
+	printf("Compressed message of length %llu", compressedLen);
+
+	for (int i = 0; i < compressedLen; i++) {
+
+		return(compressedMessage[i]);
 	}
 
-	while (!IsQueueEmpty()) {
-		q = DeQueue(); 
-		printf("\n%d) -----------------------------------------------------------\n", q->Data.seqNum);		// formatting
-		printf("%s", q->Data.message);		// print the data from each node
+	// return (end1)
 
-		free(q);													// data has been accessed so free q
+	// Decompress message
+
+	long long decompressedLen = RLEdecompress(compressedMessage, compressedLen, decompressedMessage, sizeof(decompressedMessage), 0x1b);
+
+	//Display the decompressed message
+	printf("Decompressed message of length %llu", sizeof(decompressedLen));
+
+	for (int i = 0; i < decompressedLen; i++) {
+
+		return(decompressedMessage[i]);
 	}
+	// Check if the decompressed message matched with the original message
+	if (decompressedLen == (long long)(testMessage && int (memcmp(testMessage, decompressedMessage, testLen) == 0))) {
+		printf("Test Passed:");
+	}
+	else {
+		printf("Test failed");
+	}
+	/******************************************************************************************************************************************/
 
 	free(quoteIndices);
 	free(quoteLengths);
-
+	system("pause");
 	return(0);
 }

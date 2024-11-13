@@ -26,10 +26,18 @@ unsigned char repeatedChar;
     memcpy(&out[outPos++], &count, 1);// Here, integers (HEX values not strings) are used rather than strings
     memcpy(&out[outPos++], &repeatedChar, 1); }
 
-    else if (count == 2){ ... } // Your choice
+    // Process 2 characters without compression
+    else if (count == 2){
 
+    memcpy(&out[outPos++], &repeatedChar, 1);
+    memcpy(&out[outPos++], &repeatedChar, 1);
+
+    }
+
+    // Process data without compression of count < 2
     else {
     memcpy(&out[outPos++], &repeatedChar, 1); }
+    
     }
 
     return(outPos); // Stores the length of the output buffer – make sure it is less than iOutMax
