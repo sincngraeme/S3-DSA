@@ -53,7 +53,6 @@ int main() {
 	// return (end1)
 
 	// Decompress message
-
 	long long decompressedLen = RLEdecompress(compressedMessage, compressedLen, decompressedMessage, sizeof(decompressedMessage), 0x1b);
 
 	//Display the decompressed message

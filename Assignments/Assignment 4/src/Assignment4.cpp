@@ -1,4 +1,5 @@
 #include "Assignment4.h"
+#include "Message.h"
 
 
 long long RLEcompress(unsigned char* in, long long iInLen, unsigned char* out, long long iOutMax) {
