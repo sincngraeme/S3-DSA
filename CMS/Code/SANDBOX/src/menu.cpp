@@ -129,7 +129,6 @@ int RxMode()
                 if(!RxAudio(iBigBufNew, lBigBufNewSize))    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
-                    getchar();
                     printf("\nPlaying recording from buffer\n");
                     soundObj.PlayBuffer(iBigBufNew, lBigBufNewSize);							// Play the recorded audio from the buffer.
                     soundObj.ClosePlayback();                                                   // End playback operation.

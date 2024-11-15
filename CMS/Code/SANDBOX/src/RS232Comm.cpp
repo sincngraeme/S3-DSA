@@ -36,20 +36,20 @@ RS232Comm::~RS232Comm()
 // Transmit
 void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
 {
-	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)buf, szBuf);
 }
 void RS232Comm::TxToPort(short* buf, DWORD szBuf)	// Audio
 {
-	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)buf, szBuf);
 }
 // Recieve
 DWORD RS232Comm::RxFromPort(char* buf, DWORD szBuf)
 {
-	return (inputFromPort(&hCom, buf, szBuf));			// return number of bytes read from inputFromPort
+	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
 }
 DWORD RS232Comm::RxFromPort(short* buf, DWORD szBuf)
 {
-	return (inputFromPort(&hCom, buf, szBuf));			// return number of bytes read from inputFromPort
+	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
 }
 /**************************************************************** PRIVATE ***************************************************************/
 
@@ -165,7 +165,7 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 
 	// Set communication timeouts (SEE COMMTIMEOUTS structure in MSDN) - want a fairly long timeout
 	memset((void *)&timeout, 0, sizeof(timeout));
-	timeout.ReadIntervalTimeout = 500; 
+	timeout.ReadIntervalTimeout = 50; 
 	//500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
 	timeout.ReadTotalTimeoutMultiplier = 1; 
 	//1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
