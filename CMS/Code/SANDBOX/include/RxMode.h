@@ -8,6 +8,6 @@
 #include "RS232Comm.h"
 #include <string.h>
 
-void RxAudio(short* buf, long szBuf);
-void RxText(char* buf, int szBuf);
+int RxAudio(short* buf, long szBuf);
+int RxText(char* buf, int szBuf);
 void RxImage();

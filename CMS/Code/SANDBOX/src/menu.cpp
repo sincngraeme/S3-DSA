@@ -119,24 +119,30 @@ int RxMode()
         {
             case '1':
             {
-                printf("Audio Mode:\n");
+                printf("Audio Mode:\n\n");
                 // instantiate object
                 audio soundObj;                         // constructor initializes recording
                 // BUFFERS
                 long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
                 short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
-                RxAudio(iBigBufNew, lBigBufNewSize);    // recieve audio from port
-                // playback recording 
-                printf("\nPlaying recording from buffer\n");
-                soundObj.PlayBuffer(iBigBufNew, lBigBufNewSize);								        // Play the recorded audio from the buffer.
-                soundObj.ClosePlayback();													            // End playback operation.
+                
+                if(!RxAudio(iBigBufNew, lBigBufNewSize))    // recieve audio from port and only play from buffer if there were no errors
+                {   
+                    // playback recording 
+                    getchar();
+                    printf("\nPlaying recording from buffer\n");
+                    soundObj.PlayBuffer(iBigBufNew, lBigBufNewSize);							// Play the recorded audio from the buffer.
+                    soundObj.ClosePlayback();                                                   // End playback operation.
+                }											            
                 /*TEMP*/getchar();
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:\n");
-                RxText(message, 26);
-                printf("\n%s\n", message);
+                /*TEMP*/printf("Text Mode:\n\n");
+                if(!RxText(message, 26))
+                {
+                    printf("\n%s\n", message);
+                }
                 /*TEMP*/getchar();
                 break;
             case '3':
