@@ -11,14 +11,19 @@
 #include <stdio.h>
 #include <string.h>
 
-class RS232Comm {
+namespace RS232Flags {
+    extern int dFlag;                  // flag to set debug mode: 0 by default, is set high by pressing ctrl + d
+}
+class RS232Comm {  
     public:
 
+        RS232Comm(int flag);
         RS232Comm(wchar_t* portName, int baudRate, int numBits);   // Constructor of RS232Comm
-        RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom);
+        //RS232Comm(wchar_t* portName);
+        //RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom);
         ~RS232Comm();                                   // Destructor of RS232Comm
-        void hello();
-        void hello2();
+
+        // void dSetMode(int flag);
         // Tx/Rx functions are overloaded to handle multiple types
         void TxToPort(char* buf, DWORD szBuf);                      // Text
         void TxToPort(short* buf, DWORD szBuf);                     // Audio
@@ -39,7 +44,7 @@ class RS232Comm {
 
         // Prototype the functions to be used
         void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);        // initialize port settings
-        void dinitPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);
+        //void dinitPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);
         void purgePort(HANDLE* hCom);                                                                           // clear buffers of given port
         void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf);                                              // writes from LPVOID buf to port (HANDLE* hcom)
         DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf);                                             // reads from port (HANDLE* hCom) to LPVOID buf

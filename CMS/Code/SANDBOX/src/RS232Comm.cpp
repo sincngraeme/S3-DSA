@@ -16,6 +16,9 @@
 #define EX_FATAL 1
 
 /**************************************************************** WRAPPERS **************************************************************/
+namespace RS232Flags {
+    int dFlag = 0;                  // flag to set debug mode: 0 by default, is set high by pressing ctrl + d
+}
 // Constructor
 RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 {
@@ -26,18 +29,27 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 
 	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
 }
-
-RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom)
-{
-	dinitPort(&hCom, portName, baudRate, numBits, timeout);
-}
-
+// // Debug Constructor to set flag high/low
+// RS232Comm::RS232Comm(int flag)
+// {
+// 	RS232Flags::dFlag = flag;
+// }
+// RS232Comm::RS232Comm(wchar_t* portName)
+// {
+// 	dFlag = 1;
+// 	COMPORT = portName;
+// 	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
+// }
 // Destructor
 RS232Comm::~RS232Comm()
 {
 	purgePort(&hCom);
 	CloseHandle(hCom);
 }
+// void RS232Comm::dSetMode(int flag)
+// {
+// 	dFlag = 1;
+// }
 // Transmit
 void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
 {
@@ -63,17 +75,20 @@ void RS232Comm::initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComB
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
 	purgePort(hCom);									// Purges the COM port
-	SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
-	purgePort(hCom);
+	if(!RS232Flags::dFlag)
+	{
+		SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
+		purgePort(hCom);
+	}
 }
 
-void RS232Comm::dinitPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
-{
-	//createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
-	purgePort(hCom);									// Purges the COM port
-	SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
-	purgePort(hCom);
-}
+// void RS232Comm::dinitPort(HANDLE* hCom, wchar_t* DBCOMPORT) 
+// {
+// 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
+// 	purgePort(hCom);									// Purges the COM port
+// 	// SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
+// 	// purgePort(hCom);
+// }
 
 // Purge any outstanding requests on the serial port (initialize)
 void RS232Comm::purgePort(HANDLE* hCom) 
@@ -136,13 +151,20 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
 void RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
+	DWORD creationDisposition;
+	if(RS232Flags::dFlag)
+	{
+		creationDisposition = CREATE_ALWAYS;
+	} else {
+		creationDisposition = OPEN_EXISTING;
+	}
 	// Call the CreateFile() function to create comport file (hardware is accessed through files) 
 	*hCom = CreateFile(
 		COMPORT,									// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
 		GENERIC_READ | GENERIC_WRITE,				// Open for read and write
 		NULL,										// No sharing allowed
 		NULL,										// No security
-		OPEN_EXISTING,								// Opens the existing com port
+		creationDisposition,						// Opens the existing com port (creates if in debug mode)
 		FILE_ATTRIBUTE_NORMAL,						// Do not set any file attributes --> Use synchronous operation
 		NULL										// No template
 	);
