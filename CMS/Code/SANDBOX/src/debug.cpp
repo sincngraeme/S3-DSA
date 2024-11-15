@@ -1,9 +1,8 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
-// #include <string.h>
+#include <string.h>
 #include <time.h>
 #include "menu.h"
 #include "debug.h"
@@ -58,107 +57,49 @@ void Debug::debugGeneral()
 
 void Debug::dTxText()
 {   
-    COMMTIMEOUTS timein;
     srand(time(NULL));
     printf("Testing text transmission.\n\n");              
-    char* timestamp;                                                    //variable to handle timestamp read back from debugLog.
+    char* timestamp[26];                                                //variable to handle timestamp read back from debugLog.
+    
     int numQuotes = fnumQuotes();									    //number of quotes in FortuneCookies.txt (Quotes file).
     long int* quoteIndices = fquoteIndices(numQuotes);					//index locations of the quotes.
     int* quoteLengths = fquoteLength(numQuotes, quoteIndices);          //gets the lengths of all the quotes in the file.
-    char messageA[MAX_QUOTE_LENGTH];                                    //buffer to hold outgoing transmit message.
-    char messageB[MAX_QUOTE_LENGTH];                                    //buffer to hold message read back from file.
-  
-    printf("print1\n");
+    char messageIn[MAX_QUOTE_LENGTH];                                   //buffer to hold outgoing transmit message.
+    char messageOut[strlen(messageIn) +26];                             //buffer to hold timestamped message read back from file.
+    char messageTx[strlen(messageOut)];
 
-    GetMessageFromFile(messageA, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);   //get a test message from the Quotes file.
-    printf("%s\n", messageA);
-
-    printf("print2\n");
+    GetMessageFromFile(messageIn, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);   //get a test message from the Quotes file.
 
     wchar_t* debugPort = L"DebugLog.txt";
 
-    // Call the CreateFile() function to create comport file (hardware is accessed through files) 
-        // HANDLE dCom = CreateFileW
-        // (
-        //     (LPCWSTR)debugPort,							// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
-        //     GENERIC_READ | GENERIC_WRITE,				// Open for read and write
-        //     NULL,                           			// No sharing allowed
-        //     NULL,										// No security
-        //     CREATE_ALWAYS,								// Opens the existing com port
-        //     FILE_ATTRIBUTE_NORMAL,						// Do not set any file attributes --> Use synchronous operation
-        //     NULL										// No template
-        // );
-	
-    printf("print3\n");
-
-    // printf("dCom == %d\n", dCom);
-
-	// if (dCom == INVALID_HANDLE_VALUE)
-    // {
-	// 	printf("\nFatal Error 0x%lx: Unable to open\n", GetLastError());
-	// }
-
-	// else
-    // {
-	// 	printf("\nCOM is now open\n");
-	// }
-
-    printf("print4\n");
-    //getchar();
-    // RS232Comm debug(debugPort, 9600, 8, dCom);
-    //PurgeComm(dCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
-
-    // DCB dcb;										// Windows device control block (struct that defines ctrl settings for serial coms device)
-	// // Clear DCB to start out clean, then get current settings
-	// memset(&dcb, 0, sizeof(dcb));
-	// dcb.DCBlength = sizeof(dcb);
-	// if (GetCommState(dCom, &dcb))
-	// 	return;
-
-	// // Set our own parameters from Globals
-	// dcb.BaudRate = 9600;						// Baud (bit) rate
-	// dcb.ByteSize = 8;					// Number of bits(8)
-	// dcb.Parity = 0;									// No parity	
-	// dcb.StopBits = ONESTOPBIT;						// One stop bit
-	// if (!SetCommState(dCom, &dcb))
-	// 	return;
-
-	// // Set communication timeouts (SEE COMMTIMEOUTS structure in MSDN) - want a fairly long timeout
-	// memset((void *)&timein, 0, sizeof(timein));
-	// timein.ReadIntervalTimeout = 500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
-	// timein.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	// timein.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
-	// SetCommTimeouts(dCom, &timein);
-
-    //PurgeComm(dCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
-
-    //RS232Comm dPortObj(debugPort);
-
-    printf("print5\n");
-	// Call the CreateFile() function to create DebugLog.txt file (hardware is accessed through files)   
     time_t timeNow = time(NULL);                                        //get current number of seconds since January 1, 1970.
     struct tm *dateTime = localtime(&timeNow);                          //parses timeNow into clock and calendar units (hours, seconds, days, etc.).
-    TxText(asctime(dateTime), 26, debugPort);                  //converts dateTime into a 26 character string to make it readable. Transmit stamp to debugLog file.
-    TxText(messageA, MAX_QUOTE_LENGTH, debugPort);             //transmit messageA to debugLog file.
-   
-    // FILE* debugLog = fopen("DebugLog.txt", "r");                              //open debugLog in read mode.
+    *timestamp = asctime(dateTime);                                      //Write timestamp as a 26 char string.
 
-    // if (debugLog == NULL)                                           //error checking.
+    memcpy(messageTx, *timestamp, 26);
+    strcat(messageTx, "\n");
+    strcat(messageTx, messageIn);
+
+    TxText(messageTx, 26 + strlen(messageIn), debugPort);  
+    CloseHandle(debugPort); 
+
+    // FILE* fp = fopen((const char*)debugPort, "r"); 
+
+    // if (fp == NULL)                            // error checking
     // {
-    //     perror("Error opening file\n");
+    //     perror("ERROR opening file");
     //     return;
     // }
 
-    // fgets(timestamp, 26, debugLog);                                     //retrieve the timestamp from debugLog.
-    // fgets(messageB, MAX_QUOTE_LENGTH, debugLog);                        //retrieve the message from debugLog.
-    // fclose(debugLog);                                                   //close debugLog.
-    // free(debugLog);                                                     //free the file pointer.
-    // printf("Timestamp: %s\n", timestamp);                               //print the timestamp.
+    // fgets(messageOut, sizeof(messageOut), fp);
 
-    // if (strcmp(messageA, messageB) == 0)                                //compare the string sent to the file to the one retrieved from the file to see if they match.
+    // fclose(fp);
+    // free(fp);             
+
+    // if (strcmp(messageIn, messageOut) == 0)                                //compare the string sent to the file to the one retrieved from the file to see if they match.
     // {
     //     printf("The test transmission was successful.\n");              //confirm match.
-    //     printf("Transmitted message: %s\n", messageB);                  //print retrieved string.
+    //     printf("Transmitted message: %s\n", messageOut);                  //print retrieved string.
 
     //     return;
     // }
@@ -169,7 +110,6 @@ void Debug::dTxText()
 
     //     return;
     // }
-    //CloseHandle(dCom);
 }   
 
     // int Debug::dTxImage()

@@ -29,14 +29,11 @@ int fnumQuotes()
 
     FILE* fp = fopen(filePath, "r");           // open the file for reading
 
-    printf("\n1\n");
-
     if (fp == NULL)                            // error checking
     {
         perror("ERROR opening file");
         return -1;
     }
-     printf("\n2\n");
  
     // Loop through the file character by character
     while (!feof(fp)) 
@@ -72,8 +69,6 @@ long int* fquoteIndices(int numQuotes)
 
     FILE* fp = fopen(filePath, "r");            // open file
 
-     printf("\n3\n");
-
     if (fp == NULL)                            // error checking
     {
         perror("ERROR opening file");
@@ -81,8 +76,6 @@ long int* fquoteIndices(int numQuotes)
 
         return NULL;
     }
-
-     printf("\n4\n");
 
     for (int i = 0; !feof(fp), i <= numQuotes;) 
     {
@@ -129,14 +122,9 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 // Function that gets a random quote from the FortuneCookies file 
 int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
 {
-     printf("\n4.5\n");
     int mLen = quoteLengths[randNum];           // number of characters to read from file
-    printf("%d", mLen);
-     printf("\n4.75\n");
 
     FILE* fp = fopen(filePath, "r");            // open file
-
-     printf("\n5\n");
 
     if (fp == NULL)                             // error checking
     {
@@ -144,18 +132,9 @@ int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int n
         return -1;
     }    
 
-     printf("\n6\n");
-
     fseek(fp, quoteIndices[randNum], SEEK_SET);         // set file pointer to begining then offset by file index at randNum array index
-
-    printf("\n6.5\n");
     fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
-
-    printf("\n6.75\n");
-    
     buff[mLen] = '\0';                                  // make the last read character (either the last of the quote, or the last place in the buffer) a null terminating character
-    
-
 
     if (mLen < iLen)                                        // if the length of the quote is less than the length of the output buffer,
     {
@@ -165,12 +144,8 @@ int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int n
         }
     } // set the last character in string to \0
 
-printf("\n8\n");
-
    // printf("%d\n", randNum);
     fclose(fp);                                               // close the file
-
-printf("\n9\n");
 
     return 0;
 }
