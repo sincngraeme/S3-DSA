@@ -24,7 +24,6 @@ audio::audio()
 	InitializeRecording();												////Program initialization. Setup recording.
 }
 
-
 int	audio::InitializePlayback(void)												////Initialize Playback
 {
 	int		rc;																////Flag for error checking.
@@ -46,16 +45,16 @@ int audio::PlayBuffer(short *piBuf, long lSamples)					////Function to play back
 	MMRESULT	mmErr;					
 	int		rc;							////Flag for error checking.
 
-	// stop previous note (just in case)
-	waveOutReset(HWaveOut);   // is this good?	////Yes. This stops any current playback and returns the current position to 0.
-												////This prevents the program from reading unaligned data and partial samples.
 
+	// stop previous note (just in case)
+	waveOutReset(HWaveOut);   // is this good?	// Yes. This stops any current playback and returns the current position to 0.
+												// This prevents the program from reading unaligned data and partial samples.
 	// get the header ready for playback
 	WaveHeader.lpData = (char *)piBuf;									////Sets the waveheader struct data pointer to the buffer input to function.
 	WaveHeader.dwBufferLength = lSamples * sizeof(short);				////Sets the waveheader struct buffer length to the number of samples times
 																		////the size of short to make enough room for all the bits.
 	rc = waveOutPrepareHeader(HWaveOut, &WaveHeader, sizeof(WAVEHDR));	////This prepares a waveform block for playback - loads it up.
-	if (rc) {															////Error checking the result.
+	if (rc != MMSYSERR_NOERROR) {															////Error checking the result.
 		printf("Failed preparing WAVEHDR, error 0x%x.", rc);
 		return(0);
 	}

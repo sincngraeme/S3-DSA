@@ -11,12 +11,11 @@
 
 using namespace std;
 
-// function for transmitting audio
+// function for recieving audio
 int RxAudio(short* buf, long szBuf)
 {
     cout << "COM PORT: ";
     wchar_t comport[6];                               // declare wchar_t* buffer for comport
-    wcin.ignore();
     wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings
 
@@ -24,12 +23,11 @@ int RxAudio(short* buf, long szBuf)
     
     return 0;                                                           // otherwise return 0 to indicate success 
 }
-// function for transmitting text
+// function for recieving text
 int RxText(char* buf, int szBuf)
 {
     cout << "COM PORT: ";
     wchar_t comport[6];                               // declare wchar_t* buffer for comport
-    wcin.ignore();
     wcin.getline(comport, sizeof(comport));
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings
 

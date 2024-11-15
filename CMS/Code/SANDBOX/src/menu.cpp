@@ -124,14 +124,15 @@ int RxMode()
                 // instantiate object
                 audio soundObj;                         // constructor initializes recording
                 // BUFFERS
-                long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
-                short* iBigBufNew = (short*)malloc(lBigBufNewSize);		// buffer used for reading recorded sound from file
+                //long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
+                short* iBigBufNew = (short*)malloc(soundObj.lBigBufSize*sizeof(short));		// buffer used for reading recorded sound from file
                 
-                if(!RxAudio(iBigBufNew, lBigBufNewSize))    // recieve audio from port and only play from buffer if there were no errors
+                if(!RxAudio(iBigBufNew, soundObj.lBigBufSize))    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(iBigBufNew, lBigBufNewSize);							// Play the recorded audio from the buffer.
+                    soundObj.PlayBuffer(iBigBufNew, soundObj.lBigBufSize);							// Play the recorded audio from the buffer.
+
                     soundObj.ClosePlayback();                                                   // End playback operation.
                 }											            
                 /*TEMP*/getchar();

@@ -17,6 +17,7 @@
 #define SAMPLES_SEC			8000	// number of samples per second
 #define	NFREQUENCIES		96		// number of frequencies used - leave this alone
 
+
 // FUNCTION PROTOTYPES
 /* ************************ */
 class audio {
