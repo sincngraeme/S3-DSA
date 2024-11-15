@@ -69,6 +69,7 @@ int TxMode()
                 if (getchar() == 'y')
                 {
                     TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);	
+                    getchar();
                 }
                 break;
             }
