@@ -26,6 +26,7 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 
 	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
 }
+
 // Destructor
 RS232Comm::~RS232Comm()
 {
@@ -166,4 +167,3 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	SetCommTimeouts(*hCom, &timeout);
 	return 1;
 }
-

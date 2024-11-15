@@ -29,7 +29,8 @@ class RS232Comm {
     private:
 
         // arguments to port functions
-        HANDLE hCom;                    // cannot be set with cunstructor
+        HANDLE hCom;                    // cannot be set with constructor
+        FILE dBug;
         wchar_t* COMPORT;
         int nComRate;
         int nComBits;
@@ -40,7 +41,7 @@ class RS232Comm {
         void purgePort(HANDLE* hCom);                                                                           // clear buffers of given port
         void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf);                                              // writes from LPVOID buf to port (HANDLE* hcom)
         DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf);                                             // reads from port (HANDLE* hCom) to LPVOID buf
-        // Sub functions
+        // Sub function
         void createPortFile(HANDLE* hCom, wchar_t* COMPORT);                                                       // creates device file for interacting with comport
         int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout);                 // wrapper for setting DCB and timeout settings for the given port
         //                                 ^ user can only set the BAUD rate and the number of bits
