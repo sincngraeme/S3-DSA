@@ -33,8 +33,11 @@ int RxText(char* buf, int szBuf)
     wcin.getline(comport, sizeof(comport));
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings
 
-    if(portObj.RxFromPort(buf, szBuf) == 0 || portObj.RS232CommErr != RS232_NO_ERR) return 1;                 // recieve from port
-    
+    if(portObj.RxFromPort(buf, szBuf) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
+    {
+        printf("ERROR reading from port: %B", portObj.RS232CommErr);
+        return 1;                 // recieve from port
+    }
     return 0;
 }
 // function for transmitting images
