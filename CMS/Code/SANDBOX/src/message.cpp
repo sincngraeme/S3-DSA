@@ -152,7 +152,7 @@ int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int n
     fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
 
     printf("\n6.75\n");
-    printf("%d", sizeof(buff));
+    
     buff[mLen] = '\0';                                  // make the last read character (either the last of the quote, or the last place in the buffer) a null terminating character
     
 
@@ -174,7 +174,6 @@ printf("\n9\n");
 
     return 0;
 }
-
 
 //STUFF FROM PART B
 

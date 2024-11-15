@@ -1,4 +1,4 @@
-//#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <Windows.h>
 #include <stdio.h>
@@ -104,9 +104,34 @@ void Debug::dTxText()
 
     printf("print4\n");
 
-    RS232Comm debug(debugPort, 9600, 8, dCom);
+    // RS232Comm debug(debugPort, 9600, 8, dCom);
+    PurgeComm(dCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
 
-     printf("print5\n");
+    DCB dcb;										// Windows device control block (struct that defines ctrl settings for serial coms device)
+	// Clear DCB to start out clean, then get current settings
+	memset(&dcb, 0, sizeof(dcb));
+	dcb.DCBlength = sizeof(dcb);
+	if (!GetCommState(dCom, &dcb))
+		return;
+
+	// Set our own parameters from Globals
+	dcb.BaudRate = 9600;						// Baud (bit) rate
+	dcb.ByteSize = 8;					// Number of bits(8)
+	dcb.Parity = 0;									// No parity	
+	dcb.StopBits = ONESTOPBIT;						// One stop bit
+	if (!SetCommState(dCom, &dcb))
+		return;
+
+	// Set communication timeouts (SEE COMMTIMEOUTS structure in MSDN) - want a fairly long timeout
+	memset((void *)&timein, 0, sizeof(timein));
+	timein.ReadIntervalTimeout = 500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
+	timein.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
+	timein.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
+	SetCommTimeouts(dCom, &timein);
+
+    PurgeComm(dCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
+
+    printf("print5\n");
 
 	// Call the CreateFile() function to create DebugLog.txt file (hardware is accessed through files)   
 

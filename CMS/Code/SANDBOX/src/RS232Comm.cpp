@@ -29,12 +29,7 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 
 RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom)
 {
-	// set members
-	COMPORT = portName;
-	nComRate = baudRate;
-	nComBits = numBits;
-
-	dinitPort(&hCom, COMPORT, nComRate, nComBits, timeout);
+	dinitPort(&hCom, portName, baudRate, numBits, timeout);
 }
 
 // Destructor
