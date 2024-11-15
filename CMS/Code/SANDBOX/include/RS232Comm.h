@@ -15,6 +15,7 @@ class RS232Comm {
     public:
 
         RS232Comm(wchar_t* portName, int baudRate, int numBits);   // Constructor of RS232Comm
+        RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom);
         ~RS232Comm();                                   // Destructor of RS232Comm
         void hello();
         void hello2();
@@ -38,6 +39,7 @@ class RS232Comm {
 
         // Prototype the functions to be used
         void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);        // initialize port settings
+        void dinitPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);
         void purgePort(HANDLE* hCom);                                                                           // clear buffers of given port
         void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf);                                              // writes from LPVOID buf to port (HANDLE* hcom)
         DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf);                                             // reads from port (HANDLE* hCom) to LPVOID buf

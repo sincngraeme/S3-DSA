@@ -27,6 +27,16 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
 }
 
+RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom)
+{
+	// set members
+	COMPORT = portName;
+	nComRate = baudRate;
+	nComBits = numBits;
+
+	dinitPort(&hCom, COMPORT, nComRate, nComBits, timeout);
+}
+
 // Destructor
 RS232Comm::~RS232Comm()
 {
@@ -57,6 +67,14 @@ void RS232Comm::RxFromPort(short* buf, DWORD szBuf)
 void RS232Comm::initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
+	purgePort(hCom);									// Purges the COM port
+	SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
+	purgePort(hCom);
+}
+
+void RS232Comm::dinitPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
+{
+	//createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
 	purgePort(hCom);									// Purges the COM port
 	SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
 	purgePort(hCom);

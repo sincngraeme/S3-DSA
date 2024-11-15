@@ -1,9 +1,9 @@
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h>
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
-#include <string.h>
+// #include <string.h>
 #include <time.h>
 #include "menu.h"
 #include "debug.h"
@@ -22,7 +22,7 @@ void Debug::debugGeneral()
     {
         printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
         printf("-------------------- Debug ------------------\n\n");
-        printf("Please select the function that you want to test:\n\n");
+        printf("Please select the function you want to test:\n\n");
         printf("\tTxAudio\t\t(1)\n");
         printf("\tTxText\t\t(2)\n");
         printf("\tTxImage\t\t(3)\n");
@@ -57,6 +57,7 @@ void Debug::debugGeneral()
 
 void Debug::dTxText()
 {    
+    COMMTIMEOUTS timein;
     srand(time(NULL));
     printf("Testing text transmission.\n\n");              
     char* timestamp;                                                    //variable to handle timestamp read back from debugLog.
@@ -76,21 +77,22 @@ void Debug::dTxText()
     wchar_t* debugPort = L"DebugLog.txt";
 
     // Call the CreateFile() function to create comport file (hardware is accessed through files) 
-    HANDLE hCom = CreateFileW(
-        (LPCWSTR)debugPort,							// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
-        GENERIC_READ | GENERIC_WRITE,				// Open for read and write
-        NULL,                           			// No sharing allowed
-        NULL,										// No security
-        CREATE_ALWAYS,								// Opens the existing com port
-        FILE_ATTRIBUTE_NORMAL,						// Do not set any file attributes --> Use synchronous operation
-        NULL										// No template
-    );
+        HANDLE dCom = CreateFileW
+        (
+            (LPCWSTR)debugPort,							// COM port number  --> If COM# is larger than 9 then use the following syntax--> "\\\\.\\COM10"
+            GENERIC_READ | GENERIC_WRITE,				// Open for read and write
+            NULL,                           			// No sharing allowed
+            NULL,										// No security
+            CREATE_ALWAYS,								// Opens the existing com port
+            FILE_ATTRIBUTE_NORMAL,						// Do not set any file attributes --> Use synchronous operation
+            NULL										// No template
+        );
 	
     printf("print3\n");
 
-    printf("hCom == %d\n", hCom);
+    printf("dCom == %d\n", dCom);
 
-	if (hCom == INVALID_HANDLE_VALUE)
+	if (dCom == INVALID_HANDLE_VALUE)
     {
 		printf("\nFatal Error 0x%lx: Unable to open\n", GetLastError());
 	}
@@ -102,7 +104,7 @@ void Debug::dTxText()
 
     printf("print4\n");
 
-    RS232Comm debug(debugPort, 9600, 8);
+    RS232Comm debug(debugPort, 9600, 8, dCom);
 
      printf("print5\n");
 
@@ -141,7 +143,7 @@ void Debug::dTxText()
 
         return;
     }
-    CloseHandle(hCom);
+    CloseHandle(dCom);
 }   
 
     // int Debug::dTxImage()
