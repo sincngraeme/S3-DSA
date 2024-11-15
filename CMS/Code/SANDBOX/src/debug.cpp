@@ -103,6 +103,7 @@ void Debug::dTxText()
     printf("print4\n");
 
     RS232Comm debug(debugPort, 9600, 8);
+    RS232::initPort(&hCom, debugPort, 9600, 8, timeout);
 
      printf("print5\n");
 
