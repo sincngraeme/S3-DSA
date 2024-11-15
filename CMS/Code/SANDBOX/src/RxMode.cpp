@@ -35,7 +35,7 @@ int RxText(char* buf, int szBuf)
 
     if(portObj.RxFromPort(buf, szBuf) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
     {
-        printf("ERROR reading from port: %B", portObj.RS232CommErr);
+        printf("ERROR reading from port: 0x%x", portObj.RS232CommErr);
         return 1;                 // recieve from port
     }
     return 0;
