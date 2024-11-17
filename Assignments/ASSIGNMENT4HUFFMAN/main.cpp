@@ -16,7 +16,7 @@ int main()
     FILE* f;
     unsigned char* in = nullptr;
     unsigned char* out = nullptr;
-    unsigned int insize = 0, outsize = 0;
+    long insize = 0, outsize = 0;
     int algo = 2; // Default to Huffman compression (algorithm 2)
     Huff huff;
 
@@ -41,20 +41,24 @@ int main()
 
             // Open input file
             f = fopen(inname, "rb");
+
             if (!f)
             {
                 printf("Unable to open input file \"%s\".\n", inname);
+                perror;
                 break;
             }
-
+printf("1---");
             // Get input file size
-            fseek(f, 0, SEEK_END);
-            insize = ftell(f);
-            fseek(f, 0, SEEK_SET);
+            fseek(f, 0, SEEK_END);          //go to the end of the file.
+printf("2---");
+            insize = ftell(f);              //Say how many bytes there were.
+            printf("3---");
+            fseek(f, 0, SEEK_SET);          //go back to the start of the file.
+printf("4---");
+            printf("Input file: %d bytes\n", insize);       //report.
 
-            printf("Input file: %d bytes\n", insize);
-
-            // Allocate memory for input
+            // Allocate memory for input buffer.
             in = (unsigned char*)malloc(insize);
             if (!in)
             {
@@ -65,7 +69,7 @@ int main()
             }
 
             // Read input file
-            fread(in, insize, 1, f);
+            fread(in, 1, (size_t)insize, f);
             fclose(f);
             free(f);
 
@@ -195,7 +199,7 @@ int main()
 // Renders main menu
 void printMainMenu()
 {
-    printf("\033[H\033[J"); // Clear the screen using ANSI escape codes
+  //  printf("\033[H\033[J"); // Clear the screen using ANSI escape codes
     printf("--------------- Welcome ---------------\n\n");
     printf("\tCompress File\t\t(1)\n");
     printf("\tDecompress File\t\t(2)\n");
