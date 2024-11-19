@@ -38,7 +38,7 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
-    char message[] = "this is my message string";
+    char message[256];
     // // BUFFERS
     // extern short* iBigBuf;
     // extern long  lBigBufSize;	// total number of samples
@@ -68,18 +68,19 @@ int TxMode()
 
                 if (getchar() == 'y')
                 {
-                    TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);	
+                    TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);
                     getchar();
                 }
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:");
+                printf("Text Mode:\n\nMessage: ");
+                fgets(message, sizeof(message), stdin);
                 TxText(message, 26);
                 /*TEMP*/getchar();
                 break;
             case '3':
-                /*TEMP*/printf("Image Mode:");
+                /*TEMP*/printf("Image Mode:\n");
                 /*TEMP*/getchar();
                 break;
             case 'b':

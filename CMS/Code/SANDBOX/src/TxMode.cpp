@@ -25,9 +25,9 @@ void TxAudio(short* buf, long szBuf)
 // function for transmitting text
 void TxText(char* buf, int szBuf)
 {
-    cout << "COM PORT: ";
+    cout << "\nCOM PORT: ";
     wchar_t comport[6];                                         // declare wchar_t* buffer for comport
-    wcin.ignore();
+    //wcin.ignore();
     wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
     RS232Comm port1(comport, 19200, 8);                          // Instantiate port object and initialize settings
 
