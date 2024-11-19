@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <time.h>			// Needed for srand
+#include "recursion.h"
 #include "message.h"
-// #include "recursion.h"
 
-int main()
+int recursionmain()
 {
-	link p, q; 
+	messagelink p, q; 
 	int i; 
 	int numQuotes;					// Number of quotes in the file
 	long int* quoteIndices;			// Array of quote locations in the file (index correspondes to quote number)
@@ -27,7 +27,7 @@ int main()
 
 	// Create & Add Nodes numbered 1 to 10 to the Queue
 	for (i = 0; i < 10; i++) {
-		p = (link)malloc(sizeof(Node)); 
+		p = (messagelink)malloc(sizeof(messageNode)); 
 		result = GetMessageFromFile(p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 		p->Data.seqNum = i;                     
 		(*p).Data.sid = i;
@@ -39,6 +39,33 @@ int main()
 		}
 		AddToQueue(p);
 	}
+
+	// Test count() 
+	printf("\nThe number of nodes in the Queue is: %d\n", count(returnHead()));
+
+	printf("\n\nTraversing list in forward direction gives ...\n");
+	printf("\nThe sid is %d\n", p->Data.sid);
+	traverse(returnHead(), visit); 
+	printf("\n\nTraversing list in reverse direction gives ...\n");
+	printf("\nThe sid is %d\n", p->Data.sid);
+	traverseR(returnHead(), visit);
+	
+	// Test deleteR()
+	Item v;
+	v.sid = 7; 
+	deleteR(returnHead(), returnHead()->pNext, v); 
+
+	printf("\n\nThe number of nodes in the Queue after the deleteR() operation is: %d\n", count(returnHead()));
+
+	// Empty  the Queue
+	while (!IsQueueEmpty()) {
+		q = DeQueue(); 
+		printf("\n SID of Node is: %d, and its message is: %s", q->Data.sid, q->Data.message);		// (*q).Data.sid
+	}
+
+
+	// Test count() 
+	printf("\n\nThe number of nodes in the Queue after dequeuing all nodes is: %d\n", count(returnHead()));
 
 	free(quoteIndices);
 	free(quoteLengths);

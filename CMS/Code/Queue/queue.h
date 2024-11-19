@@ -3,8 +3,9 @@
 */
 
 #pragma once
-#include "message.h"
+// #include "message.h"
 #define QUEUE_SIZE 5
+#define MAX_QUOTE_LENGTH 140
 
 const int iLen = MAX_QUOTE_LENGTH;
 

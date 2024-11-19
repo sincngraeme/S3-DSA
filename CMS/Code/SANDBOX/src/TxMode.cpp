@@ -23,7 +23,7 @@ void TxAudio(short* buf, long szBuf)
     port1.TxToPort(buf, szBuf);             // output
 }
 // function for transmitting text
-void TxText(char* buf, int szBuf)
+void TxText(char* buf, int szBuf, wchar_t* port)
 {
     cout << "\nCOM PORT: ";
     wchar_t comport[6];                                         // declare wchar_t* buffer for comport
