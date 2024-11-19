@@ -1,8 +1,8 @@
-
 #include "Huffman.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <conio.h>
+#include <string.h>
 
 //#define _CRT_NONSTDC_NO_WARNINGS
 
@@ -19,6 +19,7 @@ int main()
     long insize = 0, outsize = 0;
     int algo = 2; // Default to Huffman compression (algorithm 2)
     Huff huff;
+    char* waste = NULL;
 
     while (!Flag)
     {
@@ -32,7 +33,6 @@ int main()
         switch (c)
         {
         case '1': // Compress File
-
             
             printf("Enter input file name: ");
             scanf("%255s", inname);
@@ -48,23 +48,21 @@ int main()
                 perror;
                 break;
             }
-printf("1---");
+
             // Get input file size
-            fseek(f, 0, SEEK_END);          //go to the end of the file.
-printf("2---");
-            insize = ftell(f);              //Say how many bytes there were.
-            printf("3---");
-            fseek(f, 0, SEEK_SET);          //go back to the start of the file.
-printf("4---");
+            fseek(f, 0, SEEK_END);                          //go to the end of the file.
+            insize = ftell(f);                              //Say how many bytes there were.
+            fseek(f, 0, SEEK_SET);                          //go back to the start of the file.
             printf("Input file: %d bytes\n", insize);       //report.
 
             // Allocate memory for input buffer.
-            in = (unsigned char*)malloc(insize);
+            in = (unsigned char*)malloc(insize*sizeof(unsigned char*));
             if (!in)
             {
                 printf("Not enough memory\n");
                 fclose(f);
                 free(f);
+
                 break;
             }
 
@@ -72,10 +70,11 @@ printf("4---");
             fread(in, 1, (size_t)insize, f);
             fclose(f);
             free(f);
-
+        
             // Calculate worst-case buffer size for output
-            outsize = (insize * 104 + 50) / 100 + 384;
-            out = (unsigned char*)malloc(outsize);
+            outsize = (insize * (104 + 50)) / (100 + 384);
+            out = (unsigned char*)malloc(outsize *sizeof(unsigned char*));
+
             if (!out)
             {
                 printf("Not enough memory\n");
@@ -84,13 +83,14 @@ printf("4---");
             }
 
             // Compress
-            outsize = huff.Huffman_Compress(in, out, insize);
+            outsize = huff.Huffman_Compress(in, out, (unsigned int)insize);
 
             // Output file statistics
             printf("Output file: %d bytes (%.1f%%)\n", outsize, 100.0f * (float)outsize / (float)insize);
 
             // Write to output file
             f = fopen(outname, "wb");
+
             if (!f)
             {
                 printf("Unable to open output file \"%s\".\n", outname);
@@ -101,9 +101,9 @@ printf("4---");
 
             fwrite(out, outsize, 1, f);
             fclose(f);
-            free(f);
-
+        
             // Free memory
+            free(f);
             free(in);
             free(out);
 
@@ -111,6 +111,7 @@ printf("4---");
             break;
 
         case '2': // Decompress File
+
             printf("Enter input file name: ");
             scanf("%255s", inname);
             printf("Enter output file name: ");
@@ -118,6 +119,7 @@ printf("4---");
 
             // Open input file
             f = fopen(inname, "rb");
+
             if (!f)
             {
                 printf("Unable to open input file \"%s\".\n", inname);
@@ -128,11 +130,11 @@ printf("4---");
             fseek(f, 0, SEEK_END);
             insize = ftell(f);
             fseek(f, 0, SEEK_SET);
-
             printf("Input file: %d bytes\n", insize);
 
             // Allocate memory for input
-            in = (unsigned char*)malloc(insize);
+            in = (unsigned char*)malloc(insize*(sizeof(unsigned char*)));
+
             if (!in)
             {
                 printf("Not enough memory\n");
@@ -148,7 +150,9 @@ printf("4---");
 
             // Allocate memory for output (example size, adjust as needed)
             outsize = insize * 2; // Adjust based on expected decompressed size
-            out = (unsigned char*)malloc(outsize);
+            out = (unsigned char*)calloc(outsize , sizeof(unsigned char*));
+            printf("Size of output buffer is: %d\n", sizeof(out));
+
             if (!out)
             {
                 printf("Not enough memory\n");
@@ -157,9 +161,10 @@ printf("4---");
             }
 
             // Decompress
-            huff.Huffman_Uncompress(in, out, insize, outsize);
-
+            huff.Huffman_Uncompress(in, out, (unsigned int)insize, (unsigned int)outsize);
             printf("Decompression complete.\n");
+
+            printf("the message contained in the file is: %s\n", out);
 
             // Write to output file
             f = fopen(outname, "wb");
@@ -171,11 +176,11 @@ printf("4---");
                 break;
             }
 
-            fwrite(out, outsize, 1, f);
+            fwrite(out, sizeof(char), outsize, f);       
             fclose(f);
-            free(f);
 
             // Free memory
+            free(f);           
             free(in);
             free(out);
 

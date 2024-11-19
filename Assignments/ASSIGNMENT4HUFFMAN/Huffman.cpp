@@ -1,4 +1,5 @@
 #include "Huffman.h"
+#include <stdio.h>
 /*************************************************************************
 * Name:        huffman.c
 * Author:      Marcus Geelnard
@@ -150,17 +151,14 @@ void Huff::_Huffman_WriteBits(huff_bitstream_t* stream, unsigned int x, unsigned
     unsigned int  bit, count;
     unsigned char* buf;
     unsigned int  mask;
-
     /* Get current stream state */
     buf = stream->BytePtr;
     bit = stream->BitPos;
-
     /* Append bits */
-    mask = 1 << (bit - 1); // used to be bits
-    for (count = 0; count < bit; ++count) // used to be bits
+    mask = 1 << (bits - 1); // used to be bits    
+    for (count = 0; count < bits; ++count) // used to be bits
     {
-        *buf = (*buf & (0xff ^ (1 << (7 - bit)))) +
-            ((x & mask ? 1 : 0) << (7 - bit));
+        *buf = (*buf & (0xff ^ (1 << (7 - bit)))) + ((x & mask ? 1 : 0) << (7 - bit));
         x <<= 1;
         bit = (bit + 1) & 7;
         if (!bit)
@@ -390,14 +388,12 @@ int Huff::Huffman_Compress(unsigned char* in, unsigned char* out, unsigned int i
 
     /* Initialize bitstream */
     _Huffman_InitBitstream(&stream, out);
-
     /* Calculate and sort histogram for input data */
     _Huffman_Hist(in, sym, insize);
-
     /* Build Huffman tree */
     _Huffman_MakeTree(sym, &stream);
-
     /* Sort histogram - first symbol first (bubble sort) */
+
     do
     {
         swaps = 0;
@@ -423,6 +419,7 @@ int Huff::Huffman_Compress(unsigned char* in, unsigned char* out, unsigned int i
 
     /* Calculate size of output data */
     total_bytes = (int)(stream.BytePtr - out);
+
     if (stream.BitPos > 0)
     {
         ++total_bytes;
@@ -450,34 +447,34 @@ int Huff::Huffman_Compress(unsigned char* in, unsigned char* out, unsigned int i
 void Huff::Huffman_Uncompress(unsigned char* in, unsigned char* out,
     unsigned int insize, unsigned int outsize)
 {
-    huff_decodenode_t nodes[MAX_TREE_NODES], * root, * node;
+    huff_decodenode_t nodes[MAX_TREE_NODES], *root, *node;
     huff_bitstream_t  stream;
     unsigned int      k, node_count;
-    unsigned char* buf;
+    unsigned char     *buf;
 
     /* Do we have anything to decompress? */
-    if (insize < 1) return;
+    if( insize < 1 ) return;
 
     /* Initialize bitstream */
-    _Huffman_InitBitstream(&stream, in);
+    _Huffman_InitBitstream( &stream, in );
 
     /* Recover Huffman tree */
     node_count = 0;
-    root = _Huffman_RecoverTree(nodes, &stream, &node_count);
+    root = _Huffman_RecoverTree( nodes, &stream, &node_count );
 
     /* Decode input stream */
     buf = out;
-    for (k = 0; k < outsize; ++k)
+    for( k = 0; k < outsize; ++ k )
     {
         /* Traverse tree until we find a matching leaf node */
         node = root;
-        while (node->Symbol < 0)
+        while( node->Symbol < 0 )
         {
-            /* Get next node */
-            if (_Huffman_ReadBit(&stream))
-                node = node->ChildB;
-            else
-                node = node->ChildA;
+        /* Get next node */
+        if( _Huffman_ReadBit( &stream ) )
+            node = node->ChildB;
+        else
+            node = node->ChildA;
         }
 
         /* We found the matching leaf node and have the symbol */

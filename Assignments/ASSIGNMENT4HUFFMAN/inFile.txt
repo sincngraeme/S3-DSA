@@ -1,2 +1,5 @@
-dfsgsdfgtsfgs;;iohjghggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;lseroiernvms
-hjkhjkhjkhjk;oiu;oiu;oiu;oiusdfgsdfgsdfgsdfgsdfgssdfgjkl;sdfgjkl;sdfgjkl;sdfgjkl;
+Huffman coding is a lossless data compression algorithm.
+The idea is to assign variable-length codes to input characters.
+
+Huffman coding is a lossless data compression algorithm.
+The idea is to assign variable-length codes to input characters.
