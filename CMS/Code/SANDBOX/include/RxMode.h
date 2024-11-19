@@ -6,7 +6,8 @@
 #define UNICODE
 
 #include "RS232Comm.h"
+#include <string.h>
 
-void RxAudio();
-void RxText(char* buf, int szBuf);
+int RxAudio(short* buf, long szBuf);
+int RxText(char* buf, int szBuf);
 void RxImage();
