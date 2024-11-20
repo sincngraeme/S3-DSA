@@ -20,7 +20,6 @@ void printMainMenu()
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
     printf("\tSettings\t\t(3)\n");
-    printf("\tDebug\t\t(4)\n");
     printf("\tExit at any time\t(CTRL + q)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -172,6 +171,7 @@ void printSettingsMenu()
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
+
 int settingsMode()
 {
     int setFlag = 0;
@@ -213,8 +213,13 @@ void printDebugMenu()
 
 int debugMode()
 {
+    Debug debug;
+    debug.debugGeneral();
+
+
+
     //char arguments[DB_ARG_MAX_SZ];                          // function number (none specified by default)
-    printDebugMenu();
+    //printDebugMenu();
     //fgets(arguments, DB_ARG_MAX_SZ, stdin);         // store argument list
     // parse string
     // lookup from fn list

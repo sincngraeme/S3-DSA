@@ -1,109 +1,138 @@
+#include <stdlib.h>
+#include <Windows.h>
 #include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <time.h>
+#include "menu.h"
 #include "debug.h"
 #include "message.h"
 #include "RS232Comm.h"
 #include "TxMode.h"
-#include "RxMode.h"
+#include "RxMode.h" 
 
-    void Debug::debugGeneral(int select)
+#define CTRL_KEY(k) ((k) & 0x1f)		// allows for processing ctrl inputs
+
+void Debug::debugGeneral()
+{   
+    RS232Flags::dFlag = 1;     // set the debug flag high
+    int debugFlag = 0;
+
+    while(!debugFlag)
     {
-        int debugFlag = 0;
+        printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+        printf("-------------------- Debug ------------------\n\n");
+        printf("Please select the function you want to test:\n\n");
+        printf("\tTxAudio\t\t(1)\n");
+        printf("\tTxText\t\t(2)\n");
+        printf("\tTxImage\t\t(3)\n");
+        printf("\tRxAudio\t\t(4)\n");
+        printf("\tRxText\t\t(5)\n");
+        printf("\tRxImage\t\t(6)\n");
+        printf("\tSetParameters\t(7)\n");
+        printf("\n\tBack\t\t(b)\n");
+        printf("\n----------------------------------------------\n");
 
-        while(!debugFlag)
+        while(!kbhit());                                                // Wait for keypress
+        switch(getch())                                                 // load keypress and select fn
         {
-
-            printf("Please select the function that you want to test:\n");
-            printf("1. TxAudio\n2. TxText\n3. TxImage\n4. RxAudio\n5. RxText\n6. RxImage\n7. SetParameters\n");
-            while(!kbhit());                                                // Wait for keypress
-            switch(getch())                                                 // load keypress and select fn
-            {
-                case '1':       /*dTxAudio();*/         break;
-                case '2':       dTxText();          break;                  
-                case '3':       /*dTxImage();*/         break;
-                case '4':       /*dRxAudio();*/         break;
-                case '5':       /*dRxText();*/          break;
-                case '6':       /*dRxImage();*/         break;
-                case '7':       /*dSetParameters();*/   break;
-                case 'b':       /*debugFlag = 1;*/      break;                  // set exit flag high
-                    
-                    
-            }
+            case '1':       /*dTxAudio();*/         break;
+            case '2':       dTxText();          break;                  
+            case '3':       /*dTxImage();*/         break;
+            case '4':       /*dRxAudio();*/         break;
+            case '5':       /*dRxText();*/          break;
+            case '6':       /*dRxImage();*/         break;
+            case '7':       /*dSetParameters();*/   break;
+            case 'b':       return;                  // set exit flag high
         }
     }
 
-        // void dTxAudio()
-        // {
-        //     TxAudio();
-        // }
+    return;
+}
 
-    int Debug::dTxText()
-    {
-        int numQuotes = fnumQuotes();									    // Number of quotes
-        long int* quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
-        int* quoteLengths = fquoteLength(numQuotes, quoteIndices);
-        char* messageA;
-        char* messageB;
+    // void dTxAudio()
+    // {
+    //     TxAudio();
+    // }
 
-        GetMessageFromFile(messageA, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);
+void Debug::dTxText()
+{   
+    srand(time(NULL));
+    printf("Testing text transmission.\n\n");              
+    char* timestamp[26];                                                //variable to handle timestamp read back from debugLog.
+    
+    int numQuotes = fnumQuotes();									    //number of quotes in FortuneCookies.txt (Quotes file).
+    long int* quoteIndices = fquoteIndices(numQuotes);					//index locations of the quotes.
+    int* quoteLengths = fquoteLength(numQuotes, quoteIndices);          //gets the lengths of all the quotes in the file.
+    char messageIn[MAX_QUOTE_LENGTH];                                   //buffer to hold outgoing transmit message.
+    char messageOut[strlen(messageIn) +26];                             //buffer to hold timestamped message read back from file.
+    char messageTx[strlen(messageOut)];
 
-        FILE* debugLog = fopen("DebugLog.txt", "w");
+    GetMessageFromFile(messageIn, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);   //get a test message from the Quotes file.
 
-        if (debugLog == NULL)
-            {
-                perror("Error opening file");
-                return 1;
-            }
+    wchar_t* debugPort = L"DebugLog.txt";
 
-        TxText(messageA, MAX_QUOTE_LENGTH, (wchar_t*)debugLog);
-        fclose(debugLog);
+    time_t timeNow = time(NULL);                                        //get current number of seconds since January 1, 1970.
+    struct tm *dateTime = localtime(&timeNow);                          //parses timeNow into clock and calendar units (hours, seconds, days, etc.).
+    *timestamp = asctime(dateTime);                                      //Write timestamp as a 26 char string.
 
-        fopen((const char*)debugLog, "r");
+    memcpy(messageTx, *timestamp, 26);
+    strcat(messageTx, "\n");
+    strcat(messageTx, messageIn);
 
-            if (debugLog == NULL)
-            {
-                perror("Error opening file");
-                return 1;
-            }
+    TxText(messageTx, 26 + strlen(messageIn), debugPort);  
+    CloseHandle(debugPort); 
 
-        fgets(messageB, MAX_QUOTE_LENGTH, debugLog);
-        fclose(debugLog);
-        free(debugLog);
+    // FILE* fp = fopen((const char*)debugPort, "r"); 
 
-        
+    // if (fp == NULL)                            // error checking
+    // {
+    //     perror("ERROR opening file");
+    //     return;
+    // }
 
-        if (strcmp(messageA, messageB) == 0)
-        {
-            printf("The test transmission was successful.\n");
-            printf("Transmitted message: %s\n", messageB);
-        }
+    // fgets(messageOut, sizeof(messageOut), fp);
 
-        else
-        {
-            printf("The test transmission failed.\n");
-        }
-    }   
+    // fclose(fp);
+    // free(fp);             
 
-        // int Debug::dTxImage()
-        // {
-        //     //TxImage();
-        // }
+    // if (strcmp(messageIn, messageOut) == 0)                                //compare the string sent to the file to the one retrieved from the file to see if they match.
+    // {
+    //     printf("The test transmission was successful.\n");              //confirm match.
+    //     printf("Transmitted message: %s\n", messageOut);                  //print retrieved string.
 
-        // int Debug::dRxAudio()
-        // {
-        //     //RxAudio();
-        // }
+    //     return;
+    // }
 
-        // int Debug::dRxText()
-        // {
-        //     //RxText();
-        // }
+    // else
+    // {
+    //     printf("The test transmission failed.\n");                      //deny match.
 
-        // int Debug::dRxImage()
-        // {
-        //     //RxImage();
-        // }
+    //     return;
+    // }
+}   
 
-        // int Debug::dSetParameters()
-        // {
-        //     //SetParameters();
-        // }
+    // int Debug::dTxImage()
+    // {
+    //     //TxImage();
+    // }
+
+    // int Debug::dRxAudio()
+    // {
+    //     //RxAudio();
+    // }
+
+    // int Debug::dRxText()
+    // {
+    //     //RxText();
+    // }
+
+    // int Debug::dRxImage()
+    // {
+    //     //RxImage();
+    // }
+
+    // int Debug::dSetParameters()
+    // {
+    //     //SetParameters();
+    // }
