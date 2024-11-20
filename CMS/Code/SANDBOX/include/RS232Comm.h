@@ -16,20 +16,26 @@ namespace RS232Flags {
 }
 class RS232Comm {  
     public:
+        int RS232CommErr = 0;                   // error flags
+        /*
+        *   RS232_NO_ERR = 0
+        *   RS232_WRITE_ERR = 1
+        *   RS232_READ_ERR = 2
+        *   RS232_CREATE_ERR = 4
+        *   RS232_INVALID_PARAMETER = 8
+        */
 
         RS232Comm(int flag);
         RS232Comm(wchar_t* portName, int baudRate, int numBits);   // Constructor of RS232Comm
         //RS232Comm(wchar_t* portName);
         //RS232Comm(wchar_t* portName, int baudRate, int numBits, HANDLE hCom);
         ~RS232Comm();                                   // Destructor of RS232Comm
-
-        // void dSetMode(int flag);
         // Tx/Rx functions are overloaded to handle multiple types
         void TxToPort(char* buf, DWORD szBuf);                      // Text
         void TxToPort(short* buf, DWORD szBuf);                     // Audio
         //void TxToPort(char* buf, DWORD szBuf);                    // Image
-        void RxFromPort(char* buf, DWORD szBuf);                    // Text
-        void RxFromPort(short* buf, DWORD szBuf);                   // Audio
+        DWORD RxFromPort(char* buf, DWORD szBuf);                    // Text
+        DWORD RxFromPort(short* buf, DWORD szBuf);                   // Audio
         //void RxFromPort(LPVOID buf, DWORD szBuf);                 // Image
 
     private:

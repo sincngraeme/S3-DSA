@@ -1,19 +1,16 @@
 /*
-*   Main.cpp
+*   Menumain.cpp
 *   By: Nigel Sinclair, Rita Yevtushenko, Fergus Page
 *   Desription: Menu Main file that tests all menu functions
 */
 
 #include "menu.h"
-#include "windows.h"
-
 
 int main()
 {
     int flag = 0;   // gets set low to exit program 
+    int ret = 0;
     int c;
-
-    Sleep(500);
 
     while(!flag)    // main program loop
     {
@@ -24,23 +21,21 @@ int main()
         switch(c)           // pick function
         {
             case '1':         // Send Menu
-                flag = TxMode();
+                ret = TxMode();
                 break;
             case '2':         // Recieve Menu
-                flag = RxMode();
+                ret = RxMode();
                 break;
             case '3':         // Settings Menu
-                flag = settingsMode();
+                ret = settingsMode();
                 break;
             case CTRL_KEY('d'):             // Hidden Debug Menu
-                flag = debugMode();
+                ret = debugMode();
                 break;
             case CTRL_KEY('q'):             // Asynchronous Quit
                 flag = 1;                   // set exit flag high
                 break;
         }
-        
         c = 0;                              // ensure that we are not filling with garbage
     }
-
 }

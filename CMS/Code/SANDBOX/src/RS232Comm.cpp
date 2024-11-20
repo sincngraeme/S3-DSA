@@ -27,7 +27,7 @@ RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)
 	nComRate = baudRate;
 	nComBits = numBits;
 
-	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);
+	initPort(&hCom, COMPORT, nComRate, nComBits, timeout);			// if initPort fails set the objects error flag to initPorts error Value
 }
 // // Debug Constructor to set flag high/low
 // RS232Comm::RS232Comm(int flag)
@@ -53,33 +53,30 @@ RS232Comm::~RS232Comm()
 // Transmit
 void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
 {
-	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)buf, szBuf);
 }
 void RS232Comm::TxToPort(short* buf, DWORD szBuf)	// Audio
 {
-	outputToPort(&hCom, (LPCVOID*)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)buf, szBuf);
 }
 // Recieve
-void RS232Comm::RxFromPort(char* buf, DWORD szBuf)
+DWORD RS232Comm::RxFromPort(char* buf, DWORD szBuf)
 {
-	inputFromPort(&hCom, buf, szBuf);
+	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
 }
-void RS232Comm::RxFromPort(short* buf, DWORD szBuf)
+DWORD RS232Comm::RxFromPort(short* buf, DWORD szBuf)
 {
-	inputFromPort(&hCom, buf, szBuf);
+	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
 }
 /**************************************************************** PRIVATE ***************************************************************/
 
 // Initializes the port and sets the communication parameters
 void RS232Comm::initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) 
 {
-	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
-	purgePort(hCom);									// Purges the COM port
-	if(!RS232Flags::dFlag)
-	{
-		SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
-		purgePort(hCom);
-	}
+	RS232CommErr |= createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT# and sets error flags
+	purgePort(hCom);												// Purges the COM port
+	RS232CommErr |= SetComParms(hCom, nComRate, nComBits, timeout);		// Uses the DCB structure to set up the COM port
+	purgePort(hCom);
 }
 
 // void RS232Comm::dinitPort(HANDLE* hCom, wchar_t* DBCOMPORT) 
@@ -115,9 +112,10 @@ void RS232Comm::outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf)
 	if (i == 0) {
 		printf("\nWrite Error: 0x%lx\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
-	}
-	else
+		RS232CommErr |= RS232_WRITE_ERR; 			// set write error flag high
+	} else {
 		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
+	}
 }
 
 // input function template for recieving data of any type
@@ -139,6 +137,7 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 	if (i == 0) {
 		printf("\nRead Error: 0x%lx\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
+		RS232CommErr |= RS232_READ_ERR;			// set error flags high
 	}
 	else
 		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
@@ -149,7 +148,7 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 // Sub functions called by above functions
 /**************************************************************************************/
 // Set the hCom HANDLE to point to a COM port, initialize for reading and writing, open the port and set securities
-void RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
+int RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from Wchar_t* (LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters)
 {
 	DWORD creationDisposition;
 	if(RS232Flags::dFlag)
@@ -171,9 +170,11 @@ void RS232Comm::createPortFile(HANDLE* hCom, wchar_t* COMPORT) 	// Changed from 
 	
 	if (*hCom == INVALID_HANDLE_VALUE) {
 		printf("\nFatal Error 0x%lx: Unable to open\n", GetLastError());
+		return RS232_CREATE_ERR;
 	}
 	else {
 		printf("\nCOM is now open\n");
+		return RS232_NO_ERR;
 	}
 }
 
@@ -184,7 +185,7 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	memset(&dcb, 0, sizeof(dcb));
 	dcb.DCBlength = sizeof(dcb);
 	if (!GetCommState(*hCom, &dcb))
-		return(0);
+		return(RS232_INVALID_PARAMETER);
 
 	// Set our own parameters from Globals
 	dcb.BaudRate = nComRate;						// Baud (bit) rate
@@ -192,13 +193,18 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	dcb.Parity = 0;									// No parity	
 	dcb.StopBits = ONESTOPBIT;						// One stop bit
 	if (!SetCommState(*hCom, &dcb))
-		return(0);
+		return(RS232_INVALID_PARAMETER);
 
 	// Set communication timeouts (SEE COMMTIMEOUTS structure in MSDN) - want a fairly long timeout
 	memset((void *)&timeout, 0, sizeof(timeout));
-	timeout.ReadIntervalTimeout = 500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
-	timeout.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	timeout.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
+	timeout.ReadIntervalTimeout = 50; 
+	//500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
+	timeout.ReadTotalTimeoutMultiplier = 1; 
+	//1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
+	timeout.ReadTotalTimeoutConstant = 5000; 
+	//5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
-	return 1;
+	return RS232_NO_ERR;
 }
+
+ 

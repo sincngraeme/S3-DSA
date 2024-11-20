@@ -7,6 +7,6 @@
 
 #include "RS232Comm.h"
 
-void TxAudio();
-void TxText(char* buf, int szBuf, wchar_t* port);
+void TxAudio(short* buf, long szBuf);
+void TxText(char* buf, int szBuf);
 void TxImage();

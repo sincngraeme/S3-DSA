@@ -3,12 +3,7 @@
 *   By: Nigel Sinclair, Rita Yevtushenko, Fergus Page
 *   Desription: Menu implementation that contains function definitions for rendering menus
 */
-
 #include "menu.h"
-#include "TxMode.h"
-#include "RxMode.h"
-#include "sound.h"
-#include "debug.h"
 
 /************** Function for printing main menu *************/
 
@@ -39,11 +34,7 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
-    char message[256];
-    // // BUFFERS
-    // extern short* iBigBuf;
-    // extern long  lBigBufSize;	// total number of samples
-    
+
     while(!TxFlag)
     {
         printTxMenu();
@@ -52,45 +43,23 @@ int TxMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
-            {
-                printf("Audio Mode:\t\t\t\tPress R to Record\n");
-                while(getch() != 'r');
-
-                // instantiate audio object
-                audio soundObj;                             // constructor initializes playback and recording                
-                // start recording
-                soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
-                soundObj.CloseRecording();
-                // playback recording 
-	            printf("\nPlaying recording from buffer\n");
-	            soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
-	            soundObj.ClosePlayback();													////End playback operation.
-                printf("send? (y|n):");
-
-                if (getchar() == 'y')
-                {
-                    TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);
-                    getchar();
-                }
+                /*TEMP*/printf("Audio Mode:");
+                /*TEMP*/getchar();
                 break;
-            }
             case '2':
-                printf("Text Mode:\n\nMessage: ");
-                fgets(message, sizeof(message), stdin);
-                TxText(message, 26);
+                /*TEMP*/printf("Text Mode:");
                 /*TEMP*/getchar();
                 break;
             case '3':
-                /*TEMP*/printf("Image Mode:\n");
+                /*TEMP*/printf("Image Mode:");
                 /*TEMP*/getchar();
                 break;
             case 'b':
                 TxFlag = 1;                     // set exit flag high
                 break;
-            case CTRL_KEY('q'): return 1;       // to break out of main program loop
+                
         }
     }
-    return 0;
 }
 // Renders recieve Menu
 void printRxMenu()
@@ -108,10 +77,6 @@ void printRxMenu()
 int RxMode()
 {
     int RxFlag = 0;
-    char message[26];
-    
-
-
 
     while(!RxFlag)
     {
@@ -121,44 +86,23 @@ int RxMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
-            {
-                printf("Audio Mode:\n\n");
-                // instantiate object
-                audio soundObj;                         // constructor initializes recording
-                // BUFFERS
-                //long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
-                short* iBigBufNew = (short*)malloc(soundObj.lBigBufSize*sizeof(short));		// buffer used for reading recorded sound from file
-                
-                if(!RxAudio(iBigBufNew, soundObj.lBigBufSize))    // recieve audio from port and only play from buffer if there were no errors
-                {   
-                    // playback recording 
-                    printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(iBigBufNew, soundObj.lBigBufSize);							// Play the recorded audio from the buffer.
-
-                    soundObj.ClosePlayback();                                                   // End playback operation.
-                }											            
+                /*TEMP*/printf("Audio Mode:");
                 /*TEMP*/getchar();
                 break;
-            }
             case '2':
-                /*TEMP*/printf("Text Mode:\n\n");
-                if(!RxText(message, 26))
-                {
-                    printf("\n%s\n", message);
-                }
+                /*TEMP*/printf("Text Mode:");
                 /*TEMP*/getchar();
                 break;
             case '3':
-                /*TEMP*/printf("Image Mode:\n");
+                /*TEMP*/printf("Image Mode:");
                 /*TEMP*/getchar();
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high
                 break;
-            case CTRL_KEY('q'): return 1;       // to break out of main program loop    
+                
         }
     }
-    return 0;
 }
 // Renders Settings Menu
 void printSettingsMenu()
@@ -171,7 +115,6 @@ void printSettingsMenu()
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
-
 int settingsMode()
 {
     int setFlag = 0;
@@ -198,10 +141,9 @@ int settingsMode()
             case 'b':
                 setFlag = 1;                    // set exit flag high
                 break;
-            case CTRL_KEY('q'): return 1;       // to break out of main program loop
+                
         }
     }
-    return 0;
 }
 // Renders Debug Menu
 void printDebugMenu()
@@ -209,23 +151,17 @@ void printDebugMenu()
     printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
     // list all fn
     printf("Enter function name and arguments to test:\n");
+ 
 }
-
 int debugMode()
 {
-    Debug debug;
-    debug.debugGeneral();
-
-
-
     //char arguments[DB_ARG_MAX_SZ];                          // function number (none specified by default)
-    //printDebugMenu();
+    printDebugMenu();
     //fgets(arguments, DB_ARG_MAX_SZ, stdin);         // store argument list
     // parse string
     // lookup from fn list
     // pass arguments and run fn
     /*TEMP*/getchar();
-    return 0;
 }
 // Renders quit menu
 void printQuitMenu()

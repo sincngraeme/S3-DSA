@@ -18,8 +18,11 @@ WFLAGS = -fpermissive
 #	for windows must be full file path within quotes (for .dll)
 #	for linux can use -l[file] (if the file has format libfile.so)
 LFLAGS = \
-"C:\Windows\System32\Ws2_32.dll" \
-"C:\Windows\System32\Winmm.dll"
+C:\Windows\System32\Ws2_32.dll\
+C:\Windows\System32\Winmm.dll
+
+
+#-lWs2_32 -lWinmm
 
 # define output directory
 OUTPUT	:= output

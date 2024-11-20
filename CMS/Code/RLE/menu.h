@@ -14,9 +14,6 @@
 const char setH[] = "\033[H";           // set to home position (0,0)
 const char clearto[] = "\033[0J";       // Clear Screen starting from cursor to end of screen
 const char clearfrom[] = "\033[1J";     // Clear Screen starting from home to cursor
-const char setBlnk[] = "\033[5m";      // set mode to blinking
-const char resetGraph[] = "\033[0m";    // reset colours/graphics mode
-
 
 /********** Function Declarations **********/
 
