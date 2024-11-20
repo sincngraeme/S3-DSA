@@ -120,7 +120,7 @@ int* fquoteLength(int numQuotes, long int* quoteIndices)
 } 
 
 // Function that gets a random quote from the FortuneCookies file 
-int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
+int GetMessageFromFile(char* buff, int iLen, int randNum, int numQuotes, long int* quoteIndices, int* quoteLengths) 
 {
     int mLen = quoteLengths[randNum];           // number of characters to read from file
 
@@ -135,7 +135,7 @@ int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int n
     fseek(fp, quoteIndices[randNum], SEEK_SET);         // set file pointer to begining then offset by file index at randNum array index
     fread(buff, sizeof(char), mLen, fp);                // read message into buff as long as there is space and message
     buff[mLen] = '\0';                                  // make the last read character (either the last of the quote, or the last place in the buffer) a null terminating character
-
+    
     if (mLen < iLen)                                        // if the length of the quote is less than the length of the output buffer,
     {
         for (int diff = iLen - mLen; diff >= -1; diff--)    // initialize a variable to represent the difference in length, and decrement it ever iteration of the for loop, as long as the difference is greater than or equal to -1
@@ -149,6 +149,7 @@ int GetMessageFromFile(char buff[MAX_QUOTE_LENGTH], int iLen, int randNum, int n
 
     return 0;
 }
+
 
 //STUFF FROM PART B
 
