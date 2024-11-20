@@ -87,23 +87,6 @@ struct huff_decodenode_struct {
             unsigned int Bits;
         } huff_sym_t;
 
-        typedef struct huff_encodenode_struct huff_encodenode_t;
-
-        struct huff_encodenode_struct
-        {
-            huff_encodenode_t *ChildA, *ChildB;
-            int Count;
-            int Symbol;
-        };
-
-        typedef struct huff_decodenode_struct huff_decodenode_t;
-
-        struct huff_decodenode_struct
-        {
-            huff_decodenode_t *ChildA, *ChildB;
-            int Symbol;
-        };
-
         static void _Huffman_InitBitstream(huff_bitstream_t* stream, unsigned char* buf);
         static unsigned int _Huffman_ReadBit(huff_bitstream_t* stream);
         static unsigned int _Huffman_Read8Bits(huff_bitstream_t* stream);

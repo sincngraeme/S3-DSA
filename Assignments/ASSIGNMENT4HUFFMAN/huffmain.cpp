@@ -71,7 +71,7 @@ int main()
         
             // Calculate worst-case buffer size for output
             outsize = insize * (104 + 50) / (100 + 384);
-            out = (unsigned char*)malloc(outsize *sizeof(unsigned char*));
+            out = (unsigned char*)calloc(outsize, sizeof(unsigned char*));
 
             if (!out)
             {
@@ -147,7 +147,7 @@ int main()
             free(f);
 
             // Allocate memory for output (example size, adjust as needed)
-            outsize = insize / 0.803; // Adjust based on expected decompressed size
+            outsize = 251001;                                                               // Set to original message size, from info in the header.
             out = (unsigned char*)calloc(outsize, sizeof(unsigned char*));
             printf("Size of output buffer is: %d\n", sizeof(out));
 
