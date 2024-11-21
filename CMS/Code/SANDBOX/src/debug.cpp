@@ -2,9 +2,7 @@
 #include "debug.h"
 #include "message.h"
 #include "RS232Comm.h"
-#include "TxMode.h"
-#include "RxMode.h"
-
+#include "TxRx.h"
     void Debug::debugGeneral(int select)
     {
         int debugFlag = 0;

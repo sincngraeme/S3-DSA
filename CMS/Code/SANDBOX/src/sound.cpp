@@ -14,7 +14,32 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 // // BUFFERS
 // short iBigBuf[SAMPLES_SEC * RECORD_TIME];
 // long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
+/* *************************************** Wrappers ******************************************** */
+soundbuf record()
+{
+	printf("Audio Mode:\t\t\tPress R to Record\n");
+    
+    while(getch() != 'r');
 
+    // instantiate audio object
+    audio soundObj;                             // constructor initializes playback and recording                
+    // start recording
+    soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
+    soundObj.CloseRecording();
+    // playback recording 
+    printf("\nPlaying recording from buffer\n");
+    soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
+    soundObj.ClosePlayback();													////End playback operation.
+
+	/* Storing Recording as file if Desired */
+
+	soundbuf output;
+	output.outBuf = soundObj.iBigBuf;
+	output.outBufSize = soundObj.lBigBufSize;
+
+	return output;
+    
+}
 /* PLAYBACK FUNCTIONS */
 /* ********************************************************************************************* */
 audio::audio()

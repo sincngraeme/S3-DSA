@@ -5,8 +5,7 @@
 */
 
 #include "menu.h"
-#include "TxMode.h"
-#include "RxMode.h"
+#include "TxRx.h"
 #include "sound.h"
 #include "debug.h"
 
@@ -54,31 +53,28 @@ int TxMode()
         {
             case '1':
             {
-                printf("Audio Mode:\t\t\t\tPress R to Record\n");
-                while(getch() != 'r');
-
-                // instantiate audio object
-                audio soundObj;                             // constructor initializes playback and recording                
-                // start recording
-                soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
-                soundObj.CloseRecording();
-                // playback recording 
-	            printf("\nPlaying recording from buffer\n");
-	            soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
-	            soundObj.ClosePlayback();													////End playback operation.
-                printf("send? (y|n):");
-
+                soundbuf recording = record();													////End playback operation.
+                cin.ignore();
+                cout << "send? (y|n): ";
                 if (getchar() == 'y')
                 {
-                    TxAudio(soundObj.iBigBuf, soundObj.lBigBufSize);
-                    getchar();
+                    wcin.ignore();
+                    cout << "COM PORT: ";
+                    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
+                    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+                    TxAudio(recording.outBuf, recording.outBufSize, comport);
+                    system("pause");
                 }
                 break;
             }
             case '2':
                 printf("Text Mode:\n\nMessage: ");
-                fgets(message, sizeof(message), stdin);
-                TxText(message, 26);
+                cin.getline(message, sizeof(message));
+                cout << "\nCOM PORT: ";
+                wchar_t comport[6];                                         // declare wchar_t* buffer for comport
+                //wcin.ignore();
+                wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+                TxText(message, strlen(message) + 1, comport);
                 /*TEMP*/getchar();
                 break;
             case '3':
@@ -108,11 +104,10 @@ void printRxMenu()
 // Open Recieve Menu Mode
 int RxMode()
 {
-    int RxFlag = 0;
-    char message[26];
-    
-
-
+    int RxFlag = 0;  
+    char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
+    short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
+    long nBytes = 0;  
 
     while(!RxFlag)
     {
@@ -124,30 +119,38 @@ int RxMode()
             case '1':
             {
                 printf("Audio Mode:\n\n");
+                
+                cout << "COM PORT: ";
+                wchar_t comport[6];                               // declare wchar_t* buffer for comport
+                wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
                 // instantiate object
                 audio soundObj;                         // constructor initializes recording
                 // BUFFERS
-                //long lBigBufNewSize = soundObj.lBigBufSize*sizeof(short);
-                short* iBigBufNew = (short*)malloc(soundObj.lBigBufSize*sizeof(short));		// buffer used for reading recorded sound from file
-                
-                if(!RxAudio(iBigBufNew, soundObj.lBigBufSize))    // recieve audio from port and only play from buffer if there were no errors
+                if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(iBigBufNew, soundObj.lBigBufSize);							// Play the recorded audio from the buffer.
+                    soundObj.PlayBuffer(aInBuf, nBytes);							// Play the recorded audio from the buffer.
 
                     soundObj.ClosePlayback();                                                   // End playback operation.
-                }											            
-                /*TEMP*/getchar();
+                }		
+                free(aInBuf);									            
+                system("pause");
                 break;
             }
             case '2':
                 /*TEMP*/printf("Text Mode:\n\n");
-                if(!RxText(message, 26))
+
+                cout << "COM PORT: ";
+                wchar_t comport[6];                                 // declare wchar_t* buffer for comport
+                wcin.getline(comport, sizeof(comport));
+                
+                if(!RxText(&tInBuf, &nBytes , comport))                 
                 {
-                    printf("\n%s\n", message);
+                    printf("\n%s\n", tInBuf);
                 }
-                /*TEMP*/getchar();
+                free(tInBuf);
+                Sleep(5000);
                 break;
             case '3':
                 /*TEMP*/printf("Image Mode:\n");

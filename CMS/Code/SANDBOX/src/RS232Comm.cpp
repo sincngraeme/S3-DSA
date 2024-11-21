@@ -34,22 +34,42 @@ RS232Comm::~RS232Comm()
 	CloseHandle(hCom);
 }
 // Transmit
-void RS232Comm::TxToPort(char* buf, DWORD szBuf)	// text
+void RS232Comm::TxToPort(pcomhdr header, char* buf)	// text
 {
-	outputToPort(&hCom, (LPCVOID)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)header, sizeof(header));					// send header
+	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send text
 }
-void RS232Comm::TxToPort(short* buf, DWORD szBuf)	// Audio
+void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
 {
-	outputToPort(&hCom, (LPCVOID)buf, szBuf);
+	outputToPort(&hCom, (LPCVOID)header, sizeof(header));					// send header
+	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send Audio
 }
 // Recieve
-DWORD RS232Comm::RxFromPort(char* buf, DWORD szBuf)
+DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)
 {
-	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
+	DWORD ret;
+
+	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// recieve header
+	*buf = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
+	if(*buf == NULL)		// malloc failed
+	{
+		printf("ERROR recieving from port: not enough space\n");
+		return 0;
+	} else {
+		ret = inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);
+		return ret;			// return number of bytes read from inputFromPort unless memory could not be allocated
+	}
 }
-DWORD RS232Comm::RxFromPort(short* buf, DWORD szBuf)
+DWORD RS232Comm::RxFromPort(pcomhdr header, short** buf)
 {
-	return (inputFromPort(&hCom, (LPVOID)buf, szBuf));			// return number of bytes read from inputFromPort
+	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// wait until we receive header
+	*buf = (short*)malloc(header->payloadSize * sizeof(short));					// allocate space according to payload size in header
+	if(*buf == NULL)		// malloc failed
+	{
+		printf("ERROR recieving from port: not enough space\n");
+		return 0;
+	}
+	return (inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize));			// return number of bytes read from inputFromPort unless memory could not be allocated
 }
 /**************************************************************** PRIVATE ***************************************************************/
 
@@ -114,8 +134,12 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 		RS232CommErr |= RS232_READ_ERR;			// set error flags high
 	}
-	else
+	else if (NumberofBytesRead == 0)
+	{
+		printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
+	} else {
 		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
+	}
 
 	return(NumberofBytesRead);
 }

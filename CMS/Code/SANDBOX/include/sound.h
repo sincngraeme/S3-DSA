@@ -9,6 +9,7 @@
 #pragma once
 
 #include <windows.h>					// Contains WAVEFORMATEX structure
+#include <conio.h>
 
 // CONSTANTS - SET RECORDING TIME AND RATE
 #define	DEFAULT_NSAMPLES	4000	////Default number of samples.
@@ -17,6 +18,12 @@
 #define SAMPLES_SEC			8000	// number of samples per second
 #define	NFREQUENCIES		96		// number of frequencies used - leave this alone
 
+struct soundbuf {
+	short* outBuf;			
+	long outBufSize;
+};
+
+soundbuf record();
 
 // FUNCTION PROTOTYPES
 /* ************************ */

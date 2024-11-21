@@ -17,6 +17,26 @@
 #define RS232_CREATE_ERR  4
 #define RS232_INVALID_PARAMETER 8
 
+struct comhdr {
+    // short int sid;
+    // short int rid;
+    // char priority; 
+    // short int seqNum;
+    long int payloadSize;		// Number of bytes in payload after this header
+    char cFlags;                
+    // 0b 00 00 00 00 
+    //    ^  ^  ^  ^
+    //    |  |  |  Error Correction type
+    //    |  |  Encryption type
+    //    |  Compression type
+    //    Payload type
+    //
+    // 00: Text, 01: Audio, 10: Image etc.
+    // 00: None, 01: XOR,	10: Vigenere	11: Both
+    // 00: None, 01: RLE,	10: Huffman,	11: Both
+};
+typedef comhdr* pcomhdr;
+
 class RS232Comm {
     public:
         int RS232CommErr = 0;                   // error flags
@@ -28,14 +48,16 @@ class RS232Comm {
         *   RS232_INVALID_PARAMETER = 8
         */
 
+        comhdr header;          // instance of struct
+
         RS232Comm(wchar_t* portName, int baudRate, int numBits);   // Constructor of RS232Comm
         ~RS232Comm();                                   // Destructor of RS232Comm
         // Tx/Rx functions are overloaded to handle multiple types
-        void TxToPort(char* buf, DWORD szBuf);                      // Text
-        void TxToPort(short* buf, DWORD szBuf);                     // Audio
+        void TxToPort(pcomhdr header, char* buf);                      // Text
+        void TxToPort(pcomhdr header, short* buf);                     // Audio
         //void TxToPort(char* buf, DWORD szBuf);                    // Image
-        DWORD RxFromPort(char* buf, DWORD szBuf);                    // Text
-        DWORD RxFromPort(short* buf, DWORD szBuf);                   // Audio
+        DWORD RxFromPort(pcomhdr header, char** buf);                    // Text
+        DWORD RxFromPort(pcomhdr header, short** buf);                   // Audio
         //void RxFromPort(LPVOID buf, DWORD szBuf);                 // Image
 
     private:
