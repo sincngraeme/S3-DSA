@@ -130,7 +130,7 @@ int RxMode()
                 {   
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(aInBuf, nBytes);							// Play the recorded audio from the buffer.
+                    soundObj.PlayBuffer(aInBuf, nBytes);							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
 
                     soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
