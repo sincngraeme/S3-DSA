@@ -135,7 +135,7 @@ int RxMode()
                     soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
                 free(aInBuf);									            
-                system("pause");
+                getchar();
                 break;
             }
             case '2':
@@ -150,7 +150,7 @@ int RxMode()
                     printf("\n%s\n", tInBuf);
                 }
                 free(tInBuf);
-                Sleep(5000);
+                getchar();
                 break;
             case '3':
                 /*TEMP*/printf("Image Mode:\n");

@@ -36,7 +36,7 @@ RS232Comm::~RS232Comm()
 // Transmit
 void RS232Comm::TxToPort(pcomhdr header, char* buf)	// text
 {
-	outputToPort(&hCom, (LPCVOID)header, sizeof(header));					// send header
+	outputToPort(&hCom, (LPCVOID)header, sizeof(comhdr));					// send header
 	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send text
 }
 void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
@@ -47,7 +47,7 @@ void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
 // Recieve
 DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)
 {
-	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(header))) return -1;			// recieve header - if nothing was read than return -1 to indicate the error was in recieving the buffer
+	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(comhdr)));			// recieve header - if nothing was read than return -1 to indicate the error was in recieving the buffer
 	*buf = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
 	if(*buf == NULL)		// malloc failed
 	{
@@ -58,7 +58,7 @@ DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)
 }
 DWORD RS232Comm::RxFromPort(pcomhdr header, short** buf)
 {
-	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(header))) return -1;						// wait until we receive header
+	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// wait until we receive header
 	*buf = (short*)malloc(header->payloadSize);					// allocate space according to payload size in header
 	if(*buf == NULL)		// malloc failed
 	{
@@ -187,9 +187,9 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	memset((void *)&timeout, 0, sizeof(timeout));
 	timeout.ReadIntervalTimeout = 50; 
 	//500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
-	timeout.ReadTotalTimeoutMultiplier = 1; 
+	timeout.ReadTotalTimeoutMultiplier = 0; 
 	//1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	timeout.ReadTotalTimeoutConstant = 5000; 
+	timeout.ReadTotalTimeoutConstant = 0; 
 	//5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
 	return RS232_NO_ERR;
