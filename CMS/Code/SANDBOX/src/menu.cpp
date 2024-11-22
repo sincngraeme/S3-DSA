@@ -40,10 +40,9 @@ int TxMode()
 {
     int TxFlag = 0;
     char message[256];
-    // // BUFFERS
-    // extern short* iBigBuf;
-    // extern long  lBigBufSize;	// total number of samples
-    
+    wstring comportS;
+    wchar_t* comport;
+
     while(!TxFlag)
     {
         printTxMenu();
@@ -60,8 +59,8 @@ int TxMode()
                 {
                     wcin.ignore();
                     cout << "COM PORT: ";
-                    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
-                    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+                    comport = &comportS[0];                    // wchar_t* buffer for comport must be a c string
+                    wcin >> comportS;                                    // wide character version of cin for getting user input
                     TxAudio(recording.outBuf, recording.outBufSize * sizeof(short), comport);
                     system("pause");
                 }
@@ -71,9 +70,8 @@ int TxMode()
                 printf("Text Mode:\n\nMessage: ");
                 cin.getline(message, sizeof(message));
                 cout << "\nCOM PORT: ";
-                wchar_t comport[6];                                         // declare wchar_t* buffer for comport
-                //wcin.ignore();
-                wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+                wcin >> comportS;                                    // wide character version of cin for getting user input
+                comport = &comportS[0];                    // wchar_t* buffer for comport must be a c string          // wide version of cin for user input
                 TxText(message, strlen(message) + 1, comport);
                 /*TEMP*/getchar();
                 break;
@@ -108,6 +106,8 @@ int RxMode()
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
     long nBytes = 0;  
+    wstring comportS;                                 
+    wchar_t* comport;
 
     while(!RxFlag)
     {
@@ -121,8 +121,8 @@ int RxMode()
                 printf("Audio Mode:\n\n");
                 
                 cout << "COM PORT: ";
-                wchar_t comport[6];                               // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
+                wcin >> comportS;                                    // wide character version of cin for getting user input
+                comport = &comportS[0];                    // wchar_t* buffer for comport must be a c string
                 // instantiate object
                 audio soundObj;                         // constructor initializes recording
                 // BUFFERS
@@ -139,18 +139,17 @@ int RxMode()
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:\n\n");
-
-                cout << "COM PORT: ";
-                wchar_t comport[6];                                 // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));
+                cout << "Text Mode:\n\nCOM PORT: ";
+                wcin >> comportS;                                    // wide character version of cin for getting user input
+                comport = &comportS[0];                    // wchar_t* buffer for comport must be a c string
                 
                 if(!RxText(&tInBuf, &nBytes , comport))                 
                 {
                     printf("\n%s\n", tInBuf);
                 }
                 free(tInBuf);
-                Sleep(5000);
+                //Sleep(5000);
+                system("pause");
                 break;
             case '3':
                 /*TEMP*/printf("Image Mode:\n");
