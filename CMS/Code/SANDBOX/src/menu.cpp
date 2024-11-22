@@ -156,10 +156,12 @@ int RxMode()
                     {
                         queue.addQueueNode(tInBuf, nBytes);     //add the frame to the queue
                         free(tInBuf);                           //free the buffer
-                        void* queueOut;
-                        queueOut = queue.popQueueNode();  //pull the queue node pointer out of the queue
-                        printf("\n%s\n", (char*)queueOut);             //print out the received frame
-                        free(queueOut);                         //free the buffer
+                        //char* queueOut;
+                        //queueOut = (char*)queue.popQueueNode();  //pull the queue node pointer out of the queue and print out the received frame
+                        printf("\n%s\n", (char*)queue.popQueueNode()); 
+                        //free(queueOut);                         //free the buffer
+                        printf("Printed from the queue.\n");
+                        while(getch());
                         break;                                  
                     }
 
@@ -167,6 +169,8 @@ int RxMode()
                     {
                         printf("\n%s\n", tInBuf);               //print the frame contents
                         free(tInBuf);                           //free the buffer
+                        printf("Printed from the port.\n");
+                        while(getch());
                         break;                                 
                     }
 
