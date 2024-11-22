@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "queue.h"
 
 #define RS232_NO_ERR    0
 #define RS232_WRITE_ERR 1
@@ -58,7 +59,7 @@ class RS232Comm {
         //void TxToPort(char* buf, DWORD szBuf);                    // Image
         DWORD RxFromPort(pcomhdr header, char** buf);                    // Text
         DWORD RxFromPort(pcomhdr header, short** buf);                   // Audio
-        DWORD RxFromPort(pcomhdr header, void* buf);            //queue
+        DWORD RxFromPort(pcomhdr header, Queue queue, int queueFlag, long* nBytes);            //queue
         //void RxFromPort(LPVOID buf, DWORD szBuf);                 // Image
 
     private:

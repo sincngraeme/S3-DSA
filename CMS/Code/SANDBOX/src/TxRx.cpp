@@ -6,6 +6,7 @@
 #define UNICODE
 
 #include "TxRx.h"
+#include "queue.h"
 
 
 /******************************************** Transmitting *******************************************/
@@ -64,22 +65,20 @@ int RxAudio(short** buf, long* nbytes, wchar_t* comport)
 }                          
 
 // function for recieving text
-int RxText(char** buf, long* nbytes, wchar_t* comport)
+int RxText(wchar_t* comport, Queue queue, int queueFlag, long* nBytes)
 {
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings
     
-    if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
+    if((*nBytes = portObj.RxFromPort(&portObj.header, queue, queue.queueFlag, nBytes)) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
     {
-        cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";
+        cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nBytes << " bytes read.";
         return 1;                 // recieve from port
     }
-    else if(*nbytes != portObj.header.payloadSize)
+    else if(*nBytes != portObj.header.payloadSize)
     {
-        cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
+        cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nBytes << " bytes read.";
         return 1;
-    }
-
-    else return 0;
+    }    
 }
 
 // function for transmitting images

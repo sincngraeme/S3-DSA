@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "RS232Comm.h"
+#include "queue.h"
 
 #define EX_FATAL 1
 
@@ -45,20 +46,26 @@ void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
 	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send Audio
 }
 // Recieve
-DWORD RS232Comm::RxFromPort(pcomhdr header, void* buf)
+DWORD RS232Comm::RxFromPort(pcomhdr header, Queue queue, int queueFlag, long* nBytes)
 {
 	DWORD ret;
 
 	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// recieve header
-	buf = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
-	if(buf == NULL)		// malloc failed
+	char* payload = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
+
+	if(header->payloadSize == NULL)		// malloc failed
 	{
 		printf("ERROR recieving from port: not enough space\n");
 		return 0;
-	} else {
-		ret = inputFromPort(&hCom, (LPVOID)(buf), header->payloadSize);
+	}
+	
+	else
+	{
+		ret = inputFromPort(&hCom, (LPVOID)(payload), header->payloadSize);
+		queue.addQueueNode(header, payload);
 		return ret;			// return number of bytes read from inputFromPort unless memory could not be allocated
 	}
+
 }
 
 DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)

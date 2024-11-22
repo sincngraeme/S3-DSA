@@ -106,7 +106,7 @@ void printRxMenu()
 int RxMode()
 {
     Queue queue;
-    int queueFlag = 1;      //reception queue release flag
+    queue.queueFlag = 1;      //reception queue release flag
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
@@ -149,31 +149,11 @@ int RxMode()
                 wchar_t comport[6];                             //declare wchar_t* buffer for comport
                 wcin.getline(comport, sizeof(comport));
                 
-                if (!RxText(&tInBuf, &nBytes , comport))         //check for success receiving      
+                if (!RxText(comport, queue, queue.queueFlag, &nBytes))         //check for success receiving      
                 {
 
-                    if(queueFlag)                               //if queueFlag is set high
-                    {
-                        queue.addQueueNode(tInBuf, nBytes);     //add the frame to the queue
-                        free(tInBuf);                           //free the buffer
-                        //char* queueOut;
-                        //queueOut = (char*)queue.popQueueNode();  //pull the queue node pointer out of the queue and print out the received frame
-                        printf("\n%s\n", (char*)queue.popQueueNode()); 
-                        //free(queueOut);                         //free the buffer
-                        printf("Printed from the queue.\n");
-                        while(getch());
-                        break;                                  
-                    }
-
-                    else if(!queueFlag)                         //if queueFlag is set low
-                    {
-                        printf("\n%s\n", tInBuf);               //print the frame contents
-                        free(tInBuf);                           //free the buffer
-                        printf("Printed from the port.\n");
-                        while(getch());
-                        break;                                 
-                    }
-
+                    printf("\n%s\n", tInBuf);               //print the frame contents
+                    free(tInBuf);  
                 }
 
                 free(tInBuf);

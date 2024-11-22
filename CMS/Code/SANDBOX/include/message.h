@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "RS232Comm.h"
+
 #define MAX_QUOTE_LENGTH 140	// define the maximum buffer size
 #define QUEUE_SIZE 5			// define the size of the queue
 
@@ -27,6 +29,7 @@ typedef struct messageitem messageItem; 	// typedef for contents of nodes
 typedef messageNode* messagelink;			// typedef for pointers of nodes
 
 struct messageitem {				// item structure
+	comhdr header;
 	void* message;			// message
 	long length;
 	short int sid;			// Sender ID

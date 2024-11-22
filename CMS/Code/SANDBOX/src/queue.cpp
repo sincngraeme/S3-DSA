@@ -9,13 +9,14 @@ Queue::Queue()
 	InitQueue();
 }
 
-void* Queue::addQueueNode(void* frame, long length)
+void* Queue::addQueueNode(pcomhdr header, void* payload)
 {
     messagelink p;                                          //initialize queue node
     p = (messagelink)malloc(sizeof(messageNode));           //allocate space for node
-    p->Data.message = frame;                                //copy the received frame data into the message buffer in the queue node
-    p->Data.length = length;                                //store the length of the message in the struct
-    if(frame == NULL)				                        //check to see if the frame contains any data
+    p->Data.header = *header;
+    p->Data.message = payload;                              //copy the received frame data into the message buffer in the queue node
+    p->Data.length = header->payloadSize;               //store the length of the message in the struct
+    if(p->Data.length == NULL)		                //check to see if the frame contains any data
 		{
 			free(p);										//if no data, free the memory
 			return NULL;								    //we dont want to add if there is an error

@@ -1,11 +1,16 @@
 #pragma once
+
+#include "RS232Comm.h"
+#include "message.h"
+
 class Queue
 {
-private:
+    private:
 
-public:
+    public:
+        Queue();
+        int queueFlag;
+        void* addQueueNode(pcomhdr header, void* payload);
+        void* popQueueNode();
 
-Queue();
-void* addQueueNode(void* frame, long length);
-void* popQueueNode();
 };

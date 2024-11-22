@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string.h>
 #include <conio.h>
+#include "queue.h"
 
 using namespace std;
 
@@ -21,5 +22,5 @@ void TxText(char* buf, int szBuf, wchar_t* comport);
 void TxImage();
 
 int RxAudio(short** buf, long* nbytes, wchar_t* comport);
-int RxText(char** buf, long* nbytes, wchar_t* comport);
+int RxText(wchar_t* comport, Queue queue, int queueFlag, long* nBytes );
 void RxImage();
