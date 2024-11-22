@@ -62,7 +62,7 @@ int TxMode()
                     cout << "COM PORT: ";
                     wchar_t comport[6];                                         // declare wchar_t* buffer for comport
                     wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-                    TxAudio(recording.outBuf, recording.outBufSize, comport);
+                    TxAudio(recording.outBuf, recording.outBufSize * sizeof(short), comport);
                     system("pause");
                 }
                 break;
@@ -130,7 +130,7 @@ int RxMode()
                 {   
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(aInBuf, nBytes);							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
+                    soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
 
                     soundObj.ClosePlayback();                                                   // End playback operation.
                 }		

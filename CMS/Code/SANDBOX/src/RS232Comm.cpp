@@ -47,23 +47,19 @@ void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
 // Recieve
 DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)
 {
-	DWORD ret;
-
-	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// recieve header
+	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(header))) return -1;			// recieve header - if nothing was read than return -1 to indicate the error was in recieving the buffer
 	*buf = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
 	if(*buf == NULL)		// malloc failed
 	{
 		printf("ERROR recieving from port: not enough space\n");
 		return 0;
-	} else {
-		ret = inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);
-		return ret;			// return number of bytes read from inputFromPort unless memory could not be allocated
 	}
+	return inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);			// return number of bytes read from inputFromPort unless memory could not be allocated			
 }
 DWORD RS232Comm::RxFromPort(pcomhdr header, short** buf)
 {
-	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// wait until we receive header
-	*buf = (short*)malloc(header->payloadSize * sizeof(short));					// allocate space according to payload size in header
+	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(header))) return -1;						// wait until we receive header
+	*buf = (short*)malloc(header->payloadSize);					// allocate space according to payload size in header
 	if(*buf == NULL)		// malloc failed
 	{
 		printf("ERROR recieving from port: not enough space\n");
