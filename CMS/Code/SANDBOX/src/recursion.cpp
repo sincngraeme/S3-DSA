@@ -37,6 +37,8 @@ link deleteR(link parent, link child, Item v) {
 	else {
 		deleteR(child, child->pNext, v);
 	}
+	
+	return 0;
 }
 
 void visit(link h) {

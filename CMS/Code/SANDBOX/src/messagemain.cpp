@@ -28,7 +28,7 @@ int messagemain()
 	// Create & Add Nodes numbered 1 to 10 to the Queue
 	for (i = 0; i < 10; i++) {
 		p = (messagelink)malloc(sizeof(messageNode)); 
-		result = GetMessageFromFile(p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
+		result = GetMessageFromFile((char*)p->Data.message, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths);  // Later replace testBuff with 'node->msg.buff' which is a member of a node struct 
 		p->Data.seqNum = i;                     
 		(*p).Data.sid = i;
 		

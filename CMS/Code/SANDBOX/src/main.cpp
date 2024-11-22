@@ -9,9 +9,9 @@
 
 int main()
 {
-    int flag = 0;   // gets set low to exit program 
+    int flag = 0;           // gets set low to exit program 
     int c;
-
+    
     Sleep(500);
 
     while(!flag)    // main program loop

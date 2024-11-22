@@ -58,6 +58,7 @@ class RS232Comm {
         //void TxToPort(char* buf, DWORD szBuf);                    // Image
         DWORD RxFromPort(pcomhdr header, char** buf);                    // Text
         DWORD RxFromPort(pcomhdr header, short** buf);                   // Audio
+        DWORD RxFromPort(pcomhdr header, void* buf);            //queue
         //void RxFromPort(LPVOID buf, DWORD szBuf);                 // Image
 
     private:

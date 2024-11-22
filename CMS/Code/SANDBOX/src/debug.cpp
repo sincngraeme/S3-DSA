@@ -79,6 +79,8 @@
         {
             printf("The test transmission failed.\n");
         }
+        
+        return 0;
     }   
 
         // int Debug::dTxImage()

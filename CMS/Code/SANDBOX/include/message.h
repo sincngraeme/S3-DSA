@@ -27,7 +27,8 @@ typedef struct messageitem messageItem; 	// typedef for contents of nodes
 typedef messageNode* messagelink;			// typedef for pointers of nodes
 
 struct messageitem {				// item structure
-	char message[iLength];	// message
+	void* message;			// message
+	long length;
 	short int sid;			// Sender ID
 	short int rid;			// Receiver ID 
 	char priority;			// Priority of message

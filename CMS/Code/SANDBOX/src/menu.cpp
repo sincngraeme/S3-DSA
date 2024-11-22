@@ -8,6 +8,7 @@
 #include "TxRx.h"
 #include "sound.h"
 #include "debug.h"
+#include "queue.h"
 
 /************** Function for printing main menu *************/
 
@@ -19,7 +20,7 @@ void printMainMenu()
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
     printf("\tSettings\t\t(3)\n");
-    printf("\tDebug\t\t(4)\n");
+    //printf("\tPlay From Queue\t\t(4)\n");
     printf("\tExit at any time\t(CTRL + q)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -104,6 +105,8 @@ void printRxMenu()
 // Open Recieve Menu Mode
 int RxMode()
 {
+    Queue queue;
+    int queueFlag = 0;      //reception queue release flag
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
@@ -139,19 +142,40 @@ int RxMode()
                 break;
             }
             case '2':
+            {
                 /*TEMP*/printf("Text Mode:\n\n");
 
                 cout << "COM PORT: ";
-                wchar_t comport[6];                                 // declare wchar_t* buffer for comport
+                wchar_t comport[6];                             //declare wchar_t* buffer for comport
                 wcin.getline(comport, sizeof(comport));
                 
-                if(!RxText(&tInBuf, &nBytes , comport))                 
+                if (!RxText(&tInBuf, &nBytes , comport))         //check for success receiving      
                 {
-                    printf("\n%s\n", tInBuf);
+
+                    if(queueFlag)                               //if queueFlag is set high
+                    {
+                        queue.addQueueNode(tInBuf, nBytes);     //add the frame to the queue
+                        free(tInBuf);                           //free the buffer
+                        void* queueOut;
+                        queueOut = queue.popQueueNode();  //pull the queue node pointer out of the queue
+                        printf("\n%s\n", (char*)queueOut);             //print out the received frame
+                        free(queueOut);                         //free the buffer
+                        break;                                  
+                    }
+
+                    else if(!queueFlag)                         //if queueFlag is set low
+                    {
+                        printf("\n%s\n", tInBuf);               //print the frame contents
+                        free(tInBuf);                           //free the buffer
+                        break;                                 
+                    }
+
                 }
+
                 free(tInBuf);
                 Sleep(5000);
                 break;
+            }
             case '3':
                 /*TEMP*/printf("Image Mode:\n");
                 /*TEMP*/getchar();
