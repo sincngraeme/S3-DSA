@@ -37,6 +37,13 @@ struct comhdr {
 };
 typedef comhdr* pcomhdr;
 
+// for storing messages 
+struct frame {
+    pcomhdr header;
+    void* payload;
+};
+typedef struct frame Frame;
+
 class RS232Comm {
     public:
         int RS232CommErr = 0;                   // error flags
