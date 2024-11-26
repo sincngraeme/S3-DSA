@@ -12,7 +12,7 @@ int queue::IsQueueEmpty(void) {
 	return(pHead == NULL); 
 }
 
-void queue::AddToQueue(queue::link pn) {
+void queue::AddToQueue(link pn) {
 	if (IsQueueEmpty()) {
 		pHead = pTail = pn; 
 	}
@@ -23,7 +23,7 @@ void queue::AddToQueue(queue::link pn) {
 	pTail->pNext = NULL;
 }
 
-queue::link queue::DeQueue(void) {
+link queue::DeQueue(void) {
 	link pTemp;					// Hold the current Head
 	if (IsQueueEmpty()) {
 		return(NULL);
