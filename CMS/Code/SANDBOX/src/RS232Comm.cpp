@@ -36,40 +36,41 @@ RS232Comm::~RS232Comm()
 // Transmit
 void RS232Comm::TxToPort(pcomhdr header, char* buf)	// text
 {
-	outputToPort(&hCom, (LPCVOID)header, sizeof(header));					// send header
+	outputToPort(&hCom, (LPCVOID)header, sizeof(comhdr));					// send header
 	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send text
 }
 void RS232Comm::TxToPort(pcomhdr header, short* buf) // Audio
 {
-	outputToPort(&hCom, (LPCVOID)header, sizeof(header));					// send header
+	outputToPort(&hCom, (LPCVOID)header, sizeof(comhdr));					// send header	
 	outputToPort(&hCom, (LPCVOID)buf, header->payloadSize);					// send Audio
 }
 // Recieve
 DWORD RS232Comm::RxFromPort(pcomhdr header, char** buf)
 {
-	DWORD ret;
+	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(comhdr))) return MAXDWORD;
 
-	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// recieve header
-	*buf = (char*)malloc(header->payloadSize * sizeof(char));					// allocate space according to payload size in buffer
+	*buf = (char*)malloc(header->payloadSize);					// allocate space according to payload size in buffer
 	if(*buf == NULL)		// malloc failed
 	{
 		printf("ERROR recieving from port: not enough space\n");
 		return 0;
-	} else {
-		ret = inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);
-		return ret;			// return number of bytes read from inputFromPort unless memory could not be allocated
 	}
+	msgStatus = 1;		// message has been recieved
+	return inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);			// return number of bytes read from inputFromPort unless memory could not be allocated			
 }
 DWORD RS232Comm::RxFromPort(pcomhdr header, short** buf)
 {
-	while(!inputFromPort(&hCom, (LPVOID)header, sizeof(header)));						// wait until we receive header
-	*buf = (short*)malloc(header->payloadSize * sizeof(short));					// allocate space according to payload size in header
+	if(!inputFromPort(&hCom, (LPVOID)header, sizeof(comhdr))) return MAXDWORD;
+
+	*buf = (short*)malloc(header->payloadSize);					// allocate space according to payload size in buffer
 	if(*buf == NULL)		// malloc failed
 	{
 		printf("ERROR recieving from port: not enough space\n");
 		return 0;
 	}
-	return (inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize));			// return number of bytes read from inputFromPort unless memory could not be allocated
+	msgStatus = 1;		// message has been recieved
+	return inputFromPort(&hCom, (LPVOID)(*buf), header->payloadSize);			// return number of bytes read from inputFromPort unless memory could not be allocated			
+
 }
 /**************************************************************** PRIVATE ***************************************************************/
 
@@ -136,9 +137,9 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 	}
 	else if (NumberofBytesRead == 0)
 	{
-		printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
+		// printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
 	} else {
-		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
+		// printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
 	}
 
 	return(NumberofBytesRead);
@@ -193,7 +194,9 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	//500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
 	timeout.ReadTotalTimeoutMultiplier = 1; 
 	//1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	timeout.ReadTotalTimeoutConstant = 5000; 
+	timeout.ReadTotalTimeoutConstant = 0; 
+	// timeout.WriteTotalTimeoutMultiplier = 0;
+	// timeout.WriteTotalTimeoutConstant = 0;
 	//5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
 	return RS232_NO_ERR;

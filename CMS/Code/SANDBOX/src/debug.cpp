@@ -105,3 +105,51 @@
         // {
         //     //SetParameters();
         // }
+void PrintHexDump(const void* buffer, size_t size) {
+    const unsigned char* byteBuffer = reinterpret_cast<const unsigned char*>(buffer);
+
+    // Print the hex dump
+    for (size_t i = 0; i < size; ++i) {
+        if (i % 16 == 0) {
+            if (i > 0) {
+                std::cout << "  ";
+                // Print the ASCII representation of the last 16 bytes
+                for (size_t j = i - 16; j < i; ++j) {
+                    unsigned char byte = byteBuffer[j];
+                    if (byte >= 32 && byte <= 126) {
+                        std::cout << static_cast<char>(byte);  // Printable ASCII characters
+                    } else {
+                        std::cout << '.';  // Non-printable characters
+                    }
+                }
+            }
+            std::cout << "\n";
+            std::cout << std::setw(8) << std::setfill('0') << std::hex << i << "  ";  // Print the address in hex
+        }
+        std::cout << std::setw(2) << std::setfill('0') << std::hex << (int)byteBuffer[i] << " ";
+
+        if (i % 16 == 15) {
+            std::cout << std::dec << "\n";  // After every 16 bytes, move to the next line
+        }
+    }
+
+    if (size % 16 != 0) {
+        // Print remaining ASCII part for the last line
+        size_t lastLineStart = (size / 16) * 16;
+        size_t remaining = size % 16;
+        for (size_t i = 0; i < (16 - remaining); ++i) {
+            std::cout << "   ";  // Space for unprinted hex values
+        }
+
+        std::cout << "  ";
+        for (size_t i = lastLineStart; i < size; ++i) {
+            unsigned char byte = byteBuffer[i];
+            if (byte >= 32 && byte <= 126) {
+                std::cout << static_cast<char>(byte);  // Printable ASCII characters
+            } else {
+                std::cout << '.';  // Non-printable characters
+            }
+        }
+        std::cout << std::dec << "\n";
+    }
+}

@@ -19,7 +19,6 @@ void printMainMenu()
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
     printf("\tSettings\t\t(3)\n");
-    printf("\tDebug\t\t(4)\n");
     printf("\tExit at any time\t(CTRL + q)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -62,7 +61,7 @@ int TxMode()
                     cout << "COM PORT: ";
                     wchar_t comport[6];                                         // declare wchar_t* buffer for comport
                     wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-                    TxAudio(recording.outBuf, recording.outBufSize, comport);
+                    TxAudio(recording.outBuf, recording.outBufSize * sizeof(short), comport);
                     system("pause");
                 }
                 break;
@@ -107,7 +106,7 @@ int RxMode()
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
-    long nBytes = 0;  
+    DWORD nBytes = 0;  
 
     while(!RxFlag)
     {
@@ -128,14 +127,15 @@ int RxMode()
                 // BUFFERS
                 if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
                 {   
+                    
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(aInBuf, nBytes);							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
+                    soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
 
                     soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
                 free(aInBuf);									            
-                system("pause");
+                getchar();
                 break;
             }
             case '2':
@@ -150,7 +150,7 @@ int RxMode()
                     printf("\n%s\n", tInBuf);
                 }
                 free(tInBuf);
-                Sleep(5000);
+                getchar();
                 break;
             case '3':
                 /*TEMP*/printf("Image Mode:\n");

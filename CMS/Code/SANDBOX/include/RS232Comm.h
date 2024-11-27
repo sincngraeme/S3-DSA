@@ -22,7 +22,7 @@ struct comhdr {
     // short int rid;
     // char priority; 
     // short int seqNum;
-    long int payloadSize;		// Number of bytes in payload after this header
+    DWORD payloadSize;		// Number of bytes in payload after this header
     char cFlags;                
     // 0b 00 00 00 00 
     //    ^  ^  ^  ^
@@ -37,6 +37,13 @@ struct comhdr {
 };
 typedef comhdr* pcomhdr;
 
+// for storing messages 
+struct frame {
+    pcomhdr header;
+    void* payload;
+};
+typedef struct frame Frame;
+
 class RS232Comm {
     public:
         int RS232CommErr = 0;                   // error flags
@@ -47,6 +54,7 @@ class RS232Comm {
         *   RS232_CREATE_ERR = 4
         *   RS232_INVALID_PARAMETER = 8
         */
+        int msgStatus = 0;      // 0: Message Not Recieved  1: Message Received
 
         comhdr header;          // instance of struct
 

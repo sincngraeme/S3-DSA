@@ -63,7 +63,7 @@ int	audio::InitializePlayback(void)												////Initialize Playback
 	return(1);
 }
 
-int audio::PlayBuffer(short *piBuf, long lSamples)					////Function to play back a recorded message.
+int audio::PlayBuffer(short *piBuf, DWORD lSamples)					////Function to play back a recorded message.
 {
 	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */
@@ -75,7 +75,7 @@ int audio::PlayBuffer(short *piBuf, long lSamples)					////Function to play back
 	waveOutReset(HWaveOut);   // is this good?	// Yes. This stops any current playback and returns the current position to 0.
 												// This prevents the program from reading unaligned data and partial samples.
 	// get the header ready for playback
-	WaveHeader.lpData = (char *)piBuf;									////Sets the waveheader struct data pointer to the buffer input to function.
+	WaveHeader.lpData = (LPSTR)piBuf;									////Sets the waveheader struct data pointer to the buffer input to function.
 	WaveHeader.dwBufferLength = lSamples * sizeof(short);				////Sets the waveheader struct buffer length to the number of samples times
 																		////the size of short to make enough room for all the bits.
 	rc = waveOutPrepareHeader(HWaveOut, &WaveHeader, sizeof(WAVEHDR));	////This prepares a waveform block for playback - loads it up.
@@ -137,7 +137,7 @@ int audio::InitializeRecording(void)													////Initialize Recording
 
 }
 
-int	audio::RecordBuffer(short *piBuf, long lBufSize)								////Function to record a message.
+int	audio::RecordBuffer(short *piBuf, DWORD lBufSize)								////Function to record a message.
 {
 	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */
@@ -210,3 +210,7 @@ int audio::WaitOnHeader(WAVEHDR* wh, char cDit)
 		if (cDit) printf("%c", cDit);											
 	}
 }
+
+
+
+
