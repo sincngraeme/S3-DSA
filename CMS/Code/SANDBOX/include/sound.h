@@ -65,3 +65,6 @@ class audio {
 	int WaitOnHeader(WAVEHDR* wh, char cDit);	// Used by Playbuffer()
 
 };
+
+
+void PrintHexDump(const void* buffer, size_t size);

@@ -19,7 +19,7 @@
 using namespace std;
 
 void TxAudio(short* buf, DWORD szBuf, wchar_t* comport);
-void TxText(char* buf, int szBuf, wchar_t* comport);
+void TxText(char* buf, DWORD szBuf, wchar_t* comport);
 void TxImage();
 
 int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport);

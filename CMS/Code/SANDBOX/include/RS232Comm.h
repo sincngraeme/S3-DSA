@@ -22,7 +22,7 @@ struct comhdr {
     // short int rid;
     // char priority; 
     // short int seqNum;
-    long int payloadSize;		// Number of bytes in payload after this header
+    DWORD payloadSize;		// Number of bytes in payload after this header
     char cFlags;                
     // 0b 00 00 00 00 
     //    ^  ^  ^  ^

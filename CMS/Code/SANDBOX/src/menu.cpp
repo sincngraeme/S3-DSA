@@ -128,6 +128,7 @@ int RxMode()
                 // BUFFERS
                 if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
                 {   
+                    
                     // playback recording 
                     printf("\nPlaying recording from buffer\n");
                     soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
