@@ -63,7 +63,7 @@ int	audio::InitializePlayback(void)												////Initialize Playback
 	return(1);
 }
 
-int audio::PlayBuffer(short *piBuf, long lSamples)					////Function to play back a recorded message.
+int audio::PlayBuffer(short *piBuf, DWORD lSamples)					////Function to play back a recorded message.
 {
 	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */
@@ -137,7 +137,7 @@ int audio::InitializeRecording(void)													////Initialize Recording
 
 }
 
-int	audio::RecordBuffer(short *piBuf, long lBufSize)								////Function to record a message.
+int	audio::RecordBuffer(short *piBuf, DWORD lBufSize)								////Function to record a message.
 {
 	// static	WAVEFORMATEX WaveFormat;	/* WAVEFORMATEX structure for reading in the WAVE fmt chunk */
 	static  WAVEHDR	WaveHeader;			/* WAVEHDR structure for this buffer */

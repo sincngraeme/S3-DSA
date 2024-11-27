@@ -18,7 +18,7 @@
 
 using namespace std;
 
-void TxAudio(short* buf, long szBuf, wchar_t* comport);
+void TxAudio(short* buf, DWORD szBuf, wchar_t* comport);
 void TxText(char* buf, int szBuf, wchar_t* comport);
 void TxImage();
 
