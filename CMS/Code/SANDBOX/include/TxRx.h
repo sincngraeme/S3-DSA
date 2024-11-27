@@ -10,6 +10,8 @@
 #include "RS232Comm.h"
 #include "RS232Comm.h"
 #include "sound.h"
+#include "queue.h"
+#include "menu.h"
 #include <iostream>
 #include <string.h>
 #include <conio.h>
@@ -20,6 +22,6 @@ void TxAudio(short* buf, long szBuf, wchar_t* comport);
 void TxText(char* buf, int szBuf, wchar_t* comport);
 void TxImage();
 
-int RxAudio(short** buf, long* nbytes, wchar_t* comport);
-int RxText(char** buf, long* nbytes, wchar_t* comport);
+int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport);
+int RxText(char** buf, DWORD* nbytes, wchar_t* comport);
 void RxImage();

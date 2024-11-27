@@ -54,6 +54,7 @@ class RS232Comm {
         *   RS232_CREATE_ERR = 4
         *   RS232_INVALID_PARAMETER = 8
         */
+        int msgStatus = 0;      // 0: Message Not Recieved  1: Message Received
 
         comhdr header;          // instance of struct
 

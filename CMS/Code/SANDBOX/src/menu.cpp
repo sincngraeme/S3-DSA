@@ -107,7 +107,7 @@ int RxMode()
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
-    long nBytes = 0;  
+    DWORD nBytes = 0;  
 
     while(!RxFlag)
     {
