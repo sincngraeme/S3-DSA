@@ -137,9 +137,9 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 	}
 	else if (NumberofBytesRead == 0)
 	{
-		printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
+		// printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
 	} else {
-		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
+		// printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
 	}
 
 	return(NumberofBytesRead);

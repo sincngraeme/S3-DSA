@@ -19,7 +19,6 @@ void printMainMenu()
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
     printf("\tSettings\t\t(3)\n");
-    printf("\tDebug\t\t(4)\n");
     printf("\tExit at any time\t(CTRL + q)\n");
     printf("\n----------------------------------------------\n");
 }
