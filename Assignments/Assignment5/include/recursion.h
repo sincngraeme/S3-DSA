@@ -2,8 +2,9 @@
 #pragma once
 #define MAX_QUOTE_LENGTH 140	// define the maximum buffer size
 #define QUEUE_SIZE 5			// define the size of the queue
+#include "message.h"
 
-typedef struct node Node;		// typedef for nodes
+typedef struct node Node;	// typedef for nodes
 typedef struct item Item; 	// typedef for contents of nodes
 typedef Node* link;			// typedef for pointers of nodes
 
@@ -16,6 +17,8 @@ struct item {				// item structure
 	char priority;			// Priority of message
 	short int seqNum;		// Sequence number of the message
 	char later[25];			// Character we might use later 
+	messageitem contents;
+	int hashNumber;
 };
 
 struct node {				// node structure
