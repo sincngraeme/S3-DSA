@@ -9,6 +9,7 @@
 #pragma once
 
 #include <windows.h>					// Contains WAVEFORMATEX structure
+#include <conio.h>
 
 // CONSTANTS - SET RECORDING TIME AND RATE
 #define	DEFAULT_NSAMPLES	4000	////Default number of samples.
@@ -17,6 +18,12 @@
 #define SAMPLES_SEC			8000	// number of samples per second
 #define	NFREQUENCIES		96		// number of frequencies used - leave this alone
 
+struct soundbuf {
+	short* outBuf;			
+	DWORD outBufSize;
+};
+
+soundbuf record();
 
 // FUNCTION PROTOTYPES
 /* ************************ */
@@ -28,17 +35,17 @@ class audio {
 
 	// BUFFERS
 	short iBigBuf[SAMPLES_SEC * RECORD_TIME];
-	long  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
+	DWORD  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
 
 
 	// Playback
 	int InitializePlayback(void);						// Sets up playback.
-	int PlayBuffer(short *piBuf, long lSamples);		// Plays recorded audio through a buffer/output device.
+	int PlayBuffer(short *piBuf, DWORD lSamples);		// Plays recorded audio through a buffer/output device.
 	void ClosePlayback(void);							// Cleans out the buffers and closes the output device.
 
 	// Recording
 	int InitializeRecording(void);						// Sets up recording.
-	int	RecordBuffer(short *piBuf, long lBufSize);		// Records audio from input device to buffer.
+	int	RecordBuffer(short *piBuf, DWORD lBufSize);		// Records audio from input device to buffer.
 	void CloseRecording(void);							// Cleans out the buffers and closes the input device.
 
 	private:
@@ -58,3 +65,6 @@ class audio {
 	int WaitOnHeader(WAVEHDR* wh, char cDit);	// Used by Playbuffer()
 
 };
+
+
+void PrintHexDump(const void* buffer, size_t size);
