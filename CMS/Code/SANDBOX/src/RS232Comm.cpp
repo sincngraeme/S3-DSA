@@ -135,10 +135,12 @@ DWORD RS232Comm::inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf)
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 		RS232CommErr |= RS232_READ_ERR;			// set error flags high
 	}
-	else if (NumberofBytesRead == 0)
-	{
+	else if (NumberofBytesRead == 0) {
 		printf("\nReception Failed, There were %ld bytes read\n", NumberofBytesRead);
-	} else {
+
+	} 
+	
+	else {
 		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
 	}
 
@@ -177,8 +179,9 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	// Clear DCB to start out clean, then get current settings
 	memset(&dcb, 0, sizeof(dcb));
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(*hCom, &dcb))
+	if (!GetCommState(*hCom, &dcb)){
 		return(RS232_INVALID_PARAMETER);
+	}
 
 	// Set our own parameters from Globals
 	dcb.BaudRate = nComRate;						// Baud (bit) rate
@@ -189,7 +192,7 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 		return(RS232_INVALID_PARAMETER);
 
 	// Set communication timeouts (SEE COMMTIMEOUTS structure in MSDN) - want a fairly long timeout
-	memset((void *)&timeout, 0, sizeof(timeout));
+	memset((void*)&timeout, 0, sizeof(timeout));
 	timeout.ReadIntervalTimeout = 50; 
 	//500;					// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
 	timeout.ReadTotalTimeoutMultiplier = 1; 
@@ -201,5 +204,6 @@ int RS232Comm::SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUT
 	SetCommTimeouts(*hCom, &timeout);
 	return RS232_NO_ERR;
 }
+
 
  

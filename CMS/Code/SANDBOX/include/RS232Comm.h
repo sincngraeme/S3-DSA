@@ -2,8 +2,6 @@
  * By: Michael A. Galle
  *
  */
-#pragma once
-
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
 
 #include <Windows.h>    
@@ -11,11 +9,29 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "RLE.h"
+//#include "Huffman.h"
+
+// Error bitmask
 #define RS232_NO_ERR    0
 #define RS232_WRITE_ERR 1
 #define RS232_READ_ERR  2
 #define RS232_CREATE_ERR  4
 #define RS232_INVALID_PARAMETER 8
+
+//SetHeader bitmask
+
+#define TEXTBIT        0b00000000
+#define IMAGEBIT       0b10000000
+#define AUDIOBIT       0b01000000
+
+#define RLE         0b00010000
+#define HUFFMAN     0b00100000
+
+#define XOR         0b00000100
+#define VIGENERE    0b00001000
+
+#define VOTEON      0b00000001
 
 struct comhdr {
     // short int sid;
@@ -66,7 +82,10 @@ class RS232Comm {
         //void TxToPort(char* buf, DWORD szBuf);                    // Image
         DWORD RxFromPort(pcomhdr header, char** buf);                    // Text
         DWORD RxFromPort(pcomhdr header, short** buf);                   // Audio
-        //void RxFromPort(LPVOID buf, DWORD szBuf);                 // Image
+        //void RxFromPort(LPVOID buf, DWORD szBuf);                       // Image
+
+        
+        void SetHeader(char set); // New 
 
     private:
 
@@ -87,3 +106,4 @@ class RS232Comm {
         int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout);                 // wrapper for setting DCB and timeout settings for the given port
         //                                 ^ user can only set the BAUD rate and the number of bits
 };
+

@@ -19,7 +19,10 @@ const char clearfrom[] = "\033[1J";     // Clear Screen starting from home to cu
 const char clear[] = "\033[2J";
 const char setBlnk[] = "\033[5m";      // set mode to blinking
 const char resetGraph[] = "\033[0m";    // reset colours/graphics mode
+<<<<<<< Updated upstream
 const char curUp[] = "\033M";          // move up one line
+=======
+>>>>>>> Stashed changes
 
 /********** Function Declarations **********/
 

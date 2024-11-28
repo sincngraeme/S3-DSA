@@ -1,9 +1,3 @@
-/*	Filename: main.cpp
-Author: Michael Galle
-Date: Updated 2022
-Details: Testing mainline for Windows sound API
-*/
-
 #include "sound.h"
 #include <stdio.h>
 #include <windows.h>
