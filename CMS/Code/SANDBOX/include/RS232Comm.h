@@ -39,7 +39,7 @@ typedef comhdr* pcomhdr;
 
 
 struct frame {
-    pcomhdr header;
+    comhdr header;
     void* payload;
 };
 typedef struct frame Frame;

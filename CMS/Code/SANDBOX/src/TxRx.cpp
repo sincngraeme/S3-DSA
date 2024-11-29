@@ -32,10 +32,11 @@ void TxAudio(queue* msgQueue)
             cout << "Queueing...";
             //queue 
              
-            msgFrame.header->payloadSize = recording.outBufSize;       // store payload size in header
-            msgFrame.payload = recording.outBuf;                 // store payload
+            // header->payloadSize = recording.outBufSize;       // store payload size in header
+            // payload = recording.outBuf;                 // store payload
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data = &msgFrame;                // fill node with data
+            inMsgNode->data.header.payloadSize = recording.outBufSize;                // fill node with data
+            inMsgNode->data.payload = recording.outBuf;
             cout << "adding to queue"; 
             msgQueue->AddToQueue(inMsgNode);             // add message to the queue
         }
@@ -48,7 +49,7 @@ void TxAudio(queue* msgQueue)
             {
                 cout << "Dequeue";
                 outMsgNode = msgQueue->DeQueue();
-                msgFrame = *(frame*)outMsgNode->data;                                   // temp header variable to access data since the queue only contains void ptr
+                msgFrame = outMsgNode->data;                                   // temp header variable to access data since the queue only contains void ptr
                 portObj.TxToPort(msgFrame.header, (short*)msgFrame.payload);            // output
                 free(outMsgNode);                                                       // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             } 
@@ -67,9 +68,9 @@ void TxText(queue* msgQueue)
 
     RS232Comm portObj(comport, 19200, 8);                          // Instantiate port object and initialize settings
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
-    frame inMsgFrame;
-    frame* outMsgFrame;                                     // contains the messages' header and payload
+    frame inMsgFrame, outMsgFrame;                                     // contains the messages' header and payload
     string message;
+    comhdr header;
     char c1 = '\0';         // initialize to something
     char c2;
    
@@ -83,12 +84,14 @@ void TxText(queue* msgQueue)
             cin >> message;
             cout << "Queueing...\n";
             // set header
-            portObj.header.payloadSize = message.size();  
-            inMsgFrame.header = &portObj.header;                          // store header in msgFrame
-            inMsgFrame.payload = (void*)message.c_str();                  // store payload
+            // header.payloadSize = message.size();  
+            // inMsgFrame.header = &header;                          // store header in msgFrame
+            // inMsgFrame.payload = (void*)message.c_str();                  // store payload
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data = &inMsgFrame;                // fill node with data
-            cout << (char*)(((frame*)inMsgNode->data)->payload) << '\n';
+            inMsgNode->data.header.payloadSize = message.size();
+            inMsgNode->data.payload = (void*)message.c_str();
+            //inMsgNode->data = inMsgFrame;                // fill node with data
+            cout << (char*)inMsgNode->data.payload << '\n';
             msgQueue->AddToQueue(inMsgNode);      // add the message to the queue
         }
         else if(c1 == 't'){
@@ -96,10 +99,11 @@ void TxText(queue* msgQueue)
             {
                 outMsgNode = msgQueue->DeQueue();
                 cout << outMsgNode << '\n';
-                cout << ((frame*)outMsgNode->data)->payload << '\n';
-                cout << (char*)((frame*)outMsgNode->data)->payload << '\n';                 // we are accessing the nodes data which is void*, then casting to frame* and accessing member payload (void*) which is cast to char*
+                cout << outMsgNode->data.payload << '\n';
+                cout << (char*)outMsgNode->data.payload << '\n';                 // we are accessing the nodes data which is void*, then casting to frame* and accessing member payload (void*) which is cast to char*
                 // outMsgFrame = (frame*)outMsgNode->data;
                 // cout << (char*)outMsgFrame->payload << '\n';                           // print the payload message stored in the message frame for a given node.
+                //free(outMsgNode->data.payload);
                 free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             }
             /*TEMP*/getchar();
@@ -149,10 +153,10 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
         } else {                            // Then data must have been recieved and must be correct size
 
             // Struct Initialization
-            msgFrame.header = &portObj.header;       // store header
-            msgFrame.payload = *buf;                 // store payload
+            // msgFrame.header = &portObj.header;       // store header
+            // msgFrame.payload = *buf;                 // store payload
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data = &msgFrame;                // fill node with data
+            inMsgNode->data = msgFrame;                // fill node with data
             cout << "adding to queue"; 
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
@@ -164,7 +168,7 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
     while (!msgQueue.IsQueueEmpty())        // dequeue until all have been dequed 
     {
         outMsgNode = msgQueue.DeQueue();
-        msgFrame = *(frame*)outMsgNode->data;            // temp header variable to access data since the queue only contains void ptr
+        msgFrame = outMsgNode->data;            // temp header variable to access data since the queue only contains void ptr
         cout << (char*)msgFrame.payload << '\n';                           // print the payload message stored in the message frame for a given node.
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
@@ -201,10 +205,10 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
             return 1;
         } else {                            // Then data must have been recieved and must be correct size
             // Struct Initialization
-            msgFrame.header = &portObj.header;       // store header
-            msgFrame.payload = *buf;                 // store payload
+            // msgFrame.header = &portObj.header;       // store header
+            // msgFrame.payload = *buf;                 // store payload
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data = &msgFrame;                // fill node with data
+            inMsgNode->data = msgFrame;                // fill node with data
             cout << "adding to queue"; 
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
@@ -218,7 +222,7 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
     while (!msgQueue.IsQueueEmpty())        // dequeue until all have been dequed 
     {
         outMsgNode = msgQueue.DeQueue();
-        msgFrame = *(frame*)outMsgNode->data;            // temp header variable to access data since the queue only contains void ptr
+        msgFrame = outMsgNode->data;            // temp header variable to access data since the queue only contains void ptr
         cout << (char*)msgFrame.payload << '\n';                           // print the payload message stored in the message frame for a given node.
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
