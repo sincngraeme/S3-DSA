@@ -3,7 +3,7 @@
 #include "queue.h"
 #include <stdlib.h>
 
-	
+// initializes	
 queue::queue(void) {
 	pHead = pTail = NULL; 
 }

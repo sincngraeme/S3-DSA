@@ -17,10 +17,7 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 /* *************************************** Wrappers ******************************************** */
 soundbuf record()
 {
-	printf("Audio Mode:\t\t\tPress R to Record\n");
-    
-    while(getch() != 'r');
-
+	
     // instantiate audio object
     audio soundObj;                             // constructor initializes playback and recording                
     // start recording

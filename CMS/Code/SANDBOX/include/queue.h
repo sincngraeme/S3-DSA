@@ -17,6 +17,7 @@ struct node {
 	void* data;
 };
 
+
 class queue {
 
 	public:

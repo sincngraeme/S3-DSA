@@ -18,8 +18,9 @@
 
 using namespace std;
 
-void TxAudio(short* buf, DWORD szBuf, wchar_t* comport);
-void TxText(char* buf, DWORD szBuf, wchar_t* comport);
+// these take a pointer to a queue object so they are both sending messages on the same queue
+void TxAudio(queue* msgQueue);
+void TxText(queue* msgQueue);
 void TxImage();
 
 int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport);
