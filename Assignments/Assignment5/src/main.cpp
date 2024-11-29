@@ -15,6 +15,11 @@ int main()
     int numQuotes = fnumQuotes();									    // Number of quotes
 	long int* quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
 	int* quoteLengths = fquoteLength(numQuotes, quoteIndices);		    // Length of each quote (up to MAX_QUOTE_LENGTH) - cut off after
+
+    for(int i = 0; i < HASH_TABLE_SIZE, i++)
+    {
+        Queue i;            //Dynamically allocate queue objects by changing variable name.
+    }
    
     for(int i = 0; i <  CURRENT_NUM_QUOTES; i++)
     {
@@ -29,6 +34,7 @@ int main()
             hashing.heads[p->Data.hashNumber] = *p;
             hashing.hashTable[i] = p->Data.hashNumber;
             hashing.hashOccurrances[p->Data.hashNumber]++;
+            p->Data.messageNumber = i;
         }
 
         else if(hashing.hashTable[p->Data.hashNumber] != -1)
@@ -49,21 +55,31 @@ int main()
 
     free(quoteIndices);
 	free(quoteLengths);
-    printf("Hash #:\t\tNumber of Occurrances:\n\n");
-
+    queuenode* b = (queuenode*)malloc(sizeof(queuenode));
+    printf("Hash #:\t\tNumber of Occurrances:\t\tMessage Numbers:\n\n");
+    
     for (int i = 0; i < HASH_TABLE_SIZE; i++)
     {
-        
-        if(i < 10)
+        *b = hashing.heads[i];
+        printf("%d...............%d.............................\n", i, hashing.hashOccurrances[i]);
+        printf("%d, ", b->Data.messageNumber);
+        int j = 0;
+
+        if((b->pNext != NULL) & (j <= CURRENT_NUM_QUOTES))
         {
-            printf("%d...............%d\n", i, hashing.hashOccurrances[i]);
+            printf("%d, ", b->Data.messageNumber);
+            b = b->pNext;
+            j++;
         }
 
-        else
-        {
-            printf("%d..............%d\n", i, hashing.hashOccurrances[i]);
-        }
-         
+        printf("%d\n", b->Data.messageNumber);
+
+        // for(int j = 0; j <= hashing.hashOccurrances[i]; j++, b = b->pNext)
+        // {
+        //     printf("%d, ", b->Data.messageNumber);
+        // }
+
+        // printf("%d", i, hashing.hashOccurrances[i]);             
     }
     		
     return 0;

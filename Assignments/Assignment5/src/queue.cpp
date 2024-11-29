@@ -1,18 +1,20 @@
 #include "queue.h"
 #include <stdlib.h>
 
+Queue::Queue()
+{
+	
+}
 
-static queuelink pHead, pTail; 
-
-void InitQueue(void) {
+void Queue::InitQueue(void) {
 	pHead = pTail = NULL; 
 }
 
-int IsQueueEmpty(void) {
+int Queue::IsQueueEmpty(void) {
 	return(pHead == NULL); 
 }
 
-void AddToQueue(queuelink pn) {
+void Queue::AddToQueue(queuelink pn) {
 	if (IsQueueEmpty()) {
 		pHead = pTail = pn; 
 	}
@@ -23,7 +25,7 @@ void AddToQueue(queuelink pn) {
 	pTail->pNext = NULL;
 }
 
-queuelink DeQueue(void) {
+queuelink Queue::DeQueue(void) {
     queuelink pTemp;					// Hold the current Head
 	if (IsQueueEmpty()) {
 		return(NULL);
