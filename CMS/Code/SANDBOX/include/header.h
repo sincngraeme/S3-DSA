@@ -6,8 +6,12 @@
 //#include "Huffman.h"
 #include <iostream>
 
-void AudioCompress(short* buf, DWORD szBuf, char cFlags);
+char compress(void* buf, char cFlags);
 
-void TextCompress(short* buf, DWORD szBuf, char cFlags);
+char encrypt(void* buf, char cFlags);
+
+char dataCorrect(void* buf, char cFlags);
+
+
 
 

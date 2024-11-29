@@ -2,6 +2,9 @@
  * By: Michael A. Galle
  *
  */
+
+#pragma once
+
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
 
 #include <Windows.h>    

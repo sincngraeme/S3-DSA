@@ -7,32 +7,7 @@
 //#include "Huffman.h"
 #include <iostream>
 
-void AudioCompressRLE(short* buf, DWORD szBuf, char cFlags)
-{
-    cFlags = (AUDIOBIT | RLE); // set the header to include compression type
-    ///////////////////////
-    char* outbuf = (char*)calloc(szBuf, sizeof(char*));             // initialize output buffer
-    unsigned char cEsc = 0x1b;                                      // escape character
-    long long outlength = RLEcompress(buf, szBuf, outbuf, szBuf);   // compress the buffer
-    
-    //Display the compressed message
-	printf("Compressed message of length %llu", outlength);
-
-}
-
-
-void TextCompressRLE(char* buf, DWORD szBuf, char cFlags)
-{
-    cFlags = (AUDIOBIT | RLE); // set the header to include compression type
-    ///////////////////////
-    char* outbuf = (char*)calloc(szBuf, sizeof(char*));             // initialize output buffer
-    unsigned char cEsc = 0x1b;                                      // escape character
-    long long outlength = RLEcompress(buf, szBuf, outbuf, szBuf);   // compress the buffer
-    
-    //Display the compressed message
-	printf("Compressed message of length %llu", outlength);
-
-}
+// Logic in pseudo code or the bitwise cFlag (settings) for the header:
 
     // run the compression (temp: set variable with compression type)
     // set the cFlag from port1 object to include this compression
@@ -41,85 +16,64 @@ void TextCompressRLE(char* buf, DWORD szBuf, char cFlags)
     // run the type of compression specified
     // set headers 
     // set up header
-void AudioCompressHuff(char* buf, DWORD szBuf, char cFlags)
+
+
+// Different options for bitwise compression
+char compress(void* payload, char cFlags, DWORD szBuf)
 {
-    cFlags = (AUDIOBIT | HUFFMAN); // set the header to include compression type
-    ///////////////////////
-    char* outbuf = (char*)calloc(szBuf, sizeof(char*));             // initialize output buffer
-    unsigned char cEsc = 0x1b;                                      // escape character
-    long long outlength = RLEcompress(buf, szBuf, outbuf, szBuf);   // compress the buffer
-    
-    //Display the compressed message
-	printf("Compressed message of length %llu", outlength);
-
-}
-void TextCompressHuff(char* buf, DWORD szBuf, char cFlags)
-{
-    cFlags = (TEXTBIT | HUFFMAN); // set the header to include compression type
-    ///////////////////////
-    char* outbuf = (char*)calloc(szBuf, sizeof(char*));             // initialize output buffer
-    unsigned char cEsc = 0x1b;                                      // escape character
-    long long outlength = RLEcompress(buf, szBuf, outbuf, szBuf);   // compress the buffer
-    
-    //Display the compressed message
-	printf("Compressed message of length %llu", outlength);
-
-}
-
-
-
-// Different options for bitwise
-char compress(void* payload, char settings, char cFlag)
-{
-    if(settings & RLE & HUFFMAN)
+    if(cFlags & RLE & HUFFMAN)       // check the bits
     {
-        printf("Both Compressions"); // Huffman is missing
+        printf("Both Compressions"); // print the compression type
     }
-
-    else if(settings & RLE)
+    else if(cFlags & RLE)
     {
-        printf("rle");
-        AudioCompressRLE((short*)payload, settings, cFlag);
+        char* outbuf = (char*)calloc(szBuf, sizeof(char*));             // initialize output buffer
+        long long outlength = RLEcompress(payload, szBuf, outbuf, szBuf);   // compress the buffer
+        
+        //Display the compressed message
+        printf("Compressed message of length %llu", outlength);
+        return outlength;
     }
-        // else if(settings & HUFFMAN)
-        // {
-        //     printf("huffman");
-    
-        //     //int Huff:: HuffmanCompress(_______);
-        // }
- return(cFlag);
+    else if(cFlags & HUFFMAN)
+    {
+        printf("Huffman");
+
+        //int Huff:: HuffmanCompress(_______);
+    }
+    else 
+    {
+        printf("no compression used");
+    }
+ return(cFlags);
 }
 
-void encryption(void* buf, char settings)
+void encryption(void* buf, char cFlags)
 {
-	if(settings & VIGENERE & XOR)
+	if(cFlags & VIGENERE & XOR)
 	{
-printf("Both encryptions");
+        printf("Both encryptions");
 	}
-
-	else if(settings & RLE)
-	{
-printf("XOR");
-		// run rle on buffer
-	}
-    else if (settings & VIGENERE)
+    else if (cFlags & VIGENERE)
     {
         printf("vigenere");
     }
-    else if (settings & XOR)
+    else if (cFlags & XOR)
     {
         printf("xor");
     }
-    else () {
-        printf("no encryption");
+    else {
+        printf("no encryption used");
     }
+}
 
-// 	else if(settings & HUFFMAN)
-// 	{
-
-// // printf("huffman");
-
-// // 		//int Huff:: HuffmanCompress(_______);
-// // 	}
-
+char dataCorrect(void* buf, char cFlags){
+    if(cFlags & VOTEON)
+    {
+        printf("Voteon");
+    }
+    else
+    {
+        printf("No data correction used");
+    }
+    return(cFlags);
 }

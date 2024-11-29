@@ -6,11 +6,14 @@
 #define UNICODE 		// CreateFile() defenition needs to expand to LPCWSTR is a 32-bit pointer to a constant null-terminated string of 8-bit characters
 
 #include "TxRx.h"
+
+// Compression Libraries
 #include "RLE.h"
+#include "Huffman.h"
+
 #include "RS232Comm.h"
 #include "header.h"
 #include "menu.h"
-//#include "Huffman.h"
 #include <iostream>
 
 
@@ -21,10 +24,26 @@
 void TxAudio(short* buf, DWORD szBuf, wchar_t* comport)
 {
     RS232Comm port1(comport, 19200, 8);                          // Instantiate port object and initialize settings
-    
-    // set up header
+ 
     port1.header.payloadSize = szBuf;                            
+//////////////////////////////////////////////////////////////   
+    // set up header
+    port1.header.cFlags = (AUDIOBIT | RLE | XOR); // setting the bits
+        
+    // Compress function - will do RLE, HUFF, Both, or None
+    compress(buf, port1.header.cFlags);
+    // Encrypt - will do XOR, VIGENERE, Both, or None    
+      
+    // Data Correction - will do VOTEON, None
+    dataCorrect(buf, port1.header.cFlags);
+    // else
+    // {
+    //     port1.header.cFlag = AUDIOBIT; // set the header to include compression type
 
+    // if (port1.header.cFlag = ())
+
+
+//////////////////////////////////////////////////////////////
     port1.TxToPort(&port1.header, buf);             // output
 }
 // function for transmitting text
@@ -52,16 +71,12 @@ void TxImage()
 int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
 {
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings 
-<<<<<<< Updated upstream
     queue msgQueue;                                    // instantiate queue object
-=======
->>>>>>> Stashed changes
     DWORD prevnBytes;                                   // temp variable for storing previous nummber of bytes to prevent the wrong value beign assigned.
     cout << setBlnk << "\nWaiting..." << curUp << resetGraph;
 
     while(((kbhit()) ? getch() : 0) != 'k')
     {
-<<<<<<< Updated upstream
         // if there are no error flags set and the number of bytes recieved from payload is not 0 
         if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
         {
@@ -73,23 +88,11 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
             *nbytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
             if(portObj.msgStatus) break;        // if the msg flag is set high then something has been recieved
             // if a message has been recieved and we are now recieving 0 bytes the full message has been read
-=======
-        if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
-        {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";
-            return 1;                 // recieve from port
-        }
-        else if(*nbytes == MAXDWORD)
-        {
-            *nbytes = prevnBytes;
-            if(portObj.msgStatus) return 0;     // if a message has been recieved and we are now recieving 0 bytes the full message has been read
->>>>>>> Stashed changes
         }
         else if(*nbytes != portObj.header.payloadSize)
         {
             cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
             return 1;
-<<<<<<< Updated upstream
         } else {                            // Then data must have been recieved and must be correct size
 
             // Struct Initialization
@@ -110,18 +113,11 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
         Node msgNode = *msgQueue.DeQueue();
         comhdr header = *(pcomhdr)msgNode.data;         // temp header variable to access data
     }
-=======
-        }
-        prevnBytes = *nbytes;           // store so it can be accessed after next read operation
-    }
-    return 1;                           // If we reached here the user terminated the loop and the transmission was incomplete
->>>>>>> Stashed changes
 }
 // function for recieving text
 int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
 {
     RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings 
-<<<<<<< Updated upstream
     queue msgQueue;                                    // instantiate queue object
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
     frame msgFrame;                                     // contains the messages' header and payload
@@ -142,27 +138,11 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
             *nbytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
             if(portObj.msgStatus) timeout++;        // if the msg flag is set high then something has been recieved
             // if a message has been recieved and we are now recieving 0 bytes the full message has been read
-=======
-
-    cout << setBlnk << "\nWaiting..." << curUp << resetGraph;
-
-    while(((kbhit()) ? getch() : 0) != 'k')
-    {
-        if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR) 
-        {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";
-            return 1;                 // recieve from port
-        }
-        else if(*nbytes == MAXDWORD)
-        {
-            if(portObj.msgStatus) return 0;     // if a message has been recieved and we are now recieving 0 bytes the full message has been read
->>>>>>> Stashed changes
         }
         else if(*nbytes != portObj.header.payloadSize)
         {
             cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
             return 1;
-<<<<<<< Updated upstream
         } else {                            // Then data must have been recieved and must be correct size
 
             // Struct Initialization
@@ -187,10 +167,6 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
         cout << (char*)msgFrame.payload << '\n';                           // print the payload message stored in the message frame for a given node.
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
-=======
-        }
-    }
->>>>>>> Stashed changes
 }
 // function for transmitting images
 // void RxImage()
