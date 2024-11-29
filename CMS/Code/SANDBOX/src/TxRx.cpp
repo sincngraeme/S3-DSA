@@ -30,9 +30,18 @@ void TxText(char* buf, DWORD szBuf, wchar_t* comport)
     port1.header.payloadSize = szBuf;
 
     port1.TxToPort(&port1.header, buf);             // output
+    buf[szBuf - 1] = '1';
     port1.TxToPort(&port1.header, buf);             // output
+    buf[szBuf - 1] = '2';
     port1.TxToPort(&port1.header, buf);             // output
+    
+    buf[szBuf - 1] = '3';
     port1.TxToPort(&port1.header, buf);             // output
+    
+    buf[szBuf - 1] = '4';
+    port1.TxToPort(&port1.header, buf);             // output
+    
+    buf[szBuf - 1] = '5';
     port1.TxToPort(&port1.header, buf);             // output
 }
 // function for transmitting images
