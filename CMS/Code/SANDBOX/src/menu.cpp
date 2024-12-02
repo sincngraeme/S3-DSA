@@ -55,10 +55,6 @@ int TxMode()
             case '2':
                 TxText(&msgQueue); 
                 break;
-            case '3':
-                /*TEMP*/printf("Image Mode:\n");
-                /*TEMP*/getchar();
-                break;
             case 'b':
                 TxFlag = 1;                     // set exit flag high
                 break;
@@ -75,7 +71,6 @@ void printRxMenu()
     printf("\tSelect Message Type:\n\n");
     printf("\tAudio\t\t(1)\n");
     printf("\tText\t\t(2)\n");
-    printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }

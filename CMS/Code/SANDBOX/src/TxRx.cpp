@@ -50,7 +50,7 @@ void TxAudio(queue* msgQueue)
                 cout << "Dequeue";
                 outMsgNode = msgQueue->DeQueue();
                 msgFrame = outMsgNode->data;                                   // temp header variable to access data since the queue only contains void ptr
-                portObj.TxToPort(msgFrame.header, (short*)msgFrame.payload);            // output
+                portObj.TxToPort(&msgFrame.header, (short*)msgFrame.payload);            // output
                 free(outMsgNode);                                                       // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             } 
         
@@ -68,7 +68,7 @@ void TxText(queue* msgQueue)
 
     RS232Comm portObj(comport, 19200, 8);                          // Instantiate port object and initialize settings
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
-    frame inMsgFrame, outMsgFrame;                                     // contains the messages' header and payload
+    // frame inMsgFrame, outMsgFrame;                                     // contains the messages' header and payload
     string message;
     comhdr header;
     char c1 = '\0';         // initialize to something
@@ -88,10 +88,9 @@ void TxText(queue* msgQueue)
             // inMsgFrame.header = &header;                          // store header in msgFrame
             // inMsgFrame.payload = (void*)message.c_str();                  // store payload
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
+            inMsgNode->data.payload = (char*)malloc(message.size());
             inMsgNode->data.header.payloadSize = message.size();
-            inMsgNode->data.payload = (void*)message.c_str();
-            //inMsgNode->data = inMsgFrame;                // fill node with data
-            cout << (char*)inMsgNode->data.payload << '\n';
+            memcpy(inMsgNode->data.payload, message.c_str(), message.size());
             msgQueue->AddToQueue(inMsgNode);      // add the message to the queue
         }
         else if(c1 == 't'){
@@ -106,7 +105,7 @@ void TxText(queue* msgQueue)
                 //free(outMsgNode->data.payload);
                 free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             }
-            /*TEMP*/getchar();
+           cout << "Press b to close menu\n";
         }
     } while(c1 != 'b');
 
