@@ -119,7 +119,7 @@ int RxMode()
                 
                 if(!RxText(&tInBuf, &nBytes , comport))                 
                 {
-                    printf("\n%s\n", tInBuf);
+                    //printf("\n%s\n", tInBuf);
                 }
                 free(tInBuf);
                 getchar();

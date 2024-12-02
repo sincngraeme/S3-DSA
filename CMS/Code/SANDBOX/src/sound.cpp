@@ -37,6 +37,13 @@ soundbuf record()
 	return output;
     
 }
+// // void play(short** recording, dword* nsamples)
+// // {
+// // 	audio soundobj;
+// // 	printf("\nplaying recording from buffer\n");
+// //     soundobj.playbuffer(*recording, *nsamples);									////play the recorded audio from the buffer.
+// //     soundobj.closeplayback();													////end playback operation.
+// }
 /* PLAYBACK FUNCTIONS */
 /* ********************************************************************************************* */
 audio::audio()
@@ -77,7 +84,7 @@ int audio::PlayBuffer(short *piBuf, DWORD lSamples)					////Function to play bac
 																		////the size of short to make enough room for all the bits.
 	rc = waveOutPrepareHeader(HWaveOut, &WaveHeader, sizeof(WAVEHDR));	////This prepares a waveform block for playback - loads it up.
 	if (rc != MMSYSERR_NOERROR) {															////Error checking the result.
-		printf("Failed preparing WAVEHDR, error 0x%x.", rc);
+		printf("Failed preparing WAVEHDR, error 0x%x.\n", rc);
 		return(0);
 	}
 	WaveHeader.dwFlags &= ~(WHDR_BEGINLOOP | WHDR_ENDLOOP);				////Sets the flag in the waveheader struct to indicate the status of the buffer

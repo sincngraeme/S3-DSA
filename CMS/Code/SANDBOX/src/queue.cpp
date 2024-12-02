@@ -8,6 +8,15 @@ queue::queue(void) {
 	pHead = pTail = NULL; 
 	nodes = 0;
 }
+queue::~queue(){
+	link temp;	
+	while (!IsQueueEmpty())        // dequeue until all have been dequed 
+	{
+		temp = DeQueue();
+		free(temp->data.payload); 
+		free(temp);                                      // free the msgNode which we dequeued
+	}
+}
 
 int queue::IsQueueEmpty(void) {
 	return(pHead == NULL); 

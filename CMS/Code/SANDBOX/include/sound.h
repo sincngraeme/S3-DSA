@@ -24,6 +24,7 @@ struct soundbuf {
 };
 
 soundbuf record();
+// void play(short** recording, DWORD* nSamples);
 
 // FUNCTION PROTOTYPES
 /* ************************ */

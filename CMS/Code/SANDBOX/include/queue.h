@@ -24,7 +24,8 @@ class queue {
 
 	int nodes;
 	
-	queue(); 									
+	queue(); 
+	~queue();									
 	int IsQueueEmpty(void); 
 	void AddToQueue(link); 
 	link DeQueue(void);
