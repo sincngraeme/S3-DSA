@@ -21,18 +21,18 @@ soundbuf record()
     // instantiate audio object
     audio soundObj;                             // constructor initializes playback and recording                
     // start recording
-    soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
+    soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.nSamples);									////Record some audio into the buffer.
     soundObj.CloseRecording();
     // playback recording 
     printf("\nPlaying recording from buffer\n");
-    soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
+    soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.nSamples);									////Play the recorded audio from the buffer.
     soundObj.ClosePlayback();													////End playback operation.
 
 	/* Storing Recording as file if Desired */
 
 	soundbuf output;
 	output.outBuf = soundObj.iBigBuf;
-	output.outBufSize = soundObj.lBigBufSize;
+	output.nSamples = soundObj.nSamples;
 
 	return output;
     
@@ -121,7 +121,7 @@ int audio::InitializeRecording(void)													////Initialize Recording
 
 	// prepare the buffer header for use later on
 	WaveHeaderIn.lpData = (char *)iBigBuf;									// Sets the waveheader struct data pointer to the buffer input to function.
-	WaveHeaderIn.dwBufferLength = lBigBufSize * sizeof(short);				// Sets the waveheader struct buffer length to the number of samples times
+	WaveHeaderIn.dwBufferLength = nSamples * sizeof(short);				// Sets the waveheader struct buffer length to the number of samples times
 	WaveHeaderIn.dwFlags = 0;
 																			// the size of short to make enough room for all the bits.
 	rc = waveInPrepareHeader(HWaveIn, &WaveHeaderIn, sizeof(WAVEHDR));		// This prepares a waveform block for playback - loads it up.
