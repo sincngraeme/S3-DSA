@@ -137,6 +137,12 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
         if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
         {
             cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";                          // 0 bytes on payload
+            while(!msgQueue.IsQueueEmpty())         // make sure we free mem
+            {
+                outMsgNode = msgQueue.DeQueue();
+                free(outMsgNode->data.payload);
+                free(outMsgNode);
+            }
             return 1;                 // recieve from port
         }
         else if(*nbytes == MAXDWORD)            // if we are recieving 0 btyes
@@ -148,25 +154,44 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
         else if(*nbytes != portObj.header.payloadSize)
         {
             cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
+            while(!msgQueue.IsQueueEmpty())             // make sure we free
+            {
+                outMsgNode = msgQueue.DeQueue();
+                free(outMsgNode->data.payload);
+                free(outMsgNode);
+            }
             return 1;
         } else {                            // Then data must have been recieved and must be correct size
             
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data = msgFrame;                // fill node with data
-            cout << "adding to queue"; 
+            inMsgNode->data.payload = malloc(portObj.header.payloadSize);
+            memcpy(inMsgNode->data.payload, *buf, portObj.header.payloadSize); 
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
         prevnBytes = *nbytes;           // store so it can be accessed after next read operation
     }
-    //return 1;                           // If we reached here the user terminated the loop and the transmission was incomplete
     // Now we dequeue
-    cout << "dequeueing\n";
+
+    cout << "----------------------------------------------\n"; 
+
     while (!msgQueue.IsQueueEmpty())        // dequeue until all have been dequed 
     {
+
+        audio soundObj;
         outMsgNode = msgQueue.DeQueue();
-        cout << (char*)msgFrame.payload << '\n';                           // print the payload message stored in the message frame for a given node.
+        cout << "[Node " << msgQueue.nodes << "\t" << inMsgNode << "]\n"; 
+        
+        soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize / sizeof(short));             // divide by short to get nSamples
+        soundObj.ClosePlayback();
+        soundObj.~audio();
+
+        free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
+
+    cout << "----------------------------------------------\n"; 
+    cout << "Press b to close menu\n";
+    while(getch() != 'b'); 
     return 0;
 }
 // function for recieving text
@@ -223,14 +248,21 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
     // Now we dequeue
     //cout << setBlnk << "\nDequeueing..." << curUp << resetGraph;
      
-    cout << "dequeueing\n";
+    cout << "----------------------------------------------\n"; 
+    
     while (!msgQueue.IsQueueEmpty())        // dequeue until all have been dequed 
     {
         outMsgNode = msgQueue.DeQueue();                                                                            // dequeue 
+        cout << "[Node " << msgQueue.nodes << "\t" << inMsgNode << "]: "; 
         cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize);                           // print the payload message stored in the message frame for a given node.
+        cout << "/n"; 
         free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
+    
+    cout << "----------------------------------------------\n"; 
+    cout << "Press b to close menu\n";
+    while(getch() != 'b'); 
     return 0;
 }
 // function for transmitting images
