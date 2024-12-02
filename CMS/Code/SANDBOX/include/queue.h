@@ -21,6 +21,8 @@ struct node {
 class queue {
 
 	public:
+
+	int nodes;
 	
 	queue(); 									
 	int IsQueueEmpty(void); 

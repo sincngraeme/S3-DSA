@@ -15,10 +15,13 @@
 void TxAudio(queue* msgQueue)
 {
     wchar_t comport[6];
+    cout << "\nCOM PORT: ";
+    wcin.sync();
+    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+
     RS232Comm portObj(comport, 19200, 8);                          // Instantiate port object and initialize settings
     soundbuf recording;
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
-    frame msgFrame;                                     // contains the messages' header and payload
     char c1 = '\0';         // initialize to something
     char c2;
    
@@ -28,29 +31,23 @@ void TxAudio(queue* msgQueue)
         c1 = getch();
         if(c1 == 'r'){ 
             recording = record();													////End playback operation.
-            cin.sync();
             cout << "Queueing...";
             //queue 
              
-            // header->payloadSize = recording.outBufSize;       // store payload size in header
-            // payload = recording.outBuf;                 // store payload
-            inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
+            inMsgNode = (link)malloc(sizeof(Node));                         // Allocate space for the message node
             inMsgNode->data.header.payloadSize = recording.outBufSize;                // fill node with data
-            inMsgNode->data.payload = recording.outBuf;
-            cout << "adding to queue"; 
+            inMsgNode->data.payload = recording.outBuf;                                 // We do not need to allocate space for buffer because new memory is allocated with every call of record
             msgQueue->AddToQueue(inMsgNode);             // add message to the queue
         }
         else if(c1 == 't'){ 
-            cout << "COM PORT: ";
-            wcin.sync();
-            wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-
             while (!msgQueue->IsQueueEmpty())        // dequeue until all have been dequed, transmitting each one 
             {
-                cout << "Dequeue";
                 outMsgNode = msgQueue->DeQueue();
-                msgFrame = outMsgNode->data;                                   // temp header variable to access data since the queue only contains void ptr
-                portObj.TxToPort(&msgFrame.header, (short*)msgFrame.payload);            // output
+                //portObj.TxToPort(&msgFrame.header, (short*)msgFrame.payload);            // output
+                audio soundObj;
+                soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize / sizeof(short)); 
+                soundObj.ClosePlayback();
+                getchar();
                 free(outMsgNode);                                                       // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             } 
         
@@ -74,45 +71,41 @@ void TxText(queue* msgQueue)
     char c1 = '\0';         // initialize to something
     char c2;
    
+    cout << "----------------------------------------------\n"; 
     cout << "Text Mode:\n" << "Add Message\t\t(m)\n" << "Transmit Queue\t\t(t)\n" << "Back\t\t\t(b)\n\n";
+    cout << "----------------------------------------------\n"; 
 
     do {
         c1 = getch();
         if(c1 == 'm'){
             cout << "Message: ";
             cin.sync();
-            cin >> message;
-            cout << "Queueing...\n";
-            // set header
-            // header.payloadSize = message.size();  
-            // inMsgFrame.header = &header;                          // store header in msgFrame
-            // inMsgFrame.payload = (void*)message.c_str();                  // store payload
-            inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
-            inMsgNode->data.payload = (char*)malloc(message.size());
-            inMsgNode->data.header.payloadSize = message.size();
-            memcpy(inMsgNode->data.payload, message.c_str(), message.size());
-            msgQueue->AddToQueue(inMsgNode);      // add the message to the queue
+            getline(cin, message);                         // Get the user's message
+            inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node
+            inMsgNode->data.payload = (char*)malloc(message.size());                // Allocate space for the message itself
+            inMsgNode->data.header.payloadSize = message.size();                    // store the message size for transmission
+            memcpy(inMsgNode->data.payload, message.c_str(), message.size());       // cpy the message into the newly allocated space
+            msgQueue->AddToQueue(inMsgNode);                                        // add the message to the queue
+            cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
         }
         else if(c1 == 't'){
+           
+            cout << "----------------------------------------------\n"; 
+          
             while (!msgQueue->IsQueueEmpty())        // dequeue until all have been dequed 
             {
                 outMsgNode = msgQueue->DeQueue();
-                cout << outMsgNode << '\n';
-                cout << outMsgNode->data.payload << '\n';
-                cout << (char*)outMsgNode->data.payload << '\n';                 // we are accessing the nodes data which is void*, then casting to frame* and accessing member payload (void*) which is cast to char*
-                // outMsgFrame = (frame*)outMsgNode->data;
-                // cout << (char*)outMsgFrame->payload << '\n';                           // print the payload message stored in the message frame for a given node.
-                //free(outMsgNode->data.payload);
+                cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
+                cout << "Message: ";
+                cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize);          // print the message 
+                cout << '\n';                 
                 free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
             }
-           cout << "Press b to close menu\n";
+        
+            cout << "----------------------------------------------\n"; 
+            cout << "Press b to close menu\n";
         }
     } while(c1 != 'b');
-
-    // set up header
-    // portObj.header.payloadSize = szBuf;
-
-    // portObj.TxToPort(&portObj.header, buf);             // output
 }
 // function for transmitting images
 void TxImage()

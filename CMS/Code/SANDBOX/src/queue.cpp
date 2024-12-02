@@ -6,6 +6,7 @@
 // initializes	
 queue::queue(void) {
 	pHead = pTail = NULL; 
+	nodes = 0;
 }
 
 int queue::IsQueueEmpty(void) {
@@ -21,6 +22,7 @@ void queue::AddToQueue(link pn) {
 		pTail = pn;				// pTail points to pn
 	}
 	pTail->pNext = NULL;
+	nodes++;					// increment node counter
 }
 
 link queue::DeQueue(void) {
@@ -31,6 +33,7 @@ link queue::DeQueue(void) {
 	else {
 		pTemp = pHead;			// Store the current Head. pHead is returned and then incremented to next node in list
 		pHead = pHead->pNext;	// pHead points to next Node in list, which becomes the new head
+		nodes--;				// decrement node counter
 		return(pTemp);			// pTemp is original head, which gets returned
 	}
 }

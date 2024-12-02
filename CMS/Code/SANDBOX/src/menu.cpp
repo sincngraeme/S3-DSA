@@ -15,7 +15,7 @@
 // Renders main menu 
 void printMainMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls"); 
     printf("--------------- Welcome To CMS ---------------\n\n");
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
@@ -26,12 +26,11 @@ void printMainMenu()
 // Renders Send Menu
 void printTxMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls"); 
     printf("---------------- Send Message ----------------\n\n");
     printf("\tSelect Message Type:\n\n");
     printf("\tAudio\t\t(1)\n");
     printf("\tText\t\t(2)\n");
-    printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -66,7 +65,7 @@ int TxMode()
 // Renders recieve Menu
 void printRxMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     printf("--------------- Recieve Message --------------\n\n");
     printf("\tSelect Message Type:\n\n");
     printf("\tAudio\t\t(1)\n");
@@ -140,11 +139,10 @@ int RxMode()
 // Renders Settings Menu
 void printSettingsMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     printf("------------------- Settings -----------------\n\n");
     printf("\tSet Bitrate\t\t(1)\n");
     // printf("\tText\t\t(2)\n");
-    // printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -182,7 +180,7 @@ int settingsMode()
 // Renders Debug Menu
 void printDebugMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     // list all fn
     printf("Enter function name and arguments to test:\n");
 }
