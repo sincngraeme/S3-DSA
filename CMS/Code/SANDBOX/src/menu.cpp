@@ -39,7 +39,6 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
-    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
     queue msgQueue;
 
     while(!TxFlag)
@@ -80,7 +79,6 @@ int RxMode()
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
-    DWORD nBytes = 0;  
 
     while(!RxFlag)
     {
@@ -93,13 +91,13 @@ int RxMode()
             {
                 printf("Audio Mode:\n\n");
                 
-                cout << "COM PORT: ";
-                wchar_t comport[6];                               // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
+                // cout << "COM PORT: ";
+                // wchar_t comport[6];                               // declare wchar_t* buffer for comport
+                // wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
                 // instantiate object
                 // audio soundObj;                         // constructor initializes recording
                 // BUFFERS
-                if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
+                if(!RxAudio())    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
                     // printf("\nPlaying recording from buffer\n");
@@ -107,22 +105,21 @@ int RxMode()
 
                     // soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
-                free(aInBuf);									            
                 getchar();
                 break;
             }
             case '2':
                 printf("Text Mode:\n\n");
 
-                cout << "COM PORT: ";
-                wchar_t comport[6];                                 // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));
+                // cout << "COM PORT: ";
+                // wchar_t comport[6];                                 // declare wchar_t* buffer for comport
+                // wcin.getline(comport, sizeof(comport));
                 
-                if(!RxText(&tInBuf, &nBytes , comport))                 
+                if(!RxText())                 
                 {
                     //printf("\n%s\n", tInBuf);
                 }
-                free(tInBuf);
+                //free(tInBuf);
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high

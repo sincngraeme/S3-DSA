@@ -22,8 +22,6 @@ using namespace std;
 // these take a pointer to a queue object so they are both sending messages on the same queue
 void TxAudio(queue* msgQueue);
 void TxText(queue* msgQueue);
-void TxImage();
 
-int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport);
-int RxText(char** buf, DWORD* nbytes, wchar_t* comport);
-void RxImage();
+int RxAudio();
+int RxText();
