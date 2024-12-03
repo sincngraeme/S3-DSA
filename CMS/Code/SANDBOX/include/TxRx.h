@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string.h>
 #include <conio.h>
+#include "config.h"
 
 using namespace std;
 

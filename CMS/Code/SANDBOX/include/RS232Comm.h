@@ -18,8 +18,8 @@
 #define RS232_INVALID_PARAMETER 8
 
 struct comhdr {
-    // short int sid;
-    // short int rid;
+    short int sid;
+    short int rid;
     // char priority; 
     // short int seqNum;
     DWORD payloadSize;		// Number of bytes in payload after this header
