@@ -101,17 +101,17 @@ int RxMode()
                 if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
-                    printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
+                    // printf("\nPlaying recording from buffer\n");
+                    // soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
 
-                    soundObj.ClosePlayback();                                                   // End playback operation.
+                    // soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
                 free(aInBuf);									            
                 getchar();
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:\n\n");
+                printf("Text Mode:\n\n");
 
                 cout << "COM PORT: ";
                 wchar_t comport[6];                                 // declare wchar_t* buffer for comport
@@ -123,10 +123,6 @@ int RxMode()
                 }
                 free(tInBuf);
                 getchar();
-                break;
-            case '3':
-                /*TEMP*/printf("Image Mode:\n");
-                /*TEMP*/getchar();
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high
