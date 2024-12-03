@@ -17,29 +17,33 @@ Details: Implementation - Contains functions for Windows sound API (sound record
 /* *************************************** Wrappers ******************************************** */
 soundbuf record()
 {
-	printf("Audio Mode:\t\t\tPress R to Record\n");
-    
-    while(getch() != 'r');
-
+	
     // instantiate audio object
     audio soundObj;                             // constructor initializes playback and recording                
     // start recording
-    soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Record some audio into the buffer.
+    soundObj.RecordBuffer(soundObj.iBigBuf, soundObj.nSamples);									////Record some audio into the buffer.
     soundObj.CloseRecording();
     // playback recording 
     printf("\nPlaying recording from buffer\n");
-    soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.lBigBufSize);									////Play the recorded audio from the buffer.
+    soundObj.PlayBuffer(soundObj.iBigBuf, soundObj.nSamples);									////Play the recorded audio from the buffer.
     soundObj.ClosePlayback();													////End playback operation.
 
 	/* Storing Recording as file if Desired */
 
 	soundbuf output;
 	output.outBuf = soundObj.iBigBuf;
-	output.outBufSize = soundObj.lBigBufSize;
+	output.nSamples = soundObj.nSamples;
 
 	return output;
     
 }
+// // void play(short** recording, dword* nsamples)
+// // {
+// // 	audio soundobj;
+// // 	printf("\nplaying recording from buffer\n");
+// //     soundobj.playbuffer(*recording, *nsamples);									////play the recorded audio from the buffer.
+// //     soundobj.closeplayback();													////end playback operation.
+// }
 /* PLAYBACK FUNCTIONS */
 /* ********************************************************************************************* */
 audio::audio()
@@ -80,7 +84,7 @@ int audio::PlayBuffer(short *piBuf, DWORD lSamples)					////Function to play bac
 																		////the size of short to make enough room for all the bits.
 	rc = waveOutPrepareHeader(HWaveOut, &WaveHeader, sizeof(WAVEHDR));	////This prepares a waveform block for playback - loads it up.
 	if (rc != MMSYSERR_NOERROR) {															////Error checking the result.
-		printf("Failed preparing WAVEHDR, error 0x%x.", rc);
+		printf("Failed preparing WAVEHDR, error 0x%x.\n", rc);
 		return(0);
 	}
 	WaveHeader.dwFlags &= ~(WHDR_BEGINLOOP | WHDR_ENDLOOP);				////Sets the flag in the waveheader struct to indicate the status of the buffer
@@ -124,7 +128,7 @@ int audio::InitializeRecording(void)													////Initialize Recording
 
 	// prepare the buffer header for use later on
 	WaveHeaderIn.lpData = (char *)iBigBuf;									// Sets the waveheader struct data pointer to the buffer input to function.
-	WaveHeaderIn.dwBufferLength = lBigBufSize * sizeof(short);				// Sets the waveheader struct buffer length to the number of samples times
+	WaveHeaderIn.dwBufferLength = nSamples * sizeof(short);				// Sets the waveheader struct buffer length to the number of samples times
 	WaveHeaderIn.dwFlags = 0;
 																			// the size of short to make enough room for all the bits.
 	rc = waveInPrepareHeader(HWaveIn, &WaveHeaderIn, sizeof(WAVEHDR));		// This prepares a waveform block for playback - loads it up.

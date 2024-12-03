@@ -1,2 +1,0 @@
-thing
-: definition for thing

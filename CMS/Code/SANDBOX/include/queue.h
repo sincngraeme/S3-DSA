@@ -3,7 +3,7 @@
 */
 #pragma once
 // #include "message.h"
-
+#include "RS232Comm.h"
 
 
 #define QUEUE_SIZE 5
@@ -14,14 +14,18 @@ typedef struct node* link;
 
 struct node {
 	link pNext; 
-	void* data;
+	frame data;
 };
+
 
 class queue {
 
 	public:
+
+	int nodes;
 	
-	queue(); 									
+	queue(); 
+	~queue();									
 	int IsQueueEmpty(void); 
 	void AddToQueue(link); 
 	link DeQueue(void);

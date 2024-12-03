@@ -11,10 +11,11 @@
 
 /************** Function for printing main menu *************/
 
+
 // Renders main menu 
 void printMainMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls"); 
     printf("--------------- Welcome To CMS ---------------\n\n");
     printf("\tSend Message\t\t(1)\n");
     printf("\tRecieve Message\t\t(2)\n");
@@ -25,12 +26,11 @@ void printMainMenu()
 // Renders Send Menu
 void printTxMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls"); 
     printf("---------------- Send Message ----------------\n\n");
     printf("\tSelect Message Type:\n\n");
     printf("\tAudio\t\t(1)\n");
     printf("\tText\t\t(2)\n");
-    printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -38,11 +38,9 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
-    char message[256];
-    // // BUFFERS
-    // extern short* iBigBuf;
-    // extern long  lBigBufSize;	// total number of samples
-    
+    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
+    queue msgQueue;
+
     while(!TxFlag)
     {
         printTxMenu();
@@ -51,34 +49,10 @@ int TxMode()
         switch(getch())         // load keypress and select fn
         {
             case '1':
-            {
-                soundbuf recording = record();													////End playback operation.
-                cin.ignore();
-                cout << "send? (y|n): ";
-                if (getchar() == 'y')
-                {
-                    wcin.ignore();
-                    cout << "COM PORT: ";
-                    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
-                    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-                    TxAudio(recording.outBuf, recording.outBufSize * sizeof(short), comport);
-                    system("pause");
-                }
+                TxAudio(&msgQueue);
                 break;
-            }
             case '2':
-                printf("Text Mode:\n\nMessage: ");
-                cin.getline(message, sizeof(message));
-                cout << "\nCOM PORT: ";
-                wchar_t comport[6];                                         // declare wchar_t* buffer for comport
-                //wcin.ignore();
-                wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-                TxText(message, strlen(message) + 1, comport);
-                /*TEMP*/getchar();
-                break;
-            case '3':
-                /*TEMP*/printf("Image Mode:\n");
-                /*TEMP*/getchar();
+                TxText(&msgQueue); 
                 break;
             case 'b':
                 TxFlag = 1;                     // set exit flag high
@@ -91,12 +65,11 @@ int TxMode()
 // Renders recieve Menu
 void printRxMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     printf("--------------- Recieve Message --------------\n\n");
     printf("\tSelect Message Type:\n\n");
     printf("\tAudio\t\t(1)\n");
     printf("\tText\t\t(2)\n");
-    printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -127,19 +100,18 @@ int RxMode()
                 // BUFFERS
                 if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
                 {   
-                    
                     // playback recording 
-                    printf("\nPlaying recording from buffer\n");
-                    soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
+                    // printf("\nPlaying recording from buffer\n");
+                    // soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
 
-                    soundObj.ClosePlayback();                                                   // End playback operation.
+                    // soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
                 free(aInBuf);									            
                 getchar();
                 break;
             }
             case '2':
-                /*TEMP*/printf("Text Mode:\n\n");
+                printf("Text Mode:\n\n");
 
                 cout << "COM PORT: ";
                 wchar_t comport[6];                                 // declare wchar_t* buffer for comport
@@ -147,14 +119,10 @@ int RxMode()
                 
                 if(!RxText(&tInBuf, &nBytes , comport))                 
                 {
-                    printf("\n%s\n", tInBuf);
+                    //printf("\n%s\n", tInBuf);
                 }
                 free(tInBuf);
                 getchar();
-                break;
-            case '3':
-                /*TEMP*/printf("Image Mode:\n");
-                /*TEMP*/getchar();
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high
@@ -167,11 +135,10 @@ int RxMode()
 // Renders Settings Menu
 void printSettingsMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     printf("------------------- Settings -----------------\n\n");
     printf("\tSet Bitrate\t\t(1)\n");
     // printf("\tText\t\t(2)\n");
-    // printf("\tImage\t\t(3)\n");
     printf("\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
@@ -209,7 +176,7 @@ int settingsMode()
 // Renders Debug Menu
 void printDebugMenu()
 {
-    printf("%s%s", clearfrom, setH);        // clears screen then resets to home position
+    system("cls");
     // list all fn
     printf("Enter function name and arguments to test:\n");
 }

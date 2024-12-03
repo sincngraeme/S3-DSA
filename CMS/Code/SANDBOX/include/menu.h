@@ -8,6 +8,9 @@
 
 #include <stdio.h>
 #include <conio.h>
+#include <iostream>
+
+using namespace std;
 
 #define CTRL_KEY(k) ((k) & 0x1f)		// allows for processing ctrl inputs
 #define DB_ARG_MAX_SZ 256               // max buffer size for total argument input string to debug mode

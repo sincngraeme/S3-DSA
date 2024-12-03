@@ -20,10 +20,11 @@
 
 struct soundbuf {
 	short* outBuf;			
-	DWORD outBufSize;
+	DWORD nSamples;
 };
 
 soundbuf record();
+// void play(short** recording, DWORD* nSamples);
 
 // FUNCTION PROTOTYPES
 /* ************************ */
@@ -35,7 +36,7 @@ class audio {
 
 	// BUFFERS
 	short iBigBuf[SAMPLES_SEC * RECORD_TIME];
-	DWORD  lBigBufSize = SAMPLES_SEC * RECORD_TIME;	// total number of samples
+	DWORD  nSamples = SAMPLES_SEC * RECORD_TIME;	// total number of samples
 
 
 	// Playback

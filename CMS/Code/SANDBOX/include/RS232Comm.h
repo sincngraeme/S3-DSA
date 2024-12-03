@@ -37,9 +37,9 @@ struct comhdr {
 };
 typedef comhdr* pcomhdr;
 
-// for storing messages 
+
 struct frame {
-    pcomhdr header;
+    comhdr header;
     void* payload;
 };
 typedef struct frame Frame;
