@@ -15,7 +15,7 @@
 
 #define EX_FATAL 1
 
-/**************************************************** WRAPPERS (Added By Nigel Sinclair) *********************************************/
+/**************************************************** WRAPPERS *********************************************/
 
 // Constructor
 RS232Comm::RS232Comm(wchar_t* portName, int baudRate, int numBits)

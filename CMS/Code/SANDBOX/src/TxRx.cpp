@@ -7,19 +7,17 @@
 
 #include "TxRx.h"
 
-
 /******************************************** Transmitting *******************************************/
-
 
 // function for transmitting audio
 void TxAudio(queue* msgQueue)
 {
-    wchar_t comport[6];
-    cout << "\nCOM PORT: ";
-    wcin.sync();
-    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+    // wchar_t comport[6];
+    // cout << "\nCOM PORT: ";
+    // wcin.sync();
+    // wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
 
-    RS232Comm portObj(comport, 19200, 8);                          // Instantiate port object and initialize settings
+    RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);                          // Instantiate port object and initialize settings
     soundbuf recording;
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
     char c1 = '\0';         // initialize to something
@@ -62,12 +60,12 @@ void TxAudio(queue* msgQueue)
 // function for transmitting text
 void TxText(queue* msgQueue)
 {
-    wchar_t comport[6];
-    cout << "\nCOM PORT: ";
-    wcin.sync();
-    wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
+    // wchar_t comport[6];
+    // cout << "\nCOM PORT: ";
+    // wcin.sync();
+    // wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
 
-    RS232Comm portObj(comport, 19200, 8);                          // Instantiate port object and initialize settings
+    RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);                          // Instantiate port object and initialize settings
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
     // frame inMsgFrame, outMsgFrame;                                     // contains the messages' header and payload
     string message;
@@ -119,10 +117,12 @@ void TxImage()
 /******************************************** Recieving *******************************************/
 
 // function for recieving audio
-int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
+int RxAudio()
 {
     int timeout = 0;
-    RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings 
+    short* buf;
+    DWORD nBytes = 0;  
+    RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);              // instantiate port object and initialize port settings 
     queue msgQueue;                                    // instantiate queue object
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
     frame msgFrame;                                     // contains the messages' header and payload
@@ -134,20 +134,20 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
     while(((kbhit()) ? getch() : 0) != 'k' && timeout < 5)
     {
         // if there are no error flags set and the number of bytes recieved from payload is not 0 
-        if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
+        if((nBytes = portObj.RxFromPort(&portObj.header, &buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
         {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";                          // 0 bytes on payload
+            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << nBytes << " bytes read.";                          // 0 bytes on payload
             timeout++; 
         }
-        else if(*nbytes == MAXDWORD)            // if we are recieving 0 btyes
+        else if(nBytes == MAXDWORD)            // if we are recieving 0 btyes
         {
-            *nbytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
+            nBytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
             if(portObj.msgStatus) timeout++;        // if the msg flag is set high then something has been recieved
             // if a message has been recieved and we are now recieving 0 bytes the full message has been read
         }
-        else if(*nbytes != portObj.header.payloadSize)
+        else if(nBytes != portObj.header.payloadSize)
         {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
+            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << nBytes << " bytes read.";
             return 1;
         } else {                            // Then data must have been recieved and must be correct size
             
@@ -155,10 +155,10 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
             inMsgNode->data.payload = (short*)malloc(portObj.header.payloadSize);
             inMsgNode->data.header.payloadSize = portObj.header.payloadSize;
-            memcpy(inMsgNode->data.payload, *buf, portObj.header.payloadSize); 
+            memcpy(inMsgNode->data.payload, buf, portObj.header.payloadSize); 
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
-        prevnBytes = *nbytes;           // store so it can be accessed after next read operation
+        prevnBytes = nBytes;           // store so it can be accessed after next read operation
     }
     // Now we dequeue
 
@@ -181,9 +181,11 @@ int RxAudio(short** buf, DWORD* nbytes, wchar_t* comport)
     return 0;
 }
 // function for recieving text
-int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
+int RxText()
 {
-    RS232Comm portObj(comport, 19200, 8);              // instantiate port object and initialize port settings 
+    DWORD nbytes = 0;
+    short* buf;
+    RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);              // instantiate port object and initialize port settings 
     queue msgQueue;                                    // instantiate queue object
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
     DWORD prevnBytes;                                   // temp variable for storing previous nummber of bytes to prevent the wrong value beign assigned.
@@ -193,9 +195,9 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
     while(((kbhit()) ? getch() : 0) != 'k' && timeout < 5)
     {
         // if there are no error flags set and the number of bytes recieved from payload is not 0 
-        if((*nbytes = portObj.RxFromPort(&portObj.header, buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
+        if((nbytes = portObj.RxFromPort(&portObj.header, &buf)) == 0 || portObj.RS232CommErr != RS232_NO_ERR)               
         {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << *nbytes << " bytes read.";                          // 0 bytes on payload
+            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << "," << nbytes << " bytes read.";                          // 0 bytes on payload
             while(!msgQueue.IsQueueEmpty())
             {
                 outMsgNode = msgQueue.DeQueue();
@@ -204,15 +206,15 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
             }
             return 1;                 // recieve from port
         }
-        else if(*nbytes == MAXDWORD)            // if we are recieving 0 btyes
+        else if(nbytes == MAXDWORD)            // if we are recieving 0 btyes
         {
-            *nbytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
+            nbytes = prevnBytes;               // The previous number of bytes contains the paylod size - we do not want to assign MAXDWORD - will result in segfault
             if(portObj.msgStatus) timeout++;        // if the msg flag is set high then something has been recieved
             // if a message has been recieved and we are now recieving 0 bytes the full message has been read
         }
-        else if(*nbytes != portObj.header.payloadSize)
+        else if(nbytes != portObj.header.payloadSize)
         {
-            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << *nbytes << " bytes read.";
+            cout << "ERROR reading from port: 0x" << portObj.RS232CommErr << ", payload size:" << portObj.header.payloadSize << "does not match " << nbytes << " bytes read.";
             while(!msgQueue.IsQueueEmpty())
             {
                 outMsgNode = msgQueue.DeQueue();
@@ -225,10 +227,10 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
             inMsgNode->data.payload = (char*)malloc(portObj.header.payloadSize);
             inMsgNode->data.header.payloadSize = portObj.header.payloadSize;                // fill node with data
-            memcpy(inMsgNode->data.payload, *buf, portObj.header.payloadSize);               // copy buffer into node
+            memcpy(inMsgNode->data.payload, buf, portObj.header.payloadSize);               // copy buffer into node
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
-        prevnBytes = *nbytes;           // store so it can be accessed after next read operation
+        prevnBytes = nbytes;           // store so it can be accessed after next read operation
     }
     //return 1;                           // If we reached here the user terminated the loop and the transmission was incomplete
     // Now we dequeue
@@ -250,9 +252,4 @@ int RxText(char** buf, DWORD* nbytes, wchar_t* comport)
     cout << "Press b to close menu\n";
     while(getch() != 'b'); 
     return 0;
-}
-// function for transmitting images
-void RxImage()
-{
-
 }

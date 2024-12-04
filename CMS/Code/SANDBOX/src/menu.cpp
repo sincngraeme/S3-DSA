@@ -11,6 +11,7 @@
 
 /************** Function for printing main menu *************/
 
+config settings;
 
 // Renders main menu 
 void printMainMenu()
@@ -38,7 +39,6 @@ void printTxMenu()
 int TxMode()
 {
     int TxFlag = 0;
-    wchar_t comport[6];                                         // declare wchar_t* buffer for comport
     queue msgQueue;
 
     while(!TxFlag)
@@ -79,7 +79,6 @@ int RxMode()
     int RxFlag = 0;  
     char* tInBuf = NULL;                               // buffer used for storing recieved message - initialized to null so RxText can handle dynamic memory allocation
     short* aInBuf = NULL;		                       // buffer used for reading recorded sound from file - initialized to null so RxAudio can handle dynamic memory allocation
-    DWORD nBytes = 0;  
 
     while(!RxFlag)
     {
@@ -92,13 +91,13 @@ int RxMode()
             {
                 printf("Audio Mode:\n\n");
                 
-                cout << "COM PORT: ";
-                wchar_t comport[6];                               // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
+                // cout << "COM PORT: ";
+                // wchar_t comport[6];                               // declare wchar_t* buffer for comport
+                // wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
                 // instantiate object
-                audio soundObj;                         // constructor initializes recording
+                // audio soundObj;                         // constructor initializes recording
                 // BUFFERS
-                if(!RxAudio(&aInBuf, &nBytes, comport))    // recieve audio from port and only play from buffer if there were no errors
+                if(!RxAudio())    // recieve audio from port and only play from buffer if there were no errors
                 {   
                     // playback recording 
                     // printf("\nPlaying recording from buffer\n");
@@ -106,23 +105,21 @@ int RxMode()
 
                     // soundObj.ClosePlayback();                                                   // End playback operation.
                 }		
-                free(aInBuf);									            
                 getchar();
                 break;
             }
             case '2':
                 printf("Text Mode:\n\n");
 
-                cout << "COM PORT: ";
-                wchar_t comport[6];                                 // declare wchar_t* buffer for comport
-                wcin.getline(comport, sizeof(comport));
+                // cout << "COM PORT: ";
+                // wchar_t comport[6];                                 // declare wchar_t* buffer for comport
+                // wcin.getline(comport, sizeof(comport));
                 
-                if(!RxText(&tInBuf, &nBytes , comport))                 
+                if(!RxText())                 
                 {
                     //printf("\n%s\n", tInBuf);
                 }
-                free(tInBuf);
-                getchar();
+                //free(tInBuf);
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high
@@ -135,36 +132,69 @@ int RxMode()
 // Renders Settings Menu
 void printSettingsMenu()
 {
-    system("cls");
     printf("------------------- Settings -----------------\n\n");
-    printf("\tSet Bitrate\t\t(1)\n");
-    // printf("\tText\t\t(2)\n");
-    printf("\n\tBack\t\t(b)\n");
+    printf("\tHeader Settings:\n");
+    printf("\t  Set SID\t\t\t(1)\n");
+    printf("\t  Set RID\t\t\t(2)\n");
+    printf("\t  Set Audio Compression Type\t(3)\n");
+    printf("\t    0: None\n");
+    printf("\t    1: RLE\n"); 
+    printf("\t    2: HUFFMAN\n"); 
+    printf("\t    3: BOTH\n");
+    printf("\t  Set Text Compression Type\t(4)\n");
+    printf("\t    0: None\n");
+    printf("\t    1: RLE\n"); 
+    printf("\t    2: HUFFMAN\n"); 
+    printf("\t    3: BOTH\n");
+    printf("\tComport Settings:\n");
+    printf("\t  Set Bitrate\t\t\t(5)\n");
+    printf("\t  Set Bit Depth\t\t\t(6)\n");
+    printf("\t  Set Comport\t\t\t(7)\n");
+    printf("\n\n\tBack\t\t(b)\n");
     printf("\n----------------------------------------------\n");
 }
 int settingsMode()
 {
     int setFlag = 0;
 
+    system("cls");
+    printSettingsMenu();
+
     while(!setFlag)
     {
-        printSettingsMenu();
 
         while(!kbhit());        // Wait for keypress
         switch(getch())         // load keypress and select fn
         {
             case '1':
-                /*TEMP*/printf("Set Bitrate:");
-                /*TEMP*/getchar();
+                cout << "SID >";
+                cin >> settings.hdr.sid;
                 break;
-            // case '2':
-            //     /*TEMP*/printf("\n");
-            //     /*TEMP*/getchar();
-            //     break;
-            // case '3':
-            //     /*TEMP*/printf("\n");
-            //     /*TEMP*/getchar();
-            //     break;
+            case '2':
+                cout << "RID >";
+                cin >> settings.hdr.rid;
+                break;
+            case '3':
+                cout << "Audio Compression Type >";
+                cin >> settings.hdr.audioCompType;
+                break;
+            case '4':
+                cout << "Text Compression Type >";
+                cin >> settings.hdr.textCompType;
+                break;
+            case '5': 
+                cout << "Bitrate >";
+                cin >> settings.com.bitrate;
+                break;
+            case '6':
+                cout << "Bit Depth >";
+                cin >> settings.com.bitdepth;
+                break;
+            case '7':
+                cout << "Comport >";
+                wcin.sync();
+                wcin.getline(settings.com.comport, sizeof(settings.com.comport));                      // wide version of cin for user input  
+                break; 
             case 'b':
                 setFlag = 1;                    // set exit flag high
                 break;
