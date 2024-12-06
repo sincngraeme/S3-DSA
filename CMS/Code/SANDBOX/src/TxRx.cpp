@@ -20,6 +20,7 @@ void TxAudio(queue* msgQueue)
     RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);                          // Instantiate port object and initialize settings
     soundbuf recording;
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
+    DWORD szCompressed;
     char c1 = '\0';         // initialize to something
     char c2;
    
@@ -34,7 +35,13 @@ void TxAudio(queue* msgQueue)
             inMsgNode = (link)malloc(sizeof(Node));                         // Allocate space for the message node
             inMsgNode->data.payload = malloc(recording.nSamples * sizeof(short));                                 // We do not need to allocate space for buffer because new memory is allocated with every call of record
             inMsgNode->data.header.payloadSize = recording.nSamples * sizeof(short);                // fill node with data
+            inMsgNode->data.header.fCompress = settings.hdr.audioCompType;
             memcpy(inMsgNode->data.payload, recording.outBuf, recording.nSamples * sizeof(short));                                 // We do not need to allocate space for buffer because new memory is allocated with every call of record
+            if(compress(inMsgNode->data.payload, inMsgNode->data.header.payloadSize, &szCompressed, inMsgNode->data.header.fCompress))           // compress the buffer => if there are no compression flags set it does nothing
+            {
+                inMsgNode->data.header.uncompressedSize = inMsgNode->data.header.payloadSize;               // this is the actual size of the message
+                outMsgNode->data.header.payloadSize = szCompressed;                                         // this is the size of message being sent
+            } 
             msgQueue->AddToQueue(inMsgNode);             // add message to the queue
             cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
         }
@@ -60,14 +67,9 @@ void TxAudio(queue* msgQueue)
 // function for transmitting text
 void TxText(queue* msgQueue)
 {
-    // wchar_t comport[6];
-    // cout << "\nCOM PORT: ";
-    // wcin.sync();
-    // wcin.getline(comport, sizeof(comport));                      // wide version of cin for user input
-
     RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);                          // Instantiate port object and initialize settings
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
-    // frame inMsgFrame, outMsgFrame;                                     // contains the messages' header and payload
+    DWORD szCompressed = 0; 
     string message;
     comhdr header;
     char c = '\0';         // initialize to something
@@ -82,10 +84,17 @@ void TxText(queue* msgQueue)
             cout << "Message: ";
             cin.sync();
             getline(cin, message);                         // Get the user's message
-            inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node
+            inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node                      this is my compressed message maybe if i'm lucky but experience tells me I'm not
             inMsgNode->data.payload = (char*)malloc(message.size());                // Allocate space for the message itself
             inMsgNode->data.header.payloadSize = message.size();                    // store the message size for transmission
+            inMsgNode->data.header.fCompress = settings.hdr.textCompType;  
             memcpy(inMsgNode->data.payload, message.c_str(), message.size());       // cpy the message into the newly allocated space
+            if(compress(inMsgNode->data.payload, inMsgNode->data.header.payloadSize, &szCompressed, inMsgNode->data.header.fCompress))           // compress the buffer => if there are no compression flags set it does nothing
+            {
+                inMsgNode->data.header.uncompressedSize = inMsgNode->data.header.payloadSize;               // this is the actual size of the message
+                inMsgNode->data.header.payloadSize = szCompressed;                                         // this is the size of message being sent
+                cout << "Uncompressed size: " << inMsgNode->data.header.uncompressedSize << endl;
+            } 
             msgQueue->AddToQueue(inMsgNode);                                        // add the message to the queue
             cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
         }
@@ -93,7 +102,7 @@ void TxText(queue* msgQueue)
            
             cout << "----------------------------------------------\n"; 
           
-            while (!msgQueue->IsQueueEmpty())        // dequeue until all have been dequed 
+            while (!msgQueue->IsQueueEmpty())        // dequeue until all have been dequed               
             {
                 outMsgNode = msgQueue->DeQueue();
                 cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]: "; 
@@ -109,11 +118,8 @@ void TxText(queue* msgQueue)
         }
     } while(c != 'b');
 }
-// function for transmitting images
-void TxImage()
-{
 
-}
+
 /******************************************** Recieving *******************************************/
 
 // function for recieving audio
@@ -169,7 +175,8 @@ int RxAudio()
         soundObj.InitializePlayback();
         outMsgNode = msgQueue.DeQueue();
         cout << "[Node " << msgQueue.nodes << "\t" << outMsgNode << "]\n"; 
-        soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize / sizeof(short));
+        decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress);
+        soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize / sizeof(short));
         soundObj.ClosePlayback();
         free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
@@ -184,7 +191,7 @@ int RxAudio()
 int RxText()
 {
     DWORD nbytes = 0;
-    short* buf;
+    char* buf;
     RS232Comm portObj(settings.com.comport, settings.com.bitrate, settings.com.bitdepth);              // instantiate port object and initialize port settings 
     queue msgQueue;                                    // instantiate queue object
     link outMsgNode, inMsgNode;                         // for queueing and dequeuing
@@ -222,11 +229,12 @@ int RxText()
                 free(outMsgNode);
             }
             return 1;
-        } else {                            // Then data must have been recieved and must be correct size
+        } else {                            // Then data must have been recieved and must be correct size        
             // Struct Initialization
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
             inMsgNode->data.payload = (char*)malloc(portObj.header.payloadSize);
-            inMsgNode->data.header.payloadSize = portObj.header.payloadSize;                // fill node with data
+            //inMsgNode->data.header.payloadSize = portObj.header.payloadSize;                // fill node with data
+            memcpy(&inMsgNode->data.header, &portObj.header, sizeof(comhdr));               // copy the header
             memcpy(inMsgNode->data.payload, buf, portObj.header.payloadSize);               // copy buffer into node
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
@@ -242,7 +250,8 @@ int RxText()
     {
         outMsgNode = msgQueue.DeQueue();                                                                            // dequeue 
         cout << "[Node " << msgQueue.nodes << "\t" << outMsgNode << "]: "; 
-        cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize);                           // print the payload message stored in the message frame for a given node.
+        decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress);
+        cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize);                           // print the payload message stored in the message frame for a given node.
         cout << "\n"; 
         free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed

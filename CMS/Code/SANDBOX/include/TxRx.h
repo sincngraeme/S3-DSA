@@ -12,6 +12,7 @@
 #include "sound.h"
 #include "queue.h"
 #include "menu.h"
+#include "decode.h"
 #include <iostream>
 #include <string.h>
 #include <conio.h>

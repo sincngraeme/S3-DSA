@@ -23,7 +23,8 @@ struct comhdr {
     // char priority; 
     // short int seqNum;
     DWORD payloadSize;		// Number of bytes in payload after this header
-    char cFlags;                
+    DWORD uncompressedSize;
+    // char cFlags;                
     // 0b 00 00 00 00 
     //    ^  ^  ^  ^
     //    |  |  |  Error Correction type
@@ -34,6 +35,7 @@ struct comhdr {
     // 00: Text, 01: Audio, 10: Image etc.
     // 00: None, 01: XOR,	10: Vigenere	11: Both
     // 00: None, 01: RLE,	10: Huffman,	11: Both
+    int fCompress;     // compression flag
 };
 typedef comhdr* pcomhdr;
 
