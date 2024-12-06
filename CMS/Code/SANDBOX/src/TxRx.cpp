@@ -40,8 +40,11 @@ void TxAudio(queue* msgQueue)
             if(compress(inMsgNode->data.payload, inMsgNode->data.header.payloadSize, &szCompressed, inMsgNode->data.header.fCompress))           // compress the buffer => if there are no compression flags set it does nothing
             {
                 inMsgNode->data.header.uncompressedSize = inMsgNode->data.header.payloadSize;               // this is the actual size of the message
-                outMsgNode->data.header.payloadSize = szCompressed;                                         // this is the size of message being sent
-            } 
+                inMsgNode->data.header.payloadSize = szCompressed;                                         // this is the size of message being sent
+                cout << "Uncompressed size: " << inMsgNode->data.header.uncompressedSize << endl;
+            } else if(inMsgNode->data.header.fCompress != 0) {          // if compression failed, set the  flag to low so recieving side doesn't decompress uncompressed message
+                inMsgNode->data.header.fCompress = 0;
+            }
             msgQueue->AddToQueue(inMsgNode);             // add message to the queue
             cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
         }
@@ -186,7 +189,8 @@ int RxAudio()
             timeout = 0;                // if we are recieving reset 
             inMsgNode = (link)malloc(sizeof(Node));                       // Allocate space for the message node
             inMsgNode->data.payload = (short*)malloc(portObj.header.payloadSize);
-            inMsgNode->data.header.payloadSize = portObj.header.payloadSize;
+            // inMsgNode->data.header.payloadSize = portObj.header.payloadSize;
+            memcpy(&inMsgNode->data.header, &portObj.header, sizeof(comhdr));
             memcpy(inMsgNode->data.payload, buf, portObj.header.payloadSize); 
             msgQueue.AddToQueue(inMsgNode);      // add the message to the queue
         }
@@ -201,9 +205,13 @@ int RxAudio()
         soundObj.InitializePlayback();
         outMsgNode = msgQueue.DeQueue();
         cout << "[Node " << msgQueue.nodes << "\t" << outMsgNode << "]\n"; 
-        decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress);
-        soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize / sizeof(short));
-        soundObj.ClosePlayback();
+        if(decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress)){
+            soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize / sizeof(short));
+            soundObj.ClosePlayback();
+        } else {
+            soundObj.PlayBuffer((short*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize / sizeof(short));
+            soundObj.ClosePlayback();
+        }
         free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed
     }
