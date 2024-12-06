@@ -102,7 +102,7 @@ void TxText(queue* msgQueue)
                 strcpy((char*)inMsgNode->data.payload, randMsg);                        // copy the message in
                 inMsgNode->data.header.payloadSize = sizeof(randMsg);                   // store the message size for transmission
                 inMsgNode->data.header.fCompress = settings.hdr.textCompType;  
-                
+
             } else if (c = 'm'){                                // if the user specifies a custom message
                 cout << "Message: ";
                 cin.sync();
@@ -118,7 +118,9 @@ void TxText(queue* msgQueue)
                 inMsgNode->data.header.uncompressedSize = inMsgNode->data.header.payloadSize;               // this is the actual size of the message
                 inMsgNode->data.header.payloadSize = szCompressed;                                         // this is the size of message being sent
                 cout << "Uncompressed size: " << inMsgNode->data.header.uncompressedSize << endl;
-            } 
+            } else if(inMsgNode->data.header.fCompress != 0) {          // if compression failed, set the  flag to low so recieving side doesn't decompress uncompressed message
+                inMsgNode->data.header.fCompress = 0;
+            }
             msgQueue->AddToQueue(inMsgNode);                                        // add the message to the queue
             cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
         

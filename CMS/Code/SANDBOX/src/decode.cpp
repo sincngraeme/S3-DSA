@@ -37,7 +37,6 @@ int compress(void* buf, DWORD inSz, DWORD* outSz, int fCompress)
         if(*outSz > inSz) 
         {
             printf("Message cannot be further compressed\n"); 
-            *outSz = inSz;                                          // so we are not sending the wrong size
             return 0;
         }
         // Output file statistics message                    

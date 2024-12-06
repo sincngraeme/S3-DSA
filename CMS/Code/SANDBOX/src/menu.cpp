@@ -90,36 +90,13 @@ int RxMode()
             case '1':
             {
                 printf("Audio Mode:\n\n");
-                
-                // cout << "COM PORT: ";
-                // wchar_t comport[6];                               // declare wchar_t* buffer for comport
-                // wcin.getline(comport, sizeof(comport));         // wide character version of cin for getting user input
-                // instantiate object
-                // audio soundObj;                         // constructor initializes recording
-                // BUFFERS
-                if(!RxAudio())    // recieve audio from port and only play from buffer if there were no errors
-                {   
-                    // playback recording 
-                    // printf("\nPlaying recording from buffer\n");
-                    // soundObj.PlayBuffer(aInBuf, nBytes / sizeof(short));							// Play the recorded audio from the buffer. Since we have the number of bytes, we divide by sizeof(short) for number of samples
-
-                    // soundObj.ClosePlayback();                                                   // End playback operation.
-                }		
+                RxAudio();    // recieve audio from port and only play from buffer if there were no errors
                 getchar();
                 break;
             }
             case '2':
                 printf("Text Mode:\n\n");
-
-                // cout << "COM PORT: ";
-                // wchar_t comport[6];                                 // declare wchar_t* buffer for comport
-                // wcin.getline(comport, sizeof(comport));
-                
-                if(!RxText())                 
-                {
-                    //printf("\n%s\n", tInBuf);
-                }
-                //free(tInBuf);
+                RxText();                 
                 break;
             case 'b':
                 RxFlag = 1;                     // set exit flag high
