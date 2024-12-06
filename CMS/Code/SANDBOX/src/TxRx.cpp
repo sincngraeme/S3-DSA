@@ -75,20 +75,44 @@ void TxText(queue* msgQueue)
     char c = '\0';         // initialize to something
    
     cout << "----------------------------------------------\n"; 
-    cout << "Text Mode:\n" << "Add Message\t\t(m)\n" << "Transmit Queue\t\t(t)\n" << "Back\t\t\t(b)\n\n";
+    cout << "Text Mode:\n" << "Add Message\t\t(m)\n" << "Add Random Message\t\t(r)\n" << "Transmit Queue\t\t(t)\n" << "Back\t\t\t(b)\n\n";
     cout << "----------------------------------------------\n"; 
 
     do {
         c = getch();
-        if(c == 'm'){
-            cout << "Message: ";
-            cin.sync();
-            getline(cin, message);                         // Get the user's message
-            inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node                      this is my compressed message maybe if i'm lucky but experience tells me I'm not
-            inMsgNode->data.payload = (char*)malloc(message.size());                // Allocate space for the message itself
-            inMsgNode->data.header.payloadSize = message.size();                    // store the message size for transmission
-            inMsgNode->data.header.fCompress = settings.hdr.textCompType;  
-            memcpy(inMsgNode->data.payload, message.c_str(), message.size());       // cpy the message into the newly allocated space
+        if(c != 't' && c != 'b'){
+            if(c == 'r')                        // if the user specifies a random message
+            {
+                int i; 
+                int numQuotes;					// Number of quotes in the file
+                long int* quoteIndices;			// Array of quote locations in the file (index correspondes to quote number)
+                int* quoteLengths;				// Array of quote lengths (index correspondes to quote number)
+                char randMsg[MAX_QUOTE_LENGTH];
+
+                numQuotes = fnumQuotes();									// Number of quotes
+                quoteIndices = fquoteIndices(numQuotes);					// Index locations of the quotes
+                quoteLengths = fquoteLength(numQuotes, quoteIndices);		// Length of each quote (up to MAX_QUOTE_LENGTH) - cut off after 	
+                srand(time(NULL));					                        // Seed the random number generator
+
+                if(!GetMessageFromFile(randMsg, MAX_QUOTE_LENGTH, frandNum(0,numQuotes), numQuotes, quoteIndices, quoteLengths)) message = "error retrieving message";
+
+                cout << "Message: " << randMsg;
+                inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node                      this is my compressed message maybe if i'm lucky but experience tells me I'm not
+                inMsgNode->data.payload = malloc(sizeof(randMsg));                      // Allocate space for the random messge based on the messages size
+                strcpy((char*)inMsgNode->data.payload, randMsg);                        // copy the message in
+                inMsgNode->data.header.payloadSize = sizeof(randMsg);                   // store the message size for transmission
+                inMsgNode->data.header.fCompress = settings.hdr.textCompType;  
+                
+            } else if (c = 'm'){                                // if the user specifies a custom message
+                cout << "Message: ";
+                cin.sync();
+                getline(cin, message);                         // Get the user's message
+                inMsgNode = (link)malloc(sizeof(Node));                                 // Allocate space for the message node                      this is my compressed message maybe if i'm lucky but experience tells me I'm not
+                inMsgNode->data.payload = (char*)malloc(message.size());                // Allocate space for the message itself
+                inMsgNode->data.header.payloadSize = message.size();                    // store the message size for transmission
+                inMsgNode->data.header.fCompress = settings.hdr.textCompType;  
+                memcpy(inMsgNode->data.payload, message.c_str(), message.size());       // cpy the message into the newly allocated space
+            } 
             if(compress(inMsgNode->data.payload, inMsgNode->data.header.payloadSize, &szCompressed, inMsgNode->data.header.fCompress))           // compress the buffer => if there are no compression flags set it does nothing
             {
                 inMsgNode->data.header.uncompressedSize = inMsgNode->data.header.payloadSize;               // this is the actual size of the message
@@ -97,8 +121,8 @@ void TxText(queue* msgQueue)
             } 
             msgQueue->AddToQueue(inMsgNode);                                        // add the message to the queue
             cout << "[Node " << msgQueue->nodes << "\t" << inMsgNode << "]\n"; 
-        }
-        else if(c == 't'){
+        
+        } else {
            
             cout << "----------------------------------------------\n"; 
           
@@ -240,18 +264,19 @@ int RxText()
         }
         prevnBytes = nbytes;           // store so it can be accessed after next read operation
     }
-    //return 1;                           // If we reached here the user terminated the loop and the transmission was incomplete
-    // Now we dequeue
-    //cout << setBlnk << "\nDequeueing..." << curUp << resetGraph;
-     
+    
     cout << "----------------------------------------------\n"; 
     
     while (!msgQueue.IsQueueEmpty())        // dequeue until all have been dequed 
     {
         outMsgNode = msgQueue.DeQueue();                                                                            // dequeue 
         cout << "[Node " << msgQueue.nodes << "\t" << outMsgNode << "]: "; 
-        decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress);
-        cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize);                           // print the payload message stored in the message frame for a given node.
+        if(decompress(outMsgNode->data.payload, outMsgNode->data.header.payloadSize, outMsgNode->data.header.uncompressedSize, outMsgNode->data.header.fCompress))      // if the message was succesfully compressed
+        {
+            cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.uncompressedSize);                           // print the payload message (size is the uncompressed size sent in header)
+        } else {
+            cout.write((char*)outMsgNode->data.payload, outMsgNode->data.header.payloadSize);                           // print the payload message stored in the message frame for a given node.
+        }
         cout << "\n"; 
         free(outMsgNode->data.payload); 
         free(outMsgNode);                                      // free the msgNode which we dequeued - the msgFrame is not a ptr and does not need to be freed

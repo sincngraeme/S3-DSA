@@ -37,10 +37,11 @@ int compress(void* buf, DWORD inSz, DWORD* outSz, int fCompress)
         if(*outSz > inSz) 
         {
             printf("Message cannot be further compressed\n"); 
+            *outSz = inSz;                                          // so we are not sending the wrong size
             return 0;
         }
         // Output file statistics message                    
-        printf("Output file: %d bytes (%.1f%%)\n", *outSz, 100.0f * (float)*outSz / (float)inSz);
+        printf("\nOutput: %d bytes (%.1f%%)\n", *outSz, 100.0f * (float)*outSz / (float)inSz);
 
         memcpy(buf, out, *outSz);            // copy the compressed message in               
         free(out);

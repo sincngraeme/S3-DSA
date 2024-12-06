@@ -13,9 +13,11 @@
 #include "queue.h"
 #include "menu.h"
 #include "decode.h"
+#include "message.h"
 #include <iostream>
 #include <string.h>
 #include <conio.h>
+#include <time.h>
 #include "config.h"
 
 using namespace std;

@@ -15,6 +15,7 @@
 
 static messagelink pHead, pTail; 
 
+
 // Function gets a random number between min and max (max is the number of quotes in the file)
 int frandNum(int min, int max) 
 {
